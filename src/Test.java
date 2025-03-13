@@ -4,5 +4,6 @@ public class Test{
         System.out.println("hi");
         System.out.println("hi 99123456 addd new line");
         System.out.println("harlow world");
+        System.out.println("Test");
     }
 }
