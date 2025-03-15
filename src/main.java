@@ -3,8 +3,7 @@ public class main {
         gameMenu input = new gameMenu();
         input.displayMenu();
 
-        game g = new game();
-        g.initialise();
+        game g = new game(input.numPlayers, input.numBots);
         for (int i = 0; i < g.deck.size(); i++) {
             System.out.println(g.deck.get(i).colour + g.deck.get(i).number);
         }
