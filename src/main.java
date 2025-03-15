@@ -5,7 +5,7 @@ public class main {
 
         game g = new game(input.numPlayers, input.numBots);
         for (int i = 0; i < g.deck.size(); i++) {
-            System.out.println(g.deck.get(i).colour + g.deck.get(i).number);
+            System.out.println(g.deck.get(i).colour + "," + g.deck.get(i).number);
         }
     }
 }
