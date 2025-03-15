@@ -18,7 +18,7 @@ public class gameMenu {
             numBots = sc.nextInt();
 
             if (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
-                System.out.println("Total number of players should be between 2 and 6!");
+                System.out.println("Total number of players should be between 2 and 6!\n");
             }
         }
     }
