@@ -1,41 +1,116 @@
 import java.util.*;
 
 public class Score {
+    private HashMap<String, Integer> playerCount;
+    private HashMap<String, Integer> highestCount;
 
     /* 
-    *  method 1: convert arraylist to hashmap
-    *             -> easier counting
-    *
-    *  method 2: count player cards 
+    *  method 1: count player cards 
     *             -> count number of cards based on colour 
-    *             -> returns number of cards and its colours 
-    *             -> example: return [5,"red", 7, "blue"]
+    *             -> update playerCount 
     *
-    *  method 3: find highest number of cards for each number 
+    *  method 2: find highest number of cards for each number 
     *             -> use method 2  
     *             -> compare and find highest number 
-    *             -> take note of tie 
+    *             -> update highestCount
     *
-    *  method 4: calculate score
+    *  method 3: calculate score
     *             -> if-else 
     *             -> if respective colour and number matches highest number
     *                  -> total + 1
     *             -> else 
     *                  -> get value of card and add to total 
     */
-    
-    /*** Method 1: Convert to HashMap ***/
-    public HashMap<Integer, String> convertToHashMap(ArrayList<String> list) {
-        HashMap<Integer, String> map = new HashMap<>();
 
-        for (String i : list) {
-            String[] s = i.split(",");
-            String colour = s[1];
-            int value = Integer.parseInt(s[0]);
-            map.put(value, colour);
+    public Score() {
+        playerCount = new HashMap<>();
+        highestCount = new HashMap<>();
+    }
+
+    /*** Method 1: Count Player's Cards ***/
+    public void countPlayerCards(Player player) {
+
+        // reset count for new player 
+        playerCount.clear();
+
+        // use player attribute to get card arraylist 
+        for (Card card: player.getCards()) {
+
+            // use card attribute to get card colour 
+            String colour = card.getColour();
+
+            // get current count 
+            // default to 0 if not present 
+            int count = playerCount.getOrDefault(colour, 0);
+
+            // increment the count by one
+            playerCount.put(colour, count + 1);
         }
 
-        return map;
+    }
+
+    /*** Method 2: Find Highest Number of Cards for Each Colour ***/
+    // use arraylist of players -> unsure what class yet 
+    public void highestNumberPerColour(ArrayList<Player> playerList) {
+
+        // reset highest count 
+        highestCount.clear();
+
+        // colours array
+        String[] colours = {"red", "blue", "purple", "green", "grey", "orange"};
+
+        // check through each player
+        for (Player player: playerList) {
+            
+            // count each player's cards
+            countPlayerCards(player);
+
+            // checks through all colours  
+            for (String colour : colours) {
+                // ensures all colours has a count 
+                int currentColourCount = playerCount.getOrDefault(colour, 0);
+                int highestColourCount = highestCount.getOrDefault(colour, 0);
+
+                // update colour count
+                if (currentColourCount > highestColourCount) {
+                    // replaces count of current colour
+                    highestCount.put(colour, currentColourCount);
+                }
+            }
+        }
+
+    }
+
+    /*** Method 3: Calculate score and find winner */
+    public int calculateScore(Player player) {
+        int totalScore = 0;
+
+        // count players cards
+        countPlayerCards(player);
+
+        // use player attribute to get card arraylist 
+        for (Card card: player.getCards()) {
+
+            // use card attribute to get card colour
+            String colour = card.getColour();
+
+            // get number of cards player has
+            int playerCardCount = playerCount.getOrDefault(colour, 0);
+            // get highest count for that card 
+            int highestColourCount = highestCount.getOrDefault(colour, 0);
+
+            // for each card add score accordingly
+            if (playerCardCount == highestColourCount) {
+                // add one if matches highest count
+                totalScore += 1;
+            } else {
+                // add value of card
+                totalScore += card.getValue();
+            }
+            
+        }
+
+        return totalScore;
     }
 
 }
