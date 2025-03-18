@@ -1,9 +1,21 @@
 import java.util.ArrayList;
 
 public class Player {
-    public ArrayList<Card> deck = new ArrayList<>();
+    public ArrayList<Card> anonDeck = new ArrayList<>();
+    public ArrayList<Card> openDeck = new ArrayList<>();
 
     public Player() {
-        this.deck = deck;
+        
     }
+
+    public ArrayList<Card> getAnonDeck() {
+        return anonDeck;
+    }
+
+    public ArrayList<Card> getOpenDeck() {
+        return openDeck;
+    }
+
+
+    
 }

@@ -43,9 +43,12 @@ public class game {
                 for (int j = 0; j < 5; j++) {
                     Card c = deck.get(0);
                     deck.remove(0);
-                    p.deck.add(c);
+                    p.anonDeck.add(c);
                 }
             }
+        
+        // Draw 6 cards out from the deck
+
 
         } catch (FileNotFoundException e) {
             System.out.println("Invalid File");

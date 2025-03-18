@@ -6,4 +6,9 @@ public class Card {
         this.number = n;
         this.colour = c;
     }
+
+    public String getColour() {
+        return colour;
+    }
+
 }

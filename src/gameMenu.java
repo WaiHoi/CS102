@@ -11,11 +11,11 @@ public class gameMenu {
         while (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
             try {
                 Scanner sc = new Scanner(System.in);
-                System.out.print("Enter number of players: ");
+                System.out.print("Enter number of human players: ");
                 numPlayers = sc.nextInt();
 
                 sc = new Scanner(System.in);
-                System.out.print("Enter number of bots: ");
+                System.out.print("Enter number of bot players: ");
                 numBots = sc.nextInt();
 
                 if (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
