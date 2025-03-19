@@ -13,6 +13,8 @@ public class GameLoop {
 
     //     return false;
     // }
+    public int round = 1;
+    public int counter = 0;
 
     public boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
@@ -29,14 +31,37 @@ public class GameLoop {
         return foundColors.containsAll(requiredColors);
     }
 
-
-
-    while (deck.isEmpty() == false){
-        
-        
-        if(checkPlayersHandForCardFromEachColour() == false){
-            break;
+    public void mainFunction(){
+        for (int i = 0; i < player.length; i++) {
+            Player p = player.get(i);
+            logicalFunction(player.get(i));
+            if(checkPlayersHandForCardFromEachColour(p) == false || deck.isEmpty() == true){
+                break;
+            }
+            if(i == player.length){
+                i = -1;
+                round++;
+            }
         }
+    }
+
+    public void logicalFunction(Player p){
+
+        Card c = player.anonDeck.get(Math.random() * ((int)(player.anonDeck.size() - 0) + 1));
+        c.remove();
+        paradeDeck.add(c);
+
+        int safeCards = c.getNumber();
+
+        for (int i = c.getNumber() - 1; i < parade.length; i++) {
+            Card currentCard = Card.get(i);
+            if(currentCard.getColour().equals(c.getColour()) || currentCard.getNumber() < c.getNumber()){
+                c.deck.remove();
+                p.add(c);
+            }
+        }
+
+        
     }
 
 }
