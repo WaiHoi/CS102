@@ -20,6 +20,13 @@ public class Score {
     *                  -> total + 1
     *             -> else 
     *                  -> get value of card and add to total 
+    * method 4 : determine winner
+    *             -> use method 3 to get player's score
+    *             -> compare player's score with all other players
+    *             -> if any other player has a higher score
+    *                  -> return false (not winner)
+    *             -> else
+    *                  -> return true (winner)
     */
 
     public Score() {
@@ -111,6 +118,29 @@ public class Score {
         }
 
         return totalScore;
+    }
+
+    /*** Method 4: Compares the player's score with all other players to determine if they are the winner */
+    public boolean isWinner (Player player, ArrayList<Player> playerList) {
+        
+        // Get the player's score
+        int playerScore = calculateScore(player);
+
+        
+        // Check each player's score in the list
+        for (Player otherPlayer : playerList) {
+            
+        // Skip comparison with itself
+        if (!otherPlayer.equals(player)) {
+            int otherScore = calculateScore(otherPlayer);
+
+            // If any other player has a higher score, this player is not the winner
+            if (otherScore > playerScore) {
+                return false;
+            }
+        }
+    }
+        return true;
     }
 
 }
