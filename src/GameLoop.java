@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class GameLoop {
     /** 
@@ -15,16 +13,23 @@ public class GameLoop {
     // }
     public int round = 1;
     public int counter = 0;
+    public ArrayList<Player> players;
+    public ArrayList<Card> deck;
 
     public boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
-        Set<String> requiredColors = new HashSet<>(Arrays.asList("Red", "Blue", "Green", "Grey", "Purple", "Orange"));
-
+        ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
+            "Red", "Blue", "Green", "Grey", "Purple", "Orange"
+        ));
         // Collect colors present in openDeck
-        Set<String> foundColors = new HashSet<>();
+        ArrayList<String> foundColors = new ArrayList<>();
+
 
         for (Card card : p.openDeck) {
-            foundColors.add(card.getColour());  // Assuming Card has a getColor() method
+            String color = card.colour;  // Assuming Card has a getColour() method
+            if (!foundColors.contains(color)) { // Avoid duplicates
+                foundColors.add(color);
+            }
         }
 
         // Return true if all required colors are found
@@ -32,13 +37,15 @@ public class GameLoop {
     }
 
     public void mainFunction(){
-        for (int i = 0; i < player.length; i++) {
-            Player p = player.get(i);
-            logicalFunction(player.get(i));
-            if(checkPlayersHandForCardFromEachColour(p) == false || deck.isEmpty() == true){
+        // iterates through the players
+        for (int i = 0; i < players.size(); i++) {
+            //get the first player
+            Player p = players.get(i);
+            // calls the move of the player
+            logicalFunction(p);
+            if(checkPlayersHandForCardFromEachColour(p) == true || deck.isEmpty() == true){
                 break;
-            }
-            if(i == player.length){
+            } else if(i == players.size()){
                 i = -1;
                 round++;
             }
@@ -47,17 +54,18 @@ public class GameLoop {
 
     public void logicalFunction(Player p){
 
-        Card c = player.anonDeck.get(Math.random() * ((int)(player.anonDeck.size() - 0) + 1));
-        c.remove();
-        paradeDeck.add(c);
+        Random rand = new Random();
+        Card c = p.anonDeck.get(rand.nextInt(p.anonDeck.size())); 
+        p.anonDeck.remove(c);
+        //paradeDeck.add(c);
 
-        int safeCards = c.getNumber();
+        int safeCards = c.number;
 
-        for (int i = c.getNumber() - 1; i < parade.length; i++) {
-            Card currentCard = Card.get(i);
-            if(currentCard.getColour().equals(c.getColour()) || currentCard.getNumber() < c.getNumber()){
-                c.deck.remove();
-                p.add(c);
+        for (int i = parade.size() - c.number; i >= 0; i++) {
+            Card currentCard = parade.get(i);
+            if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
+                parade.remove(c);
+                p.openDeck.add(c);
             }
         }
 
