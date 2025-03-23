@@ -11,4 +11,8 @@ public class Card {
         return colour;
     }
 
+    public int getValue() {
+        return number;
+    }
+
 }

@@ -41,7 +41,7 @@ public class Score {
         playerCount.clear();
 
         // use player attribute to get card arraylist 
-        for (Card card: player.getCards()) {
+        for (Card card: player.getAnonDeck()) {
 
             // use card attribute to get card colour 
             String colour = card.getColour();
@@ -96,7 +96,7 @@ public class Score {
         countPlayerCards(player);
 
         // use player attribute to get card arraylist 
-        for (Card card: player.getCards()) {
+        for (Card card: player.getAnonDeck()) {
 
             // use card attribute to get card colour
             String colour = card.getColour();

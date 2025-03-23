@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class gameMenu {
+public class GameMenu {
     public int numPlayers;
     public int numBots;
 
@@ -13,10 +13,11 @@ public class gameMenu {
                 Scanner sc = new Scanner(System.in);
                 System.out.print("Enter number of human players: ");
                 numPlayers = sc.nextInt();
+                sc.nextLine();
 
-                sc = new Scanner(System.in);
                 System.out.print("Enter number of bot players: ");
                 numBots = sc.nextInt();
+                sc.nextLine();
 
                 if (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
                     System.out.println("Total number of players and bots should be between 2 and 6!\n");
