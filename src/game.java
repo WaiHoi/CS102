@@ -3,8 +3,8 @@ import java.io.*;
 
 public class Game {
     public ArrayList<Card> deck = new ArrayList<>();
-    public ArrayList<Player> players = new ArrayList<>();
     public ArrayList<Card> parade = new ArrayList<>();
+    public ArrayList<Player> players = new ArrayList<>();
 
     public Game(int numPlayers, int numBots) {
         // Add players and bots
@@ -58,5 +58,7 @@ public class Game {
         } catch (FileNotFoundException e) {
             System.out.println("Invalid File");
         }
+
     }
+
 }

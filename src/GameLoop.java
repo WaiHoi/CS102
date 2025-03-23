@@ -45,6 +45,11 @@ public class GameLoop {
 
     public void mainFunction(){
         System.out.println("Round 1");
+        String pcards = "";
+        for(Card paradeCards: parade){
+            pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
+        }
+        System.out.println(pcards);
 
         // iterates through the players
         for (int i = 0; i < players.size(); i++) {
@@ -74,10 +79,13 @@ public class GameLoop {
         Card c = p.anonDeck.get(rand.nextInt(p.anonDeck.size())); 
         p.anonDeck.remove(c);
         parade.add(c);
+        System.out.println(c.getColour() + c.getValue());
+
+
 
         //int safeCards = c.number;
 
-        for (int i = parade.size() - 1 - c.number; i >= 0; i--) {
+        for (int i = parade.size() - c.number - 1; i >= 0; i--) {
             Card currentCard = parade.get(i);
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
                 parade.remove(c);

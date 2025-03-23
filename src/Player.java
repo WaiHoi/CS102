@@ -23,6 +23,8 @@ public class Player {
         }
         if (!cards.equals("")){
             cards = "[" + cards.substring(0, cards.length() - 2)+ "]";
+        } else {
+            return "[]";
         }
         return cards;
     }
