@@ -74,6 +74,7 @@ public class GameLoop {
     }
 
     public void logicalFunction(Player p){
+        
 
         Random rand = new Random();
         Card c = p.anonDeck.get(rand.nextInt(p.anonDeck.size())); 
@@ -81,15 +82,21 @@ public class GameLoop {
         parade.add(c);
         System.out.println(c.getColour() + c.getValue());
 
+        String pcards = "";
+        for(Card paradeCards: parade){
+            pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
+        }
+        System.out.println(pcards);
 
 
         //int safeCards = c.number;
 
-        for (int i = parade.size() - c.number - 1; i >= 0; i--) {
+        for (int i = parade.size() - c.number - 2; i >= 0; i--) {
             Card currentCard = parade.get(i);
+            System.out.println(currentCard.colour + currentCard.getValue());
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
-                parade.remove(c);
-                p.openDeck.add(c);
+                parade.remove(currentCard);
+                p.openDeck.add(currentCard);
             }
         }
 
