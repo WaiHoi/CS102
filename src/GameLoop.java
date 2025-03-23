@@ -44,17 +44,26 @@ public class GameLoop {
     }
 
     public void mainFunction(){
+        System.out.println("Round 1");
+
         // iterates through the players
         for (int i = 0; i < players.size(); i++) {
+    
             //get the first player
             Player p = players.get(i);
+
             // calls the move of the player
+            System.out.println("player " + i);
             logicalFunction(p);
+
             if(checkPlayersHandForCardFromEachColour(p) == true || deck.isEmpty() == true){
                 break;
-            } else if(i == players.size()){
+            } else if(players.size() == i){
                 i = -1;
                 round++;
+                System.out.println("Round:" + round);
+                System.out.println(deck);
+
             }
         }
     }
@@ -64,11 +73,11 @@ public class GameLoop {
         Random rand = new Random();
         Card c = p.anonDeck.get(rand.nextInt(p.anonDeck.size())); 
         p.anonDeck.remove(c);
-        //paradeDeck.add(c);
+        parade.add(c);
 
-        int safeCards = c.number;
+        //int safeCards = c.number;
 
-        for (int i = parade.size() - 1; i >= parade.size() - c.number && i >= 0; i--) {
+        for (int i = parade.size() - 1 - c.number; i >= 0; i--) {
             Card currentCard = parade.get(i);
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
                 parade.remove(c);
@@ -76,7 +85,9 @@ public class GameLoop {
             }
         }
 
-        
+        //print out open deck cards
+        System.out.println(p.toString(p.openDeck));
+
     }
 
 }
