@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class GameMenu {
+public class gameMenu {
     public int numPlayers;
     public int numBots;
 
