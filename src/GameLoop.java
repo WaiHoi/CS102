@@ -249,6 +249,10 @@ public class GameLoop {
         // Show open deck
         System.out.println("Your open deck:");
         System.out.println(p.toString(p.openDeck) + "\n");
+        sc = new Scanner(System.in);
+        System.out.print("Press Enter to continue > ");
+        sc.nextLine();
+        System.out.println();
     }
 
 }
