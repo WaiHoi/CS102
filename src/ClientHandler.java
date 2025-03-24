@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
     private BufferedReader in;
     private BufferedWriter out;
     private String clientUsername;
-
+    /*** Constructor ***/
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
@@ -57,6 +57,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /*** Method 1 ***/
     @Override
     public void run() {
 
@@ -81,6 +82,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /*** Method 2: Broadcasting messages */
     public void broadcastMessage(String messageToSend) {
         // for each clientHandler in the list
         for (ClientHandler clientHandler : clientHandlers) {
@@ -103,6 +105,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /*** Method 3: Remove Client handlers */
     public void removeClientHandler() {
         // remove user -> not send message to the connection
         clientHandlers.remove(this);
@@ -110,6 +113,7 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /*** Method 4: Close Everything ***/
     public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
         // remove individual connection
         removeClientHandler();
