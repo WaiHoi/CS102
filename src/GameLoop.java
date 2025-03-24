@@ -164,6 +164,7 @@ public class GameLoop {
     public void mainFunction() {
         System.out.println("\nRound 1");
         String pcards = "";
+        System.out.print("Parade: ");
         for (Card paradeCards : parade) {
             pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
         }
