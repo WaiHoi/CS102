@@ -165,6 +165,7 @@ public class GameLoop {
     public void mainFunction() {
         System.out.println("\nRound 1");
         String pcards = "";
+        System.out.print("Parade: ");
         for (Card paradeCards : parade) {
             pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
         }
@@ -252,6 +253,10 @@ public class GameLoop {
         // Show open deck
         System.out.println("Your open deck:");
         System.out.println(p.toString(p.openDeck) + "\n");
+        sc = new Scanner(System.in);
+        System.out.print("Press Enter to continue > ");
+        sc.nextLine();
+        System.out.println();
     }
 
 }
