@@ -147,18 +147,18 @@ public class GameLoop {
     public boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
         ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
-                "Red", "Blue", "Green", "Grey", "Purple", "Orange"));
+                "red", "blue", "green", "grey", "purple", "orange"));
         // Collect colors present in openDeck
         ArrayList<String> foundColors = new ArrayList<>();
 
         for (Card card : p.openDeck) {
-            String color = card.colour; // Assuming Card has a getColour() method
-            if (!foundColors.contains(color)) { // Avoid duplicates
-                foundColors.add(color);
+            if (!foundColors.contains(card.colour)) { // Avoid duplicates
+                foundColors.add(card.colour);
             }
         }
 
         // Return true if all required colors are found
+        System.out.println(foundColors.contains(requiredColors));
         return foundColors.containsAll(requiredColors);
     }
 
@@ -180,15 +180,11 @@ public class GameLoop {
             // calls the move of the player
             System.out.println("player " + i);
             logicalFunction(p);
-            if (checkPlayersHandForCardFromEachColour(p) == true || deck.isEmpty() == true) {
-                System.out.println("player " + i);
-                if (checkPlayersHandForCardFromEachColour(p) == true) {
-                    System.out.println("player" + i + "has cards of each colour. game ends");
-                } else {
-                    System.out.println("deck is empty. game ends");
-                }
 
-                break;
+            if (checkPlayersHandForCardFromEachColour(p)){
+                System.out.println("player" + i + " has cards of each colour. game ends");
+            } else if(deck.isEmpty()) {
+                System.out.println("deck is empty. game ends");
 
             } else if (players.size() == i + 1) {
                 i = -1;
