@@ -9,12 +9,12 @@ public class game {
     public game(int numPlayers, int numBots) {
         // Add players and bots
         for (int i = 0; i < numPlayers; i++) {
-            Player p = new Player();
+            Player p = new Player(false);
             players.add(p); 
         }
 
         for (int i = 0; i < numBots; i++) {
-            Player b = new Player();
+            Player b = new Player(true);
             players.add(b); 
         }
 
