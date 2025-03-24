@@ -9,5 +9,6 @@ public class main {
         // }
 
         GameLoop gl = new GameLoop(g.players, g.deck, g.parade);
+        gl.mainFunction();
     }
 }
