@@ -4,6 +4,7 @@ import java.io.*;
 public class Game {
     public ArrayList<Card> deck = new ArrayList<>();
     public ArrayList<Player> players = new ArrayList<>();
+    public ArrayList<Card> parade = new ArrayList<>();
 
     public Game(int numPlayers, int numBots) {
         // Add players and bots
@@ -47,8 +48,12 @@ public class Game {
                 }
             }
         
-        // Draw 6 cards out from the deck
-
+        // Draw 6 cards out from the deck into parade
+        for (int i = 0; i < 6; i++) {
+            Card c = deck.get(0);
+            deck.remove(0);
+            parade.add(c);
+        }
 
         } catch (FileNotFoundException e) {
             System.out.println("Invalid File");

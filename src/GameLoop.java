@@ -15,6 +15,13 @@ public class GameLoop {
     public int counter = 0;
     public ArrayList<Player> players;
     public ArrayList<Card> deck;
+    public ArrayList<Card> parade;
+
+    public GameLoop(ArrayList<Player> players, ArrayList<Card> deck, ArrayList<Card> parade) {
+        this.players = players;
+        this.deck = deck;
+        this.parade = parade;
+    }
 
     public boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
@@ -61,7 +68,7 @@ public class GameLoop {
 
         int safeCards = c.number;
 
-        for (int i = parade.size() - c.number; i >= 0; i++) {
+        for (int i = parade.size() - 1; i >= parade.size() - c.number && i >= 0; i--) {
             Card currentCard = parade.get(i);
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
                 parade.remove(c);
