@@ -1,12 +1,12 @@
 import java.util.*;
 import java.io.*;
 
-public class Game {
+public class game {
     public ArrayList<Card> deck = new ArrayList<>();
     public ArrayList<Player> players = new ArrayList<>();
     public ArrayList<Card> parade = new ArrayList<>();
 
-    public Game(int numPlayers, int numBots) {
+    public game(int numPlayers, int numBots) {
         // Add players and bots
         for (int i = 0; i < numPlayers; i++) {
             Player p = new Player();
