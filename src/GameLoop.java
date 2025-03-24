@@ -98,7 +98,7 @@ public class GameLoop {
 
         //int safeCards = c.number;
 
-        for (int i = parade.size() - c.number; i >= 0; i++) {
+        for (int i = parade.size() - 1; i >= parade.size() - c.number && i >= 0; i--) {
             Card currentCard = parade.get(i);
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
                 parade.remove(currentCard);
