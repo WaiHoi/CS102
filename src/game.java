@@ -5,7 +5,6 @@ public class game {
     public ArrayList<Card> deck = new ArrayList<>();
     public ArrayList<Card> parade = new ArrayList<>();
     public ArrayList<Player> players = new ArrayList<>();
-    public ArrayList<Card> parade = new ArrayList<>();
 
     public game(int numPlayers, int numBots) {
         // Add players and bots
