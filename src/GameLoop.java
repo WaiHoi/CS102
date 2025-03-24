@@ -44,39 +44,73 @@ public class GameLoop {
     }
 
     public void mainFunction(){
+        System.out.println("Round 1");
+        String pcards = "";
+        for(Card paradeCards: parade){
+            pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
+        }
+        System.out.println(pcards);
+
         // iterates through the players
         for (int i = 0; i < players.size(); i++) {
+    
             //get the first player
             Player p = players.get(i);
+
             // calls the move of the player
+            System.out.println("player " + i);
             logicalFunction(p);
+
             if(checkPlayersHandForCardFromEachColour(p) == true || deck.isEmpty() == true){
+                System.out.println("player " + i);
                 break;
-            } else if(i == players.size()){
+            } else if(players.size() == i + 1){
                 i = -1;
                 round++;
+                System.out.println("Round:" + round);
+                System.out.println(deck);
+
             }
         }
     }
 
     public void logicalFunction(Player p){
+        
 
         Random rand = new Random();
         Card c = p.anonDeck.get(rand.nextInt(p.anonDeck.size())); 
         p.anonDeck.remove(c);
-        //paradeDeck.add(c);
+        parade.add(c);
 
-        int safeCards = c.number;
+        //add new card for player
+        Card newCard = deck.get(0);
+        deck.remove(0);
+        p.anonDeck.add(newCard);
 
-        for (int i = parade.size() - 1; i >= parade.size() - c.number && i >= 0; i--) {
+        System.out.println(c.getColour() + c.getValue());
+
+        String pcards = "";
+        for(Card paradeCards: parade){
+            pcards = pcards + paradeCards.getColour() + ", " + paradeCards.getValue() + "; ";
+        }
+        System.out.println(pcards);
+
+
+        //int safeCards = c.number;
+
+        for (int i = parade.size() - c.number; i >= 0; i++) {
             Card currentCard = parade.get(i);
             if(currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number){
-                parade.remove(c);
-                p.openDeck.add(c);
+                parade.remove(currentCard);
+                p.openDeck.add(currentCard);
             }
         }
 
         
+
+        //print out open deck cards
+        System.out.println(p.toString(p.openDeck));
+
     }
 
 }
