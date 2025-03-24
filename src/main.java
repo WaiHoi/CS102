@@ -8,7 +8,6 @@ public class main {
         //     System.out.println(g.deck.get(i).colour + "," + g.deck.get(i).number);
         // }
 
-        Player p = g.players.get(1);
-        System.out.println(p.anonDeck.get(1).colour + p.anonDeck.get(1).number);
+        GameLoop gl = new GameLoop(g.players, g.deck, g.parade);
     }
 }
