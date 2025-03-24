@@ -29,8 +29,10 @@ public class Client {
     private BufferedWriter out;
     private String username;
 
+    /*** Constructor : setup input and output */
     public Client(Socket socket, String username) {
         try {
+            // setting up input and output
             this.socket = socket;
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -43,7 +45,7 @@ public class Client {
             System.out.println("Error occurred: Client");
         }
     }
-
+    /*** Method 1: Send Messages  */
     public void sendMessage() {
         try {
             Scanner sc = new Scanner(System.in);
@@ -52,10 +54,10 @@ public class Client {
             out.write(username);
             out.newLine();
             out.flush();
-
+            // Runs a loop to continously hear the user's input
             while (socket.isConnected()) {
                 String messageToSend = sc.nextLine();
-
+                // Allows the user to disconnect from the system
                 if (messageToSend.equalsIgnoreCase("/quit")) {
                     System.out.println("Disconnecting from the server");
                     closeEverything(socket, in, out);
@@ -71,8 +73,9 @@ public class Client {
             System.out.println("Error occurred: sendMessage()");
         }
     }
-
+    /*** Method 2: Listening for messages */
     public void listenForMessage() {
+        // Create a new thread for incoming messages
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -82,7 +85,7 @@ public class Client {
                 while (socket.isConnected()) {
                     try {
                         msgFromChat = in.readLine();
-
+                        // Checks if the connection to the server has to be closed
                         if (msgFromChat == null) {
                             System.out.println("Server has disconnected");
                             closeEverything(socket, in, out);
@@ -100,8 +103,9 @@ public class Client {
             }
         }).start();
     }
-
+    /*** Method 3: Close Everything */
     public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
+        // Ensures all the connections and streams are closed
         try {
             if (in != null) {
                 in.close();
