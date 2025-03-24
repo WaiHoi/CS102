@@ -136,6 +136,7 @@ public class GameLoop {
     public ArrayList<Card> deck;
     public ArrayList<Card> parade;
     public boolean isBot;
+    // public game game;
 
     public GameLoop(ArrayList<Player> players, ArrayList<Card> deck, ArrayList<Card> parade) {
         this.players = players;
@@ -185,7 +186,9 @@ public class GameLoop {
                 } else {
                     System.out.println("deck is empty. game ends");
                 }
+
                 break;
+
             } else if (players.size() == i + 1) {
                 i = -1;
                 round++;
@@ -202,9 +205,9 @@ public class GameLoop {
         if (!p.isBot) {
             while (true) {
                 System.out.println("Enter a number between 1 and 5:");
-                selectNumber = sc.nextInt();
+                selectNumber = sc.nextInt() - 1;
 
-                if (selectNumber >= 1 && selectNumber <= 5) {
+                if (selectNumber >= 0 && selectNumber <= 4) {
                     break; // valid input, exit loop
                 }
 

@@ -10,5 +10,9 @@ public class main {
 
         GameLoop gl = new GameLoop(g.players, g.deck, g.parade);
         gl.mainFunction();
+
+        Score score = new Score();
+        score.isWinner(g.players, g);
+
     }
 }

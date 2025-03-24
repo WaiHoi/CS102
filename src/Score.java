@@ -1,8 +1,10 @@
 import java.util.*;
 
 public class Score {
-    private HashMap<String, Integer> playerCount;
+    private HashMap<String, Integer> playerColouredCards;
     private HashMap<String, Integer> highestCount;
+    private HashMap<Player, Integer> playerScoreCount;
+
 
     /* 
     *  method 1: count player cards 
@@ -30,15 +32,16 @@ public class Score {
     */
 
     public Score() {
-        playerCount = new HashMap<>();
+        playerColouredCards = new HashMap<>();
         highestCount = new HashMap<>();
+        playerScoreCount = new HashMap<>();
     }
 
-    /*** Method 1: Count Player's Cards ***/
+    /*** Method 1: Count Player's Coloured Cards ***/
     public void countPlayerCards(Player player) {
 
         // reset count for new player 
-        playerCount.clear();
+        playerColouredCards.clear();
 
         // use player attribute to get card arraylist 
         for (Card card: player.getAnonDeck()) {
@@ -48,10 +51,10 @@ public class Score {
 
             // get current count 
             // default to 0 if not present 
-            int count = playerCount.getOrDefault(colour, 0);
+            int count = playerColouredCards.getOrDefault(colour, 0);
 
             // increment the count by one
-            playerCount.put(colour, count + 1);
+            playerColouredCards.put(colour, count + 1);
         }
 
     }
@@ -69,13 +72,13 @@ public class Score {
         // check through each player
         for (Player player: playerList) {
             
-            // count each player's cards
+            // count player's cards
             countPlayerCards(player);
 
             // checks through all colours  
             for (String colour : colours) {
                 // ensures all colours has a count 
-                int currentColourCount = playerCount.getOrDefault(colour, 0);
+                int currentColourCount = playerColouredCards.getOrDefault(colour, 0);
                 int highestColourCount = highestCount.getOrDefault(colour, 0);
 
                 // update colour count
@@ -89,58 +92,77 @@ public class Score {
     }
 
     /*** Method 3: Calculate score and find winner */
-    public int calculateScore(Player player) {
-        int totalScore = 0;
+    public void calculateScore(ArrayList<Player> playerList, game game) {
+
+
+        highestNumberPerColour(game.players);
 
         // count players cards
-        countPlayerCards(player);
+        for (Player player : playerList) {
+            countPlayerCards(player);
+            int totalScore = 0;
 
-        // use player attribute to get card arraylist 
-        for (Card card: player.getAnonDeck()) {
+            // use player attribute to get card arraylist 
+            for (Card card: player.getAnonDeck()) {
 
-            // use card attribute to get card colour
-            String colour = card.getColour();
+                // use card attribute to get card colour
+                String colour = card.getColour();
 
-            // get number of cards player has
-            int playerCardCount = playerCount.getOrDefault(colour, 0);
-            // get highest count for that card 
-            int highestColourCount = highestCount.getOrDefault(colour, 0);
+                // get number of cards player has
+                int playerCardCount = playerColouredCards.getOrDefault(colour, 0);
+                // get highest count for that card 
+                int highestColourCount = highestCount.getOrDefault(colour, 0);
 
-            // for each card add score accordingly
-            if (playerCardCount == highestColourCount) {
-                // add one if matches highest count
-                totalScore += 1;
-            } else {
-                // add value of card
-                totalScore += card.getValue();
+                // for each card add score accordingly
+                if (playerCardCount == highestColourCount) {
+                    // add one if matches highest count
+                    totalScore += 1;
+                } else {
+                    // add value of card
+                    totalScore += card.getValue();
+                }
             }
-            
+            playerScoreCount.put(player, totalScore);
+
         }
 
-        return totalScore;
     }
 
     /*** Method 4: Compares the player's score with all other players to determine if they are the winner */
-    public boolean isWinner (Player player, ArrayList<Player> playerList) {
+    public void isWinner (ArrayList<Player> playerList, game game) {
         
+        Player winner = new Player();
+        int winnerScore = 0;
+
         // Get the player's score
-        int playerScore = calculateScore(player);
+        calculateScore(playerList, game);
 
-        
-        // Check each player's score in the list
-        for (Player otherPlayer : playerList) {
-            
-        // Skip comparison with itself
-        if (!otherPlayer.equals(player)) {
-            int otherScore = calculateScore(otherPlayer);
+        List<Map.Entry<Player, Integer>> entryList = new ArrayList<>(playerScoreCount.entrySet());
 
-            // If any other player has a higher score, this player is not the winner
-            if (otherScore > playerScore) {
-                return false;
+        entryList.sort(Map.Entry.comparingByValue());
+
+        for (int i = 0; i < entryList.size() - 1; i++) {
+            Map.Entry<Player, Integer> current = entryList.get(i);
+            Map.Entry<Player, Integer> next = entryList.get(i + 1);
+
+            if (current.getValue().equals(next.getValue())) {
+                Player player1 = current.getKey();
+                Player player2 = next.getKey();
+
+                int p1TotalCards = player1.anonDeck.size();
+                int p2TotalCards = player2.anonDeck.size();
+
+                if (p1TotalCards < p2TotalCards) {
+                    winner = player1;
+                    winnerScore = current.getValue();
+                } else {
+                    winner = player2;
+                }
             }
         }
-    }
-        return true;
+
+        System.out.println(winner + " has won with a score of " + winnerScore);
+
     }
 
 }
