@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class game {
+public class Game {
     public ArrayList<Card> deck = new ArrayList<>();
     public ArrayList<Card> parade = new ArrayList<>();
     public ArrayList<Player> players = new ArrayList<>();
