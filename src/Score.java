@@ -92,7 +92,7 @@ public class Score {
     }
 
     /*** Method 3: Calculate score and find winner */
-    public void calculateScore(ArrayList<Player> playerList, game game) {
+    public void calculateScore(ArrayList<Player> playerList, Game game) {
 
 
         highestNumberPerColour(game.players);
@@ -129,7 +129,7 @@ public class Score {
     }
 
     /*** Method 4: Compares the player's score with all other players to determine if they are the winner */
-    public void isWinner (ArrayList<Player> playerList, game game) {
+    public void isWinner (ArrayList<Player> playerList, Game game) {
         
         Player winner = new Player();
         int winnerScore = 0;
