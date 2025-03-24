@@ -145,3 +145,16 @@ public class Score {
 
 }
 
+// UML Diagram for Score.java
+// +----------------------------+
+// |         Score              |
+// +----------------------------+
+// | - playerCount: HashMap<String, Integer>   |
+// | - highestCount: HashMap<String, Integer>  |
+// +----------------------------+
+// | + Score()                                      |
+// | + countPlayerCards(player: Player): void       |
+// | + highestNumberPerColour(players: ArrayList<Player>): void |
+// | + calculateScore(player: Player): int          |
+// | + isWinner(player: Player, players: ArrayList<Player>): boolean |
+// +----------------------------+
