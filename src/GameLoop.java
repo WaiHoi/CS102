@@ -200,15 +200,23 @@ public class GameLoop {
 
         // if player is human
         if (!p.isBot) {
+            System.out.print("Enter a number between 1 and 5:");
+
             while (true) {
-                System.out.println("Enter a number between 1 and 5:");
-                selectNumber = sc.nextInt() - 1;
+                try{
+                    selectNumber = sc.nextInt() - 1;
+                    sc.nextLine();
 
                 if (selectNumber >= 0 && selectNumber <= 4) {
                     break; // valid input, exit loop
+                }else{
+                    System.out.print("Enter a number between 1 and 5:");
                 }
 
-                System.out.println("Please enter only numbers from 1 to 5.");
+                }catch (InputMismatchException e){
+                    sc.nextLine();
+                    System.out.print("Please enter only numbers from 1 to 5:");
+                }
             }
         }
         // Randomly pick a card from anonDeck
