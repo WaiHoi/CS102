@@ -8,6 +8,8 @@ public class gameMenu {
         numPlayers = 0;
         numBots = 0;
 
+        System.out.println("Welcome to a game of Parades!\nEnjoy and have fun!");
+
         while (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
             try {
                 Scanner sc = new Scanner(System.in);

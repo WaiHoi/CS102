@@ -69,28 +69,28 @@ public class Player {
         return openDeck;
     }
 
-    public String toString(ArrayList<Card> deckType) {
-        if (deckType.isEmpty()) {
-            return "[]";
-        }
+    // public String toString(ArrayList<Card> deckType) {
+    //     if (deckType.isEmpty()) {
+    //         return "[]";
+    //     }
     
-        // Sort the cards by colour first, then by value
-        deckType.sort((card1, card2) -> {
-            int colorComparison = card1.getColour().compareTo(card2.getColour());
-            return (colorComparison != 0) ? colorComparison : Integer.compare(card1.getValue(), card2.getValue());
-        });
+    //     // Sort the cards by colour first, then by value
+    //     deckType.sort((card1, card2) -> {
+    //         int colorComparison = card1.getColour().compareTo(card2.getColour());
+    //         return (colorComparison != 0) ? colorComparison : Integer.compare(card1.getValue(), card2.getValue());
+    //     });
     
-        // Construct the formatted string
-        StringBuilder cards = new StringBuilder("[");
-        for (Card card : deckType) {
-            cards.append(card.colour).append(", ").append(card.number).append("; ");
-        }
+    //     // Construct the formatted string
+    //     StringBuilder cards = new StringBuilder("[");
+    //     for (Card card : deckType) {
+    //         cards.append(card.colour).append(", ").append(card.number).append("; ");
+    //     }
     
-        // Remove the last "; " and close the bracket
-        cards.setLength(cards.length() - 2);
-        cards.append("]");
+    //     // Remove the last "; " and close the bracket
+    //     cards.setLength(cards.length() - 2);
+    //     cards.append("]");
     
-        return cards.toString();
-    }
+    //     return cards.toString();
+    // }
     
 }
