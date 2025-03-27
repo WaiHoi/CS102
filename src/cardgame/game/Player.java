@@ -1,6 +1,7 @@
 package cardgame.game;
 
 import java.util.ArrayList;
+import cardgame.model.Card;
 
 public abstract class Player {
     public ArrayList<Card> closedDeck = new ArrayList<>();

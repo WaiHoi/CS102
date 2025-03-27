@@ -1,7 +1,7 @@
 package cardgame;
 
-import cardgame.utility.*;
-import cardgame.game.*;
+import cardgame.utility.Initialize;
+import cardgame.game.Game;
 
 public class Main {
     public static void main(String[] args) {

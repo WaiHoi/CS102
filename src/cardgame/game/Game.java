@@ -2,6 +2,7 @@ package cardgame.game;
 
 import java.util.*;
 import java.io.*;
+import cardgame.model.*;
 
 public class Game {
     public static int round = 1;

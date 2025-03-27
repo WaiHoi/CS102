@@ -1,5 +1,5 @@
 package cardgame.model;
-
+import cardgame.game.*;
 import java.util.InputMismatchException;
 import java.util.*;
 

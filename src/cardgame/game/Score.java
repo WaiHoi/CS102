@@ -1,6 +1,7 @@
 package cardgame.game;
 
 import java.util.*;
+import cardgame.model.*;
 
 public class Score {
     private HashMap<String, Integer> playerColouredCards;
@@ -97,7 +98,7 @@ public class Score {
     public void calculateScore(ArrayList<Player> playerList, Game game) {
 
 
-        highestNumberPerColour(game.players);
+        highestNumberPerColour(Player.players);
 
         // count players cards
         for (Player player : playerList) {
@@ -133,7 +134,7 @@ public class Score {
     /*** Method 4: Compares the player's score with all other players to determine if they are the winner */
     public void isWinner (ArrayList<Player> playerList, Game game) {
         
-        Player winner = new Player();
+        Player winner = null;
         int winnerScore = 0;
 
         // Get the player's score
@@ -151,8 +152,8 @@ public class Score {
                 Player player1 = current.getKey();
                 Player player2 = next.getKey();
 
-                int p1TotalCards = player1.anonDeck.size();
-                int p2TotalCards = player2.anonDeck.size();
+                int p1TotalCards = player1.getAnonDeck().size();
+                int p2TotalCards = player2.getAnonDeck().size();
 
                 if (p1TotalCards < p2TotalCards) {
                     winner = player1;

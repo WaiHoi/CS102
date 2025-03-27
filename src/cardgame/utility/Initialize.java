@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
+import cardgame.game.*;
+import cardgame.model.*;
 
 public class Initialize {
 
