@@ -1,1 +1,1 @@
-javac cardgame/**/*.java
+javac -cp lib/jansi-2.4.0.jar -d bin src/cardgame/**/*.java

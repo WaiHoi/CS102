@@ -9,6 +9,9 @@ import java.util.Scanner;
 import cardgame.game.*;
 import cardgame.model.*;
 
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.ansi;
+
 public class Initialize {
 
     public static int numPlayers;
@@ -18,7 +21,7 @@ public class Initialize {
 
         numPlayers = 0;
         numBots = 0;
-        System.out.println("Welcome to a game of Parades!\nEnjoy and have fun!");
+        System.out.println(ansi().fgBrightCyan().a("Welcome to a game of Parades!\nEnjoy and have fun!").reset());
 
         while (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
             try {
@@ -40,12 +43,11 @@ public class Initialize {
                 }
 
                 if (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
-                    System.out.println("Total number of players and bots should be between 2 and 6!\n");
-                }
+                    System.out.println(ansi().fgYellow().a("Total number of players and bots should be between 2 and 6!\n").reset());                
+                    }
             } catch (InputMismatchException e) {
-                System.out.println("Input must be a positive integer and not more than 6!\n");
+                System.out.println(ansi().fgRed().a("Input must be a positive integer and not more than 6!\n").reset());            
             }
-
         }
     }
 
