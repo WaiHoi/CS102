@@ -1,3 +1,8 @@
+package cardgame;
+
+import cardgame.utility.*;
+import cardgame.game.*;
+
 public class Main {
     public static void main(String[] args) {
         

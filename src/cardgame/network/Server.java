@@ -1,3 +1,5 @@
+package cardgame.network;
+
 import java.io.*;
 import java.net.*;
 

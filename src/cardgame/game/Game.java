@@ -1,3 +1,5 @@
+package cardgame.game;
+
 import java.util.*;
 import java.io.*;
 
