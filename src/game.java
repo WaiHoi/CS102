@@ -2,63 +2,106 @@ import java.util.*;
 import java.io.*;
 
 public class Game {
-    public ArrayList<Card> deck = new ArrayList<>();
-    public ArrayList<Card> parade = new ArrayList<>();
-    public ArrayList<Player> players = new ArrayList<>();
+    public static int round = 1;
+    public static int counter = 0;
+    public static ArrayList<Card> deck = new ArrayList<>();
+    public static ArrayList<Card> parade = new ArrayList<>();
+    public static Card card;
 
-    public Game(int numPlayers, int numBots) {
-        // Add players and bots
-        for (int i = 0; i < numPlayers; i++) {
-            Player p = new Player(false);
-            players.add(p); 
-        }
+    public static boolean checkPlayersHandForCardFromEachColour(Player p) {
+        // Define the required colors
+        ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
+                "red", "blue", "green", "grey", "purple", "orange"));
+        // Collect colors present in openDeck
+        ArrayList<String> foundColors = new ArrayList<>();
 
-        for (int i = 0; i < numBots; i++) {
-            Player b = new Player(true);
-            players.add(b); 
-        }
-
-        // import the cards from deck.txt
-        Scanner sc = null;
-        try {
-            ArrayList<Card> deckUnshuffled = new ArrayList<>();
-            sc = new Scanner(new File("deck.txt"));
-            while (sc.hasNext()) {
-                String[] attributes = sc.nextLine().split(",");
-                Card c = new Card(Integer.parseInt(attributes[0]), attributes[1]);
-                deckUnshuffled.add(c);
+        for (Card card : p.openDeck) {
+            if (!foundColors.contains(card.colour)) { // Avoid duplicates
+                foundColors.add(card.colour);
             }
-            sc.close();
-
-        // shuffle the cards in deck
-            Random rand = new Random();
-            while (deckUnshuffled.size() > 0) {
-                int r = rand.nextInt(deckUnshuffled.size());
-                deck.add(deckUnshuffled.get(r));
-                deckUnshuffled.remove(r);
-            }
-        
-        // Deal each player and bot 5 cards 
-            for (int i = 0; i < players.size(); i++) {
-                Player p = players.get(i);
-                for (int j = 0; j < 5; j++) {
-                    Card c = deck.get(0);
-                    deck.remove(0);
-                    p.anonDeck.add(c);
-                }
-            }
-        
-        // Draw 6 cards out from the deck into parade
-        for (int i = 0; i < 6; i++) {
-            Card c = deck.get(0);
-            deck.remove(0);
-            parade.add(c);
         }
 
-        } catch (FileNotFoundException e) {
-            System.out.println("Invalid File");
+        // Return true if all required colors are found
+        return foundColors.containsAll(requiredColors);
+    }
+
+    public static void logicalFunction(Player p) {
+        Scanner sc = new Scanner(System.in);
+        int selectNumber = 0;
+        p.placeCard();
+
+        Card c = p.closedDeck.get(selectNumber);
+        p.closedDeck.remove(c);
+        parade.add(c);
+
+        // add new card for player
+        Card newCard = deck.get(0);
+        deck.remove(0);
+        p.closedDeck.add(newCard);
+        System.out.println("\nOpening up your card now...");
+        System.out.println("You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
+
+        // Print current parade
+        System.out.println("Parade:\n" + Card.printCards(parade, false, false));
+
+        ArrayList<Card> cardsDrawn = new ArrayList<>();
+        // Check collectible cards
+        for (int i = parade.size() - c.number - 2; i >= 0; i--) {
+            if (i < 0)
+                break;
+            Card currentCard = parade.get(i);
+
+            if (currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number) {
+                parade.remove(currentCard);
+                p.openDeck.add(currentCard);
+
+                cardsDrawn.add(currentCard);
+            }
         }
 
+        // Show cards drawn in the current round.
+        System.out.println("\nCards that you collected this round:");
+        System.out.println(Card.printCards(cardsDrawn, false, false));
+
+
+        // Show open deck
+        System.out.println("\nYour deck of cards:");
+        System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
+        //sc = new Scanner(System.in);
+        System.out.print("Press Enter to continue > ");
+        sc.nextLine();
+        System.out.println();
+    }
+
+    public static void mainFunction() {
+        System.out.println("\n----- Round" + round + " -----\n");
+        System.out.print("Parade:\n" + Card.printCards(parade, false, false) + "\n");
+
+        // iterates through the players
+        // n random from 0 to players.size() - 1
+        for (int i = 0/*n*/; i < Player.players.size(); i++) {
+
+            // get the first player
+            Player p = Player.players.get(i);
+
+            // calls the move of the player
+            System.out.println("\nPlayer " + i + "'s turn!\n");
+            logicalFunction(p);
+
+            if (checkPlayersHandForCardFromEachColour(p)){
+                System.out.println("player" + i + " has cards of each colour. game ends");
+            } else if(deck.isEmpty()) {
+                System.out.println("deck is empty. game ends");
+
+            } else if (Player.players.size() == i + 1) {
+                i = -1;
+                round++;
+                System.out.println("Round:" + round + "\n");
+            }
+
+            // count++;
+            // round = count / player.size();
+        }
     }
 
 }
