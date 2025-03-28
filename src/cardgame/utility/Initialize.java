@@ -10,6 +10,7 @@ import cardgame.game.*;
 import cardgame.model.*;
 
 import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.Ansi;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class Initialize {
@@ -21,20 +22,29 @@ public class Initialize {
 
         numPlayers = 0;
         numBots = 0;
-        System.out.println(ansi().fgBrightCyan().a("Welcome to a game of Parades!\nEnjoy and have fun!").reset());
+        System.out.println(
+            ansi().fgBrightCyan().a("Welcome ")
+            .fgBrightYellow().a("to a ")
+            .fgBrightMagenta().a("game ")
+            .fgBrightGreen().a("of ")
+            .fgBrightRed().a("Parades!\n")
+            .fgBrightBlue().a("Enjoy ")
+            .fgBrightYellow().a("and ")
+            .fgBrightCyan().a("have fun!")
+            .reset()
+        );
 
         while (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
             try {
                 Scanner sc = new Scanner(System.in);
-                System.out.print("Enter number of human players: ");
-                numPlayers = sc.nextInt();
+                System.out.print(ansi().fgBrightCyan().a("Enter number of human players: ").reset());
                 sc.nextLine();
 
                 if (numPlayers < 0 || numPlayers > 6) {
                     throw new InputMismatchException();
                 }
 
-                System.out.print("Enter number of bot players: ");
+                System.out.print(ansi().fgBrightMagenta().a("Enter number of bot players: ").reset());                numPlayers = sc.nextInt();
                 numBots = sc.nextInt();
                 sc.nextLine();
 
