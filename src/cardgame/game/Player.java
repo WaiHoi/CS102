@@ -23,6 +23,14 @@ public abstract class Player {
         return openDeck;
     }
 
+    public static ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public String getPlayerName() {
+        return name;
+    }
+
     public abstract int placeCard();
     
     

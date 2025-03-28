@@ -82,6 +82,7 @@ public class Game {
 
         // iterates through the players
         // n random from 0 to players.size() - 1
+        System.out.println(Player.players.size());
         for (int i = 0/*n*/; i < Player.players.size(); i++) {
 
             // get the first player

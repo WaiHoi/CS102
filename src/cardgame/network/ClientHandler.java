@@ -1,67 +1,85 @@
 package cardgame.network;
 
 import java.util.*;
+import java.util.concurrent.*;
+
 import java.io.*;
 import java.net.*;
 
-/* 
- * constructor: 
- *      -> setup input and output 
- *      -> add players to player class
- *      -> start game when all conditions are met 
- * 
- * method 1: run()
- *      -> run separate threads for each client 
- *      -> handles any game-related messages 
- *      -> should use a trigger .startsWith("[GAME]")
- * 
- * method 2: broadcastMessage()
- *      -> send messages to all clients 
- * 
- * method 3: removeClientHandler()
- *      -> remove from game 
- * 
- * method 4: closeEverything()
- *      -> close input and output
- *      -> close socket/connection
- */
+import cardgame.game.*;
+import cardgame.network.*;
+import cardgame.utility.UsernameValidator;
 
 public class ClientHandler implements Runnable {
 
     // loop through clients and send message to each client 
     // broadcast message to multiple players 
-    public static List<ClientHandler> clientHandlers = new ArrayList<>();
+    public static final List<ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
 
-    private Socket socket;
+    private final Socket socket;
+    private final int playerID;
+
     private BufferedReader in;
     private BufferedWriter out;
     private String clientUsername;
-    /*** Constructor ***/
-    public ClientHandler(Socket socket) {
-        try {
-            this.socket = socket;
 
-            // input and output streams
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.clientUsername = in.readLine();
+    public ClientHandler(Socket socket, int playerID) {
 
-            // add clientHandler object to arraylist
-            clientHandlers.add(this);
+        // initialise the final field first 
+        this.socket = socket;
+        this.playerID = playerID;
 
-            // broadcast a message to other clients
-            broadcastMessage("[SERVER] " + clientUsername + " has joined the game!");
+            try {
 
-        } catch (IOException e) {
-            // close everything if error occurs 
-            closeEverything(socket, in, out);
-            System.out.println("Error occurred: clienthandler");
+                // input and output streams
+                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                this.clientUsername = checkUsername();
+
+                // add clientHandler object to arraylist
+                clientHandlers.add(this);
+
+                // broadcast a message to other clients
+                broadcastToAll(String.format("[SERVER] %s (ID:%d) has joined!", 
+                                    clientUsername, playerID));
+
+            } catch (IOException e) {
+                // close everything if error occurs 
+                closeEverything(socket, in, out);
+            }
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public String getClientUsername() {
+        return this.clientUsername;
+    }
+
+    private String checkUsername() throws IOException {
+
+        while (true) {
+            String requestedUsername = in.readLine();
+
+            if (requestedUsername == null) {
+                sendToPlayer("[SERVER] Client disconnected");
+            }
+
+            if (UsernameValidator.checkUsername(requestedUsername)) {
+                return requestedUsername;
+            } else {
+                sendToPlayer("[SERVER] Username already taken.\nPlease choose another: \n");
+
+            }
+
         }
     }
 
-    /*** Method 1 ***/
+    /*** Method 2 ***/
     @Override
-    public void run() {
+    public synchronized void run() {
 
         while (socket.isConnected()) {
             try {
@@ -69,29 +87,45 @@ public class ClientHandler implements Runnable {
                 // separate thread for each client => rest of program can still run
                 String messageFromClient = in.readLine();
 
+                // if any issue occurs 
                 if (messageFromClient == null) {
                     closeEverything(socket, in, out);
                     break;
-                }
+                } 
 
-                broadcastMessage(messageFromClient);
+                // handle commands from client
+                switch (messageFromClient.toLowerCase()) {
+                    case "/quit":
+                        handleQuit();
+                        break;
+                    case "/help":
+                        sendToPlayer("\nAvailable Commands:");
+                        sendToPlayer("/quit - Exit the game");
+                        sendToPlayer("/help - Show this help\n");
+                        break;
+                    default: 
+                        // Add to game logic first
+                        // if (game != null) {
+                        //     game.processMove(clientUsername, messageFromClient);
+                        // }
+                        // Then broadcast to others
+                        broadcastToOthers("[GAME] " + clientUsername + ": " + messageFromClient);                    }
 
             } catch (IOException e) {
                 closeEverything(socket, in, out);
-                System.out.println("Error occurred: run()");
                 break;
             }
         }
     }
 
-    /*** Method 2: Broadcasting messages */
-    public void broadcastMessage(String messageToSend) {
+    public synchronized void broadcastToOthers(String msgToSend) {
+
         // for each clientHandler in the list
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 // send to other users with different username
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
-                    clientHandler.out.write(messageToSend);
+                    clientHandler.out.write(msgToSend);
                     // send new line -> bufferedReader waits for a newLine() character
                     clientHandler.out.newLine();
 
@@ -102,23 +136,55 @@ public class ClientHandler implements Runnable {
                 }
             } catch (IOException e) {
                 closeEverything(socket, in, out);
-                System.out.println("Error occurred: broadcastmessage()");
             }
         }
     }
 
-    /*** Method 3: Remove Client handlers */
-    public void removeClientHandler() {
-        // remove user -> not send message to the connection
-        clientHandlers.remove(this);
-        broadcastMessage("[SERVER] " + clientUsername + " has left the game");
+    public synchronized void broadcastToAll(String msgToAll) {
+        // for each clientHandler in the list
+        for (ClientHandler clientHandler : clientHandlers) {
+            try {
+                clientHandler.out.write(msgToAll);
+                clientHandler.out.newLine();
+                clientHandler.out.flush();
+
+            } catch (IOException e) {
+                closeEverything(socket, in, out);
+            }
+        }
+    }
+
+    public synchronized void sendToPlayer(String msgToPlayer) {
+        // message to player only 
+        try {
+            if (!socket.isClosed()) {
+                out.write(msgToPlayer);
+                out.newLine();
+                out.flush();
+            }
+        } catch (IOException e) {
+            closeEverything(socket, in, out);
+        }
+    }
+
+    private void handleQuit() {
+        sendToPlayer("[SERVER] You have left the game. Goodbye!");
+        closeEverything(socket, in, out);
+        return;
 
     }
 
-    /*** Method 4: Close Everything ***/
-    public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
+    private void removeClient() {
+
+        clientHandlers.remove(this);
+        UsernameValidator.removeUsername(clientUsername);
+        broadcastToAll("[SERVER] " + clientUsername + " has left the game");
+
+    }
+
+    private void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
         // remove individual connection
-        removeClientHandler();
+        removeClient();
         try {
             if (in != null) {
                 in.close();
@@ -128,10 +194,11 @@ public class ClientHandler implements Runnable {
             }
             if (socket != null) {
                 socket.close();
+                System.out.printf("%s has disconnected.\n", clientUsername);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
 }

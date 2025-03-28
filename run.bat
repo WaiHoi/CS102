@@ -1,1 +1,2 @@
-java -cp "lib/jansi-2.4.0.jar:bin" cardgame.Main
+java -cp "lib/*:bin" cardgame.GameMenu
+
