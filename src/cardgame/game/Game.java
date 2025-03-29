@@ -2,6 +2,8 @@ package cardgame.game;
 
 import java.util.*;
 import java.io.*;
+
+import cardgame.GameMenu;
 import cardgame.model.*;
 
 public class Game {
@@ -77,30 +79,30 @@ public class Game {
     }
 
     public static void mainFunction() {
-        System.out.println("\n----- Round" + round + " -----\n");
+        System.out.println("\n----- Round " + round + " -----\n");
         System.out.print("Parade:\n" + Card.printCards(parade, false, false) + "\n");
 
         // iterates through the players
         // n random from 0 to players.size() - 1
-        System.out.println(Player.players.size());
         for (int i = 0/*n*/; i < Player.players.size(); i++) {
 
             // get the first player
             Player p = Player.players.get(i);
+            System.out.println(i);
 
             // calls the move of the player
-            System.out.println("\nPlayer " + i + "'s turn!\n");
+            System.out.println("\nPlayer " + p.name + "'s turn!\n");
             logicalFunction(p);
 
             if (checkPlayersHandForCardFromEachColour(p)){
-                System.out.println("player" + i + " has cards of each colour. game ends");
+                System.out.println("player" + p.name + " has cards of each colour. game ends");
             } else if(deck.isEmpty()) {
                 System.out.println("deck is empty. game ends");
 
             } else if (Player.players.size() == i + 1) {
                 i = -1;
                 round++;
-                System.out.println("Round:" + round + "\n");
+                System.out.println("\n----- Round " + round + " -----\n");
             }
 
             // count++;

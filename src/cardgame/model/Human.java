@@ -1,6 +1,7 @@
 package cardgame.model;
+import cardgame.GameMenu;
 import cardgame.game.*;
-import java.util.InputMismatchException;
+
 import java.util.*;
 
 public class Human extends Player {
@@ -38,4 +39,12 @@ public class Human extends Player {
         }
         return selectNumber;
     }
+
+    public static void initializePlayers(){
+        for (int i = 0; i < GameMenu.numHumans; i++) {
+            Player p = new Human(GameMenu.playerNames.get(i));
+            Player.players.add(p); 
+        }
+    }
+    
 }

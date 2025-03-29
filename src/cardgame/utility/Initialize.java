@@ -14,20 +14,14 @@ import static org.fusesource.jansi.Ansi.ansi;
 public class Initialize {
 
     private String username;
-    public static int numPlayers;
-    public static int numBots;
+    static int numHumans = GameMenu.numHumans;
+    static int numBots = GameMenu.numBots;
 
     public static void initializeVariables() {
 
-        for (int i = 0; i < GameMenu.numPlayers; i++) {
-            Player p = new Human("name");
-            Player.players.add(p); 
-        }
-
-        for (int i = 0; i < GameMenu.numBots; i++) {
-            Player b = new Bot("name");
-            Player.players.add(b); 
-        }
+        //initialize players
+        Human.initializePlayers();
+        Bot.initializePlayers();
 
         // import the cards from deck.txt
         Scanner sc = null;

@@ -15,11 +15,14 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class GameMenu {
 
-    private String username;
-    public static int numPlayers;
+    private static String username;
+    public static List<String> usernames = new ArrayList<>();
+    public static int numHumans;
     public static int numBots;
+    public static List<String> playerNames;
+    
 
-    public void displayMainMenu() {
+    public static void displayMainMenu() {
         System.out.println("\n====Welcome to a game of Parades!====");
         System.out.println("Enjoy and have fun!");
         System.out.println("Type /help for commands");
@@ -31,8 +34,8 @@ public class GameMenu {
         System.out.print("Choose an option: ");
     }
 
-    public void displayPlayerSetup() {
-        numPlayers = 0;
+    public static void displayPlayerSetup() {
+        numHumans = 0;
         numBots = 0;
         System.out.println(
             ansi().fgBrightCyan().a("Welcome ")
@@ -46,14 +49,14 @@ public class GameMenu {
             .reset()
         );
 
-        while (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
+        while (numHumans + numBots < 2 || numHumans + numBots > 6) {
             try {
                 Scanner sc = new Scanner(System.in);
                 System.out.print(ansi().fgBrightCyan().a("Enter number of human players: ").reset());
-                numPlayers = sc.nextInt();
+                numHumans = sc.nextInt();
                 sc.nextLine();
 
-                if (numPlayers < 0 || numPlayers > 6) {
+                if (numHumans < 0 || numHumans > 6) {
                     throw new InputMismatchException();
                 }
 
@@ -65,7 +68,7 @@ public class GameMenu {
                     throw new InputMismatchException();
                 }
 
-                if (numPlayers + numBots < 2 || numPlayers + numBots > 6) {
+                if (numHumans + numBots < 2 || numHumans + numBots > 6) {
                     System.out.println(ansi().fgYellow().a("Total number of players and bots should be between 2 and 6!\n").reset());                
                 }
             } catch (InputMismatchException e) {
@@ -75,7 +78,7 @@ public class GameMenu {
         }
     }
 
-    public void readOption() {
+    public static void readOption() {
         boolean isRunning = true;
         Scanner sc = new Scanner(System.in);
 
@@ -113,9 +116,11 @@ public class GameMenu {
         }
     }
 
-    private List<String> getPlayerNames(int numPlayers) {
-        List<String> usernames = new ArrayList<>();
+    private static List<String> getPlayerNames(int numPlayers) {
         Scanner sc = new Scanner(System.in);
+
+        List<String> usernames = new ArrayList<>();
+
 
         for (int i = 0; i < numPlayers; i++) {
 
@@ -135,7 +140,7 @@ public class GameMenu {
 
     }
 
-    public void hostAndPlay() {
+    public static void hostAndPlay() {
         displayPlayerSetup();
 
         new Thread(() -> {
@@ -163,20 +168,20 @@ public class GameMenu {
 
     }
 
-    private void joinGame() {
+    private static void joinGame() {
         connectToGame("localhost");
 
     }
 
-    private void startLocalGame() {
+    private static void startLocalGame() {
         displayPlayerSetup();
 
         // unique usernames 
-        List<String> playerNames = getPlayerNames(numPlayers);
+        playerNames = getPlayerNames(numHumans);
 
         // bots 
         for (int i = 0; i < numBots; i++) {
-            playerNames.add("Bot " + (i++));
+            playerNames.add("Bot " + (i + 1));
         }
 
         Initialize.initializeVariables();
@@ -184,11 +189,11 @@ public class GameMenu {
 
     }
 
-    private void connectToGame(String host) {
+    private static void connectToGame(String host) {
 
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter your username: ");
-        this.username = sc.nextLine();
+        username = sc.nextLine();
 
         try {
             System.out.println("\nConnecting to the server");
@@ -206,8 +211,8 @@ public class GameMenu {
 
         AnsiConsole.systemInstall();
 
-        GameMenu menu = new GameMenu();
-        menu.readOption();
+        // GameMenu menu = new GameMenu(); //static methods so dunnid to create object instance
+        readOption();
 
         // Initialize.initializeVariables();
         // Game.mainFunction();

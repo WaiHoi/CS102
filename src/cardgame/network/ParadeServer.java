@@ -26,7 +26,7 @@ public class ParadeServer {
         try {
 
             // keep server running until serverSocket is closed 
-            while (!serverSocket.isClosed() && nextPlayerID.get() <= GameMenu.numPlayers) {
+            while (!serverSocket.isClosed() && nextPlayerID.get() <= GameMenu.numHumans) {
 
                 // wait and accept client connection
                 Socket socket = serverSocket.accept();
@@ -39,7 +39,7 @@ public class ParadeServer {
                 Thread thread = new Thread(clientHandler);
                 thread.start();
 
-                if (nextPlayerID.get() > GameMenu.numPlayers) {
+                if (nextPlayerID.get() > GameMenu.numHumans) {
                     System.out.println("[SERVER] All players connected! Game Starting!");
                     Initialize.initializeVariables();
                     Game.mainFunction();
