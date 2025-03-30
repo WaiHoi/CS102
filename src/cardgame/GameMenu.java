@@ -129,7 +129,7 @@ public class GameMenu {
                 String name = sc.nextLine().strip();
     
                 if (UsernameValidator.checkUsername(name)) {
-                    usernames.add(name);
+                    usernames.add("Player " + name);
                     break;
                 } else {
                     System.out.println("Username '" + name + "' is taken. Try another.");
@@ -186,6 +186,7 @@ public class GameMenu {
 
         Initialize.initializeVariables();
         Game.mainFunction();
+        Score.calculateScore();
 
     }
 

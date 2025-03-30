@@ -22,6 +22,8 @@ public class Initialize {
         //initialize players
         Human.initializePlayers();
         Bot.initializePlayers();
+        Player.randomizePlayers();
+
 
         // import the cards from deck.txt
         Scanner sc = null;

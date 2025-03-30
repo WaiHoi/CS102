@@ -168,6 +168,9 @@ public class Score {
 
     }
 
+    public static void calculateScore(){
+        
+    }
 }
 
 // UML Diagram for Score.java

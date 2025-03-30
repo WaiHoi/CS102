@@ -17,23 +17,41 @@ public class Game {
         // Define the required colors
         ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
                 "red", "blue", "green", "grey", "purple", "orange"));
-        // Collect colors present in openDeck
-        ArrayList<String> foundColors = new ArrayList<>();
 
+        // Collect colors present in the player's openDeck
+        ArrayList<String> foundColors = new ArrayList<>();
         for (Card card : p.openDeck) {
-            if (!foundColors.contains(card.colour)) { // Avoid duplicates
-                foundColors.add(card.colour);
+            if (!foundColors.contains(card.getColour())) { // Avoid duplicates
+                foundColors.add(card.getColour());
             }
         }
 
-        // Return true if all required colors are found
-        return foundColors.containsAll(requiredColors);
+        // Check if all required colors are in foundColors
+        for (String color : requiredColors) {
+            if (!foundColors.contains(color)) {
+                return false; // If any required color is missing, return false
+            }
+        }
+        return true; // If all colors are found, return true
     }
 
-    public static void logicalFunction(Player p) {
+    public static void lastRound(Player p) {
+        int selectNumber = 0;
+        selectNumber = p.placeCard();
+
+        Card c = p.closedDeck.get(selectNumber);
+        p.closedDeck.remove(c);
+        parade.add(c);
+
+        if (p instanceof Human) {
+            System.out.println(Card.printCards(p.closedDeck, false, false));
+        }
+    }
+
+    public static void gameLogic(Player p) {
         Scanner sc = new Scanner(System.in);
         int selectNumber = 0;
-        p.placeCard();
+        selectNumber = p.placeCard();
 
         Card c = p.closedDeck.get(selectNumber);
         p.closedDeck.remove(c);
@@ -68,11 +86,10 @@ public class Game {
         System.out.println("\nCards that you collected this round:");
         System.out.println(Card.printCards(cardsDrawn, false, false));
 
-
         // Show open deck
         System.out.println("\nYour deck of cards:");
         System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
-        //sc = new Scanner(System.in);
+        // sc = new Scanner(System.in);
         System.out.print("Press Enter to continue > ");
         sc.nextLine();
         System.out.println();
@@ -83,31 +100,26 @@ public class Game {
         System.out.print("Parade:\n" + Card.printCards(parade, false, false) + "\n");
 
         // iterates through the players
-        // n random from 0 to players.size() - 1
-        for (int i = 0/*n*/; i < Player.players.size(); i++) {
+        for (int i = 0; i < Player.players.size(); i++) {
 
             // get the first player
             Player p = Player.players.get(i);
-            System.out.println(i);
 
             // calls the move of the player
-            System.out.println("\nPlayer " + p.name + "'s turn!\n");
-            logicalFunction(p);
+            System.out.println("\n" + p.name + "'s turn!\n");
+            gameLogic(p);
 
-            if (checkPlayersHandForCardFromEachColour(p)){
-                System.out.println("player" + p.name + " has cards of each colour. game ends");
-            } else if(deck.isEmpty()) {
-                System.out.println("deck is empty. game ends");
-
+            if (checkPlayersHandForCardFromEachColour(p)) {
+                System.out.println(p.name + " has cards of each colour. The last round will be initiated now.");
+                lastRound(p);
+            } else if (deck.isEmpty()) {
+                System.out.println("Deck is empty. The last round will be initiated now.");
+                lastRound(p);
             } else if (Player.players.size() == i + 1) {
                 i = -1;
                 round++;
                 System.out.println("\n----- Round " + round + " -----\n");
             }
-
-            // count++;
-            // round = count / player.size();
         }
     }
-
 }

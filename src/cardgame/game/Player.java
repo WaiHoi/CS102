@@ -1,6 +1,9 @@
 package cardgame.game;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Collections;
+
 import cardgame.model.Card;
 
 public abstract class Player {
@@ -29,6 +32,12 @@ public abstract class Player {
 
     public String getPlayerName() {
         return name;
+    }
+
+    public static void randomizePlayers(){
+        Random rand = new Random();
+        int rotateValue = rand.nextInt(Player.players.size());
+        Collections.rotate(players, rotateValue);
     }
 
     public abstract int placeCard();
