@@ -5,6 +5,7 @@ import java.util.*;
 
 import cardgame.game.*;
 import cardgame.model.*;
+import cardgame.network.ClientHandler;
 import cardgame.*;
 
 import org.fusesource.jansi.AnsiConsole;
@@ -20,10 +21,12 @@ public class Initialize {
     public static void initializeVariables() {
 
         //initialize players
-        Human.initializePlayers();
-        Bot.initializePlayers();
-        Player.randomizePlayers();
+        if (Player.players.isEmpty()) {
+            Human.initializePlayers();
+            Bot.initializePlayers();
+            Player.randomizePlayers();
 
+        }
 
         // import the cards from deck.txt
         Scanner sc = null;
@@ -63,7 +66,7 @@ public class Initialize {
         }
 
         } catch (FileNotFoundException e) {
-            System.out.println("Invalid File");
+            ClientHandler.gameOutput(ClientHandler.TAG_ERROR + "Invalid File");
         }
 
     }

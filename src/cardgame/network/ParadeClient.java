@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import cardgame.network.*;
-
 public class ParadeClient {
 
     private Socket socket;
@@ -13,25 +11,19 @@ public class ParadeClient {
     private BufferedWriter out;
     private String username;
 
-    public ParadeClient(Socket socket, String username) {
+    /* ========= CONSTRUCTOR ========== */
+    public ParadeClient(Socket socket, String username) throws IOException{
         
         this.username = username;
+        this.socket = socket;
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.username = username;
 
-        try {
-            this.socket = socket;
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.username = username;
-
-            // send username to server
-            out.write(username);
-            out.newLine();
-            out.flush();
-
-        } catch (IOException e) {
-            closeEverything(socket, in, out);
-            System.out.println("Error occurred: Client");
-        }
+        // send username to server
+        out.write(username);
+        out.newLine();
+        out.flush();
 
     }
 
@@ -40,32 +32,70 @@ public class ParadeClient {
     }
 
     public void startClient() {
-        // run while socket is running
-        // separate thread -> both will run at the same time 
-        new Thread(this::listenForMessage).start(); 
-        sendMessage();
+        try {
+            listenForMessage(); 
+            sendMessage();
+        } catch (Exception e) {
+            System.out.println("Connection error: " + e.getMessage());
+            closeEverything(socket, in, out);
+        }
     }
 
-    public void sendMessage() {
-        try {
-            Scanner sc = new Scanner(System.in);
+    /* ========= MESSAGE HANDLING ========== */
+    // listen for any messages 
+    public void listenForMessage() {
 
-            while (true) {
-                // remove whitespaces
-                String message = sc.nextLine().strip();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String message;
 
-                // only command that needs to be included 
-                if (message.equalsIgnoreCase("/quit")) {
-                    handleQuit();
-                    return;
-                } else if (message.equalsIgnoreCase("/help")) {
-                    displayHelp();
-                } else {
-                    sendToServer(message);
+                // waits for broadcast message
+                while (socket.isConnected()) {
+                    try {
+                        message = in.readLine();
+
+                        if (message == null) {
+                            closeEverything(socket, in, out);
+                        }
+
+                        System.out.println(message);
+
+                    } catch (IOException e) {
+                        System.out.println("Connection lost");
+                        closeEverything(socket, in, out);
+                        break;
+                    }
                 }
             }
-        } catch (IOException e) {
-            closeEverything(socket, in, out);
+        }).start();
+    }
+
+    public void sendMessage() throws IOException {
+        Scanner sc = new Scanner(System.in);
+
+        while (socket.isConnected()) {
+            // remove whitespaces
+            String message = sc.nextLine().strip();
+
+            // basic validation
+            if (message.isEmpty()) {
+                continue;
+            }
+
+            if (message.length() > 1000) {
+                System.out.println("Message too long (max 1000 chars)");
+                continue;
+            }
+            
+            // client specific handling
+            if (message.equalsIgnoreCase("/quit")) {
+                handleQuit();
+                return;
+            }
+
+            sendToServer(message);
+
         }
     }
 
@@ -86,52 +116,27 @@ public class ParadeClient {
     }
 
     private void displayHelp() {
-        System.out.println("\nAvailable Commands:");
-        System.out.println("/help - Show this help");
-        System.out.println("/quit - Exit the game\n");
-    }
-
-    // listen for any messages 
-    public void listenForMessage() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String message;
-
-                // waits for broadcast message
-                while (socket.isConnected()) {
-                    try {
-                        message = in.readLine();
-
-                        if (message == null) {
-                            closeEverything(socket, in, out);
-                            System.exit(0);
-                        }
-
-                        System.out.println(message);
-
-                    } catch (IOException e) {
-                        closeEverything(socket, in, out);
-                        break;
-                    }
-                }
-            }
-        }).start();
+        System.out.println("\n===================");
+        System.out.println("Available Commands:");
+        System.out.println("===================\n");
+        System.out.println("/quit - Exit the game");
+        System.out.println("/help - Show this help\n");
     }
 
     public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
+
         try {
-            if (in != null) {
-                in.close();
-            }
             if (out != null) {
                 out.close();
+            }
+            if (in != null) {
+                in.close();
             }
             if (socket != null) {
                 socket.close();
             }
         } catch (IOException e) {
+            System.out.println("[SERVER] Error closing resources");
             e.printStackTrace();
         }
     }

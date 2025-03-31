@@ -2,6 +2,8 @@ package cardgame.model;
 
 import java.util.*;
 
+import cardgame.network.ClientHandler;
+
 public class Card {
 
     public int number;
@@ -24,7 +26,7 @@ public class Card {
         if(isPlayer){
             int counter = 1;
             for(Card card : deck){
-                System.out.println(counter + ". " + card.colour + " " + card.number);
+                ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + counter + ". " + card.colour + " " + card.number);
                 counter ++;
             }
             return "";

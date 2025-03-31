@@ -17,8 +17,8 @@ public class Bot extends Player {
 
     public static void initializePlayers() {
         for (int i = 0; i < GameMenu.numBots; i++) {
-            Player b = new Bot(GameMenu.playerNames.get(i + GameMenu.numHumans));
-            Player.players.add(b);
+            Player b = new Bot(GameMenu.usernames.get(i + GameMenu.numHumans));
+            Player.players.add(b); 
         }
     }
 }

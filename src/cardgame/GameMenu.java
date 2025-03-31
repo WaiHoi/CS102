@@ -6,20 +6,21 @@ import java.util.*;
 
 import cardgame.*;
 import cardgame.game.*;
+import cardgame.model.Bot;
+import cardgame.model.Human;
 import cardgame.network.*;
 import cardgame.utility.*;
-
 
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class GameMenu {
 
-    private static String username;
+    public static String username;
     public static List<String> usernames = new ArrayList<>();
     public static int numHumans;
     public static int numBots;
-    public static List<String> playerNames;
+    // public static List<String> playerNames;
     
 
     public static void displayMainMenu() {
@@ -174,14 +175,19 @@ public class GameMenu {
     }
 
     private static void startLocalGame() {
+        // set network mdoe
+        ClientHandler.setNetworkMode(false);
+        
         displayPlayerSetup();
 
         // unique usernames 
-        playerNames = getPlayerNames(numHumans);
+        usernames = getPlayerNames(numHumans);
 
-        // bots 
-        for (int i = 0; i < numBots; i++) {
-            playerNames.add("Bot " + (i + 1));
+        for (String name : usernames) {
+            Player.players.add(new Human(name));
+        }
+        for (int i = 1; i <= numBots; i++) {
+            Player.players.add(new Bot("Bot " + i));
         }
 
         Initialize.initializeVariables();
