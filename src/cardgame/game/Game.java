@@ -5,16 +5,16 @@ import java.io.*;
 
 import cardgame.GameMenu;
 import cardgame.model.*;
-import cardgame.network.ClientHandler;
-import cardgame.network.ParadeServer;
-import cardgame.network.TurnManager;
 
 public class Game {
-    public static int round = 1;
-    public static int counter = 0;
+    public static int currentRound = 1;
     public static ArrayList<Card> deck = new ArrayList<>();
     public static ArrayList<Card> parade = new ArrayList<>();
+    public static int lastRound = 0;
     public static Card card;
+    public static Player player;
+
+    private static boolean lastRoundTriggered = false; // Flag for last round
 
     public static boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
@@ -38,20 +38,13 @@ public class Game {
         return true; // If all colors are found, return true
     }
 
-    public static void lastRound(Player p) {
-        int selectNumber = 0;
-        selectNumber = p.placeCard();
-
-        Card c = p.closedDeck.get(selectNumber);
-        p.closedDeck.remove(c);
-        parade.add(c);
-
-        if (p instanceof Human) {
-            System.out.println(Card.printCards(p.closedDeck, false, false));
-        }
+    public static void addNewCard(Player p) {
+        Card newCard = deck.get(0);
+        deck.remove(0);
+        p.closedDeck.add(newCard);
     }
 
-    public static void gameLogic(Player p) {
+    public static void gameLogic(Player p, boolean lastRound) {
         Scanner sc = new Scanner(System.in);
         int selectNumber = 0;
         selectNumber = p.placeCard();
@@ -60,25 +53,26 @@ public class Game {
         p.closedDeck.remove(c);
         parade.add(c);
 
-        // add new card for player
-        Card newCard = deck.get(selectNumber);
-        p.closedDeck.add(c);
+        // if last round, do not add new card
+        if (!lastRound) {
+            addNewCard(p);
+        }
 
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + "\nOpening up your card now...");
-        ClientHandler.gameOutput(
-                ClientHandler.TAG_PRIVATE + "You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
+        System.out.println("\nOpening up your card now...");
+        System.out.println("You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
 
         // Print current parade
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + "Parade:\n" + Card.printCards(parade, false, false));
+        System.out.println("Parade:\n" + Card.printCards(parade, false, false));
 
         ArrayList<Card> cardsDrawn = new ArrayList<>();
+
         // Check collectible cards
         for (int i = parade.size() - c.number - 2; i >= 0; i--) {
             if (i < 0)
                 break;
             Card currentCard = parade.get(i);
 
-            if (currentCard.getColour().equals(c.getColour()) || currentCard.number < c.number) {
+            if (currentCard.getColour().equals(c.getColour()) || currentCard.number <= c.number) {
                 parade.remove(currentCard);
                 p.openDeck.add(currentCard);
 
@@ -87,51 +81,70 @@ public class Game {
         }
 
         // Show cards drawn in the current round.
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + "\nCards that you collected this round:");
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + Card.printCards(cardsDrawn, false, false));
+        System.out.println("\nCards that you collected this round:");
+        System.out.println(Card.printCards(cardsDrawn, false, false));
 
         // Show open deck
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + "\nYour deck of cards:");
-        ClientHandler.gameOutput(ClientHandler.TAG_PRIVATE + Card.printCards(p.openDeck, true, false) + "\n");
-        // sc = new Scanner(System.in);
-        ClientHandler.gameOutputRaw(ClientHandler.TAG_PRIVATE + "Press Enter to continue > ");
-        sc.nextLine();
-        ClientHandler.gameOutput("");
-
+        System.out.println("\nYour deck of cards:");
+        System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
     }
 
     public static void mainFunction() {
 
+        System.out.println("\n----- Round " + currentRound + " -----\n");
+        System.out.print("Parade:\n" + Card.printCards(parade, false, false) + "\n");
+
         while (true) {
-            // round header
-            ClientHandler.gameOutput(ClientHandler.TAG_PUBLIC + "\n===== Round " + round + " =====\n");
-            ClientHandler.gameOutputRaw(ClientHandler.TAG_PUBLIC + 
-                "Parade:\n" + Card.printCards(parade, false, false) + "\n");
+            boolean processLastRound = false;
+            Player triggeringPlayer = null;
 
+            // Process regular turns
             for (Player p : Player.players) {
-                TurnManager.setCurrentPlayer(p.getPlayerID());
+                System.out.println("\n" + p.name + "'s turn!\n");
 
-                // notify turn
-                String turnMsg = "\nPlayer " + p.getPlayerName() + "'s turn!\n";
-                ClientHandler.gameOutput(ClientHandler.TAG_PUBLIC + turnMsg);
+                // Play the current turn (regular or last round)
+                gameLogic(p, lastRoundTriggered);
 
-                // calls the move of the player
-                gameLogic(p);
+                // Check for last round conditions
+                if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(p) || deck.isEmpty())) {
+                    lastRoundTriggered = true;
+                    triggeringPlayer = p;
+                    System.out.println("Last round triggered by " + p.name + "!");
+                    processLastRound = true;
+                }
 
-                // win conditions
-                if (checkPlayersHandForCardFromEachColour(p)) {
-
-                    String winMsg = p.name + " has cards of each colour. The last round will be initiated now.";
-                    lastRound(p);
-                    ClientHandler.gameOutput(ClientHandler.TAG_PUBLIC + winMsg);
-
-                } else if (deck.isEmpty()) {
-                    String deckEmptyMsg = "Deck is empty. The last round will be initiated now.\n";
-                    ClientHandler.gameOutput(ClientHandler.TAG_PUBLIC + deckEmptyMsg);
-                    lastRound(p);
+                // If last round was just triggered, break to process final turns
+                if (processLastRound) {
+                    break;
                 }
             }
-            round++;
+
+            // Process last round if triggered
+            if (processLastRound) {
+                executeLastRound();
+                break; // Exit the game loop after last round
+            }
+
+            // Only increment round if not in last round
+            if (!lastRoundTriggered) {
+                currentRound++;
+                System.out.println("\n----- Round " + currentRound + " -----\n");
+            }
+        }
+
+        // Game over logic
+        System.out.println("\n=== GAME OVER ===");
+        System.out.println("Total rounds played: " + currentRound);
+    }
+
+    private static void executeLastRound() {
+        System.out.println("\n----- FINAL ROUND -----\n");
+
+        // Give each player one final turn
+        for (Player p : Player.players) {
+            System.out.println("\n" + p.name + "'s final turn!\n");
+            gameLogic(p, lastRoundTriggered);
+            p.lastRound(p);
         }
     }
 }

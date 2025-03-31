@@ -12,16 +12,10 @@ public abstract class Player {
     public static ArrayList<Player> players = new ArrayList<>();
 
     public String name;
-    public int playerID;
 
     // Constructor with parameter to set if the player is a bot
     public Player(String name) {
         this.name = name;
-    }
-
-    public Player(String name, int playerID) {
-        this.name = name;
-        this.playerID = playerID;
     }
 
     public ArrayList<Card> getAnonDeck() {
@@ -40,17 +34,14 @@ public abstract class Player {
         return name;
     }
 
-    public static void randomizePlayers() {
+    public static void randomizePlayers(){
         Random rand = new Random();
         int rotateValue = rand.nextInt(Player.players.size());
         Collections.rotate(players, rotateValue);
     }
 
-    public int getPlayerID() {
-        return playerID;
-    }
-
     public abstract int placeCard();
+    public abstract void lastRound(Player p);
     
     
 }
