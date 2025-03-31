@@ -24,14 +24,23 @@ public class GameMenu {
     
 
     public static void displayMainMenu() {
-        System.out.println("\n====Welcome to a game of Parades!====");
-        System.out.println("Enjoy and have fun!");
-        System.out.println("Type /help for commands");
+        System.out.println(
+            ansi().fgBrightCyan().a("Welcome ")
+            .fgBrightYellow().a("to a ")
+            .fgBrightMagenta().a("game ")
+            .fgBrightGreen().a("of ")
+            .fgBrightRed().a("Parades!\n")
+            .fgBrightBlue().a("Enjoy ")
+            .fgBrightYellow().a("and ")
+            .fgBrightCyan().a("have fun!")
+            .reset()
+        );
+        System.out.println(ansi().fgBrightGreen().a("Type /help for commands"));
         System.out.println("=====================================");
-        System.out.println("1. Host & Play (Start Server + Client)");
-        System.out.println("2. Join Existing Game (Client Only)");
-        System.out.println("3. Play Locally (Console Mode)");
-        System.out.println("4. Exit\n");
+        System.out.println(ansi().fgBrightCyan().a("1. Host & Play (Start Server + Client)"));
+        System.out.println(ansi().fgBrightMagenta().a("2. Join Existing Game (Client Only)"));
+        System.out.println(ansi().fgBrightYellow().a("3. Play Locally (Console Mode)"));
+        System.out.println(ansi().fgBrightRed().a("4. Exit\n"));
         System.out.print("Choose an option: ");
     }
 
