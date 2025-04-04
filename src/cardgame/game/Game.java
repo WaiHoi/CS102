@@ -5,6 +5,10 @@ import java.io.*;
 
 import cardgame.GameMenu;
 import cardgame.model.*;
+import cardgame.network.ClientHandler;
+import cardgame.network.TurnManager;
+import cardgame.io.input.*;
+import cardgame.io.output.*;
 
 public class Game {
     public static int currentRound = 1;
@@ -15,6 +19,11 @@ public class Game {
     public static Player player;
 
     private static boolean lastRoundTriggered = false; // Flag for last round
+
+    // input and output 
+    private static GameInput input;
+    private static GameOutput output;
+    private static TurnManager turnManager;
 
     public static boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
@@ -45,9 +54,8 @@ public class Game {
     }
 
     public static void gameLogic(Player p, boolean lastRound) {
-        Scanner sc = new Scanner(System.in);
-        int selectNumber = 0;
-        selectNumber = p.placeCard();
+
+        int selectNumber = p.placeCard();
 
         Card c = p.closedDeck.get(selectNumber);
         p.closedDeck.remove(c);
@@ -58,11 +66,11 @@ public class Game {
             addNewCard(p);
         }
 
-        System.out.println("\nOpening up your card now...");
-        System.out.println("You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
+        output.sendPrivate("\nOpening up your card now...");
+        output.sendPrivate("You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
 
         // Print current parade
-        System.out.println("Parade:\n" + Card.printCards(parade, false, false));
+        output.broadcastToAll("Parade:\n" + Card.printCards(parade, false, false));
 
         ArrayList<Card> cardsDrawn = new ArrayList<>();
 
@@ -81,18 +89,27 @@ public class Game {
         }
 
         // Show cards drawn in the current round.
-        System.out.println("\nCards that you collected this round:");
-        System.out.println(Card.printCards(cardsDrawn, false, false));
+        output.sendPrivate("\nCards that you collected this round:");
+        output.sendPrivate(Card.printCards(cardsDrawn, false, false));
 
         // Show open deck
-        System.out.println("\nYour deck of cards:");
-        System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
+        output.sendPrivate("\nYour deck of cards:");
+        output.sendPrivate(Card.printCards(p.openDeck, true, false) + "\n");
     }
 
     public static void mainFunction() {
 
-        System.out.println("\n----- Round " + currentRound + " -----\n");
-        System.out.print("Parade:\n" + Card.printCards(parade, false, false) + "\n");
+        // initialise input and output
+        try {
+            ClientHandler handler = ClientHandler.getHandlerForPlayer(1);
+            input = new NetworkInput(handler, output);
+            output = new NetworkOutput(handler);
+        } catch (IOException e) {
+            System.err.println("Network initialization failed: " + e.getMessage());
+        }
+
+        output.broadcastToAll("\n----- Round " + currentRound + " -----\n");
+        output.broadcastToAll("Parade:\n" + Card.printCards(parade, false, false) + "\n");
 
         while (true) {
             boolean processLastRound = false;
@@ -100,8 +117,10 @@ public class Game {
 
             // Process regular turns
             for (Player p : Player.players) {
-                System.out.println("\n" + p.name + "'s turn!\n");
 
+                // sent to all
+                output.broadcastToAll(p.name + "'s turn!\n");
+ 
                 // Play the current turn (regular or last round)
                 gameLogic(p, lastRoundTriggered);
 
@@ -109,7 +128,7 @@ public class Game {
                 if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(p) || deck.isEmpty())) {
                     lastRoundTriggered = true;
                     triggeringPlayer = p;
-                    System.out.println("Last round triggered by " + p.name + "!");
+                    output.broadcastToAll("Last round triggered by " + p.name + "!");
                     processLastRound = true;
                 }
 
@@ -128,21 +147,21 @@ public class Game {
             // Only increment round if not in last round
             if (!lastRoundTriggered) {
                 currentRound++;
-                System.out.println("\n----- Round " + currentRound + " -----\n");
+                output.broadcastToAll("\n----- Round " + currentRound + " -----\n");
             }
         }
 
         // Game over logic
-        System.out.println("\n=== GAME OVER ===");
-        System.out.println("Total rounds played: " + currentRound);
+        output.broadcastToAll("\n=== GAME OVER ===");
+        output.broadcastToAll("Total rounds played: " + currentRound);
     }
 
     private static void executeLastRound() {
-        System.out.println("\n----- FINAL ROUND -----\n");
+        output.broadcastToAll("\n----- FINAL ROUND -----\n");
 
         // Give each player one final turn
         for (Player p : Player.players) {
-            System.out.println("\n" + p.name + "'s final turn!\n");
+            output.broadcastToAll("\n" + p.name + "'s final turn!\n");
             gameLogic(p, lastRoundTriggered);
             p.lastRound(p);
         }

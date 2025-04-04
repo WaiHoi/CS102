@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
 
+import cardgame.io.input.*;
+import cardgame.io.output.*;
 import cardgame.model.Card;
 
 public abstract class Player {
@@ -12,10 +14,13 @@ public abstract class Player {
     public static ArrayList<Player> players = new ArrayList<>();
 
     public String name;
+    public int playerID;
+    public GameOutput output;
 
     // Constructor with parameter to set if the player is a bot
-    public Player(String name) {
+    public Player(String name, int playerID) {
         this.name = name;
+        this.playerID = playerID;
     }
 
     public ArrayList<Card> getAnonDeck() {

@@ -1,7 +1,9 @@
 package cardgame.model;
-
 import cardgame.GameMenu;
 import cardgame.game.*;
+import cardgame.io.input.*;
+import cardgame.io.output.*;
+import cardgame.network.ClientHandler;
 
 import java.util.*;
 
@@ -9,49 +11,33 @@ public class Human extends Player {
     public Card card;
     private int playerID;
 
-    public Human(String name) {
-        super(name);
-    }
+    private GameInput input;
+    private GameOutput output;
 
-    public Human(String name, int playerID) {
-        super(name);
-        this.playerID = playerID;
+    public Human(String name, int playerID, GameOutput output, GameInput input) {
+        super(name, playerID);
+        
+        // Manual null checks
+        if (output == null) {
+            throw new IllegalArgumentException("GameOutput cannot be null");
+        }
+        if (input == null) {
+            throw new IllegalArgumentException("GameInput cannot be null");
+        }
+        
+        this.output = output;
+        this.input = input;
     }
 
     public int placeCard() {
-        System.out.println("Your closed deck:");
-        System.out.println(Card.printCards(closedDeck, false, true));
-        System.out.print("Please choose a card to be added into the parade: ");
 
-        int selectNumber = 0;
+        output.sendPrivate("Your closed deck:");
+        output.sendPrivate(Card.printCards(closedDeck, false, true));
 
-        Scanner sc = new Scanner(System.in);
-        while (true) {
-            try {
-                selectNumber = sc.nextInt() - 1;
-                sc.nextLine();
+        // moved to ConsoleInput and NetworkInput
+        int selectNumber = input.readInt("Please choose a card to be added into the parade: ", 1, 5) - 1;
 
-                if (selectNumber >= 0 && selectNumber <= 4) {
-                    break; // valid input, exit loop
-                } else {
-                    System.out.println("Invalid Entry!");
-                    System.out.print("Please enter only numbers from 1 to 5:");
-                }
-
-            } catch (InputMismatchException e) {
-                sc.nextLine();
-                System.out.println("Invalid Entry!");
-                System.out.print("Please enter only numbers from 1 to 5:");
-            }
-        }
         return selectNumber;
-    }
-
-    public static void initializePlayers() {
-        for (int i = 0; i < GameMenu.numHumans; i++) {
-            Player p = new Human(GameMenu.usernames.get(i));
-            Player.players.add(p);
-        }
     }
 
     public void lastRound(Player p) {
@@ -62,18 +48,18 @@ public class Human extends Player {
         };
 
         for (int j = 0; j < 2; j++) {
-            System.out.println(messages[j]);
+            output.sendPrivate(messages[j]);
             int selectNumber = p.placeCard();
             Card c = p.closedDeck.get(selectNumber);
             p.closedDeck.remove(c);
             p.openDeck.add(c);
 
-            System.out.println("You have picked" + c.getColour() + " " + c.getValue());
+            output.sendPrivate("You have picked" + c.getColour() + " " + c.getValue());
         }
-        System.out.println("Your current deck:");
-        System.out.println(Card.printCards(p.openDeck, true, false));
+        output.sendPrivate("Your current deck:");
+        output.sendPrivate(Card.printCards(p.openDeck, true, false));
 
-        System.out.println("Thank you, your last 2 cards will be discarded now.");
+        output.sendPrivate("Thank you, your last 2 cards will be discarded now.");
     }
-
+    
 }

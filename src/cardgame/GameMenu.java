@@ -3,9 +3,12 @@ package cardgame;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cardgame.*;
 import cardgame.game.*;
+import cardgame.io.input.*;
+import cardgame.io.output.*;
 import cardgame.model.Bot;
 import cardgame.model.Human;
 import cardgame.network.*;
@@ -20,8 +23,10 @@ public class GameMenu {
     public static List<String> usernames = new ArrayList<>();
     public static int numHumans;
     public static int numBots;
-    // public static List<String> playerNames;
-    
+
+    // create new thread
+    private static Thread serverThread;
+    private static final AtomicBoolean serverReady = new AtomicBoolean(false);    
 
     public static void displayMainMenu() {
         System.out.println(
@@ -151,31 +156,60 @@ public class GameMenu {
     }
 
     public static void hostAndPlay() {
+        
         displayPlayerSetup();
 
-        new Thread(() -> {
+        // initialise network mode
+        ClientHandler.setNetworkMode(true);
+
+        // start server with thread management 
+        serverThread = new Thread(() -> {
             try {
-                // start server
-                ParadeServer.main(new String[0]); 
+                ServerSocket serverSocket = new ServerSocket(1234);
+                ParadeServer server = new ParadeServer(serverSocket, true, numHumans, numBots);
+                serverReady.set(true);
+                server.startServer();
 
             } catch (IOException e) {
-                System.out.println("Failed to connect to server. Starting a local game instead.");
-                startLocalGame();
+                System.out.println("[SERVER] Failed to start the server.\nStarting local game...");
+                fallbackToLocalGame();
             }
-        }).start();
+        });
+        serverThread.start();
 
-        System.out.println("[SERVER] Starting server on port 1234");
+        // wait for server to be ready
+        if (!waitForServerReady(5000)) {
+            System.out.println("[SERVER] Server startup timed out.\nStarting local game...");
+            fallbackToLocalGame();
+            return;
+        }
 
-        // 2 second buffer to wait for server to start
+        // 1 second buffer after port has opened
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
+        // wait for connections
         System.out.println("[SERVER] Waiting for connections...\n");
         connectToGame("localhost");
 
+    }
+
+    // checks if server's port is open 
+    // wait for server before client connects 
+    private static boolean waitForServerReady(int timeout) {
+        long start = System.currentTimeMillis();
+        while (!serverReady.get() && (System.currentTimeMillis() - start) < timeout) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return serverReady.get();
     }
 
     private static void joinGame() {
@@ -183,20 +217,35 @@ public class GameMenu {
 
     }
 
-    private static void startLocalGame() {
-        // set network mdoe
+    private static void fallbackToLocalGame() {
+        if (serverThread != null && serverThread.isAlive()) {
+            serverThread.interrupt();
+        }
+        ClientHandler.setNetworkMode(false);
+        startLocalGame();
+    }
+
+    public static void startLocalGame() {
+
         ClientHandler.setNetworkMode(false);
         
         displayPlayerSetup();
+        Player.players.clear();
 
         // unique usernames 
         usernames = getPlayerNames(numHumans);
 
-        for (String name : usernames) {
-            Player.players.add(new Human(name));
+        /* === Initialise Players and Bots === */
+        // console mode
+        for (int i = 0; i < numHumans; i++) {
+            int playerID = i + 1;
+            ConsoleInput input = new ConsoleInput();
+            ConsoleOutput output = new ConsoleOutput();
+            Player.players.add(new Human(usernames.get(i), playerID, output, input));
         }
-        for (int i = 1; i <= numBots; i++) {
-            Player.players.add(new Bot("Bot " + i));
+
+        for (int i = 0; i < numBots; i++) {
+            Player.players.add(new Bot("Bot " + i, new ConsoleOutput()));
         }
 
         Initialize.initializeVariables();
@@ -209,7 +258,7 @@ public class GameMenu {
 
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter your username: ");
-        username = sc.nextLine();
+        username = sc.nextLine().trim();
 
         try {
             System.out.println("\nConnecting to the server");

@@ -2,11 +2,13 @@ package cardgame.game;
 
 import java.util.*;
 import cardgame.model.*;
+import cardgame.io.output.*;
 
 public class Score {
     private HashMap<String, Integer> playerColouredCards;
     private HashMap<String, Integer> highestCount;
     private HashMap<Player, Integer> playerScoreCount;
+    private static GameOutput output;
 
 
     /* 
@@ -164,7 +166,7 @@ public class Score {
             }
         }
 
-        System.out.println(winner + " has won with a score of " + winnerScore);
+        output.broadcastToAll(winner + " has won with a score of " + winnerScore);
 
     }
 

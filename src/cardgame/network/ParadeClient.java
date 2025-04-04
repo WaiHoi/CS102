@@ -12,29 +12,49 @@ public class ParadeClient {
     private String username;
 
     /* ========= CONSTRUCTOR ========== */
-    public ParadeClient(Socket socket, String username) throws IOException{
-        
+    public ParadeClient(Socket socket, String username) throws IOException {
         this.username = username;
         this.socket = socket;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        this.username = username;
-
-        // send username to server
-        out.write(username);
-        out.newLine();
-        out.flush();
 
     }
 
-    public String getClientUsername() {
-        return username;
+    /* ========= HANDSHAKE PROTOCOL ========== */
+    private boolean waitForServerReady() throws IOException {
+        try {
+            String serverResponse = in.readLine();
+
+            if ("SERVER_READY".equals(serverResponse)) {
+                return true;
+            } else {
+                System.out.println("[ERROR] Invalid server handshake");
+                return false;
+            }
+        } catch (SocketTimeoutException e) {
+            System.out.println("[ERROR] Server handshake timeout");
+            return false;
+        }
     }
+
 
     public void startClient() {
         try {
-            listenForMessage(); 
+            // wait for server to be ready before sending username
+            if (!waitForServerReady()) {
+                throw new IOException("Server handshake failed");
+            }
+
+            out.write(username);
+            out.newLine();
+            out.flush();
+
+            // start a listener thread
+            new Thread(this::listenForMessage).start();
+
+            // start message sender
             sendMessage();
+
         } catch (Exception e) {
             System.out.println("Connection error: " + e.getMessage());
             closeEverything(socket, in, out);
@@ -42,33 +62,29 @@ public class ParadeClient {
     }
 
     /* ========= MESSAGE HANDLING ========== */
-    // listen for any messages 
+    // listen for any messages
     public void listenForMessage() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String message;
+        String message;
 
-                // waits for broadcast message
-                while (socket.isConnected()) {
-                    try {
-                        message = in.readLine();
+        // waits for broadcast message
+        while (socket.isConnected()) {
+            try {
+                message = in.readLine();
 
-                        if (message == null) {
-                            closeEverything(socket, in, out);
-                        }
-
-                        System.out.println(message);
-
-                    } catch (IOException e) {
-                        System.out.println("Connection lost");
-                        closeEverything(socket, in, out);
-                        break;
-                    }
+                if (message == null) {
+                    closeEverything(socket, in, out);
                 }
+
+                System.out.println(message);
+
+            } catch (IOException e) {
+                System.out.println("Connection lost");
+                closeEverything(socket, in, out);
+                break;
             }
-        }).start();
+        }
+
     }
 
     public void sendMessage() throws IOException {
@@ -76,7 +92,7 @@ public class ParadeClient {
 
         while (socket.isConnected()) {
             // remove whitespaces
-            String message = sc.nextLine().strip();
+            String message = sc.nextLine().trim();
 
             // basic validation
             if (message.isEmpty()) {
@@ -87,32 +103,31 @@ public class ParadeClient {
                 System.out.println("Message too long (max 1000 chars)");
                 continue;
             }
-            
-            // client specific handling
-            if (message.equalsIgnoreCase("/quit")) {
+
+            handleCommand(message);
+
+        }
+    }
+
+    /* ========= COMMAND HANDLING ========== */
+    private void handleCommand(String message) throws IOException {
+        switch (message.toLowerCase()) {
+            case "/quit":
                 handleQuit();
-                return;
-            }
-
-            sendToServer(message);
-
+                break;
+            case "/help":
+                displayHelp();
+                break;
+            default:
+                sendToServer(message);
         }
     }
 
-    // method to print to server from client 
-    private void sendToServer(String message) throws IOException {
-        if (out != null) {
-            out.write(message);
-            out.newLine();
-            out.flush();
-        }
-    }
-
-    private void handleQuit() throws IOException{
+    private void handleQuit() throws IOException {
 
         sendToServer("/quit");
         System.out.println("Disconnected from server");
-        
+
     }
 
     private void displayHelp() {
@@ -123,6 +138,17 @@ public class ParadeClient {
         System.out.println("/help - Show this help\n");
     }
 
+    /* ========= SEND TO SERVER ========== */
+    // method to print to server from client
+    private void sendToServer(String message) throws IOException {
+        if (out != null) {
+            out.write(message);
+            out.newLine();
+            out.flush();
+        }
+    }
+
+    /* ========== CLEANUP ========== */
     public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
 
         try {
@@ -142,21 +168,20 @@ public class ParadeClient {
     }
 
     public static void main(String[] args) throws IOException {
-    
+
         Scanner sc = new Scanner(System.in);
         System.out.printf("Enter your username: ");
         String username = sc.nextLine();
 
         try {
-            // create a socket to connect to the server running on localhost at port number 1234
+            // create a socket to connect to the server running on localhost at port number
+            // 1234
             Socket socket = new Socket("localhost", 1234);
-
             ParadeClient client = new ParadeClient(socket, username);
             client.startClient();
         } catch (IOException e) {
             System.out.println("Failed to connect to server");
         }
-        
+
     }
 }
-
