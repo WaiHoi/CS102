@@ -1,13 +1,19 @@
 package cardgame.game;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.sound.midi.Track;
+
 import cardgame.model.*;
 import cardgame.io.output.*;
 
 public class Score {
     private HashMap<String, Integer> playerColouredCards;
     private HashMap<String, Integer> highestCount;
-    private HashMap<Player, Integer> playerScoreCount;
+    //Track tied majorities
+    protected HashMap<Player, Integer> playerScoreCount;
+    private HashMap<String, Integer> playersWithMaxCount = new HashMap<>(); 
     private static GameOutput output;
 
 
@@ -95,80 +101,62 @@ public class Score {
         }
 
     }
+    
+    /*** Method 3: Calculate Score ***/
+    public void calculateScore(ArrayList<Player> playerList) {
+            determineColorMajorities(playerList);
+    
+            for (Player player : playerList) {
+                countPlayerCards(player);
+                int totalScore = 0;
+    
+                // Face-up cards: sum values
+                int faceUp = player.getOpenDeck().stream()
+                    .mapToInt(Card::getValue)
+                    .sum();
+    
+                // Face-down points: 1 per card if sole majority
+                int faceDown = 0;
+            for (String color : playerColouredCards.keySet()) {
+                int playerCount = playerColouredCards.get(color);
+                int highest = highestCount.getOrDefault(color, 0);
+                int maxPlayers = playersWithMaxCount.getOrDefault(color, 0);
 
-    /*** Method 3: Calculate score and find winner */
-    public void calculateScore(ArrayList<Player> playerList, Game game) {
-
-
-        highestNumberPerColour(Player.players);
-
-        // count players cards
-        for (Player player : playerList) {
-            countPlayerCards(player);
-            int totalScore = 0;
-
-            // use player attribute to get card arraylist 
-            for (Card card: player.getAnonDeck()) {
-
-                // use card attribute to get card colour
-                String colour = card.getColour();
-
-                // get number of cards player has
-                int playerCardCount = playerColouredCards.getOrDefault(colour, 0);
-                // get highest count for that card 
-                int highestColourCount = highestCount.getOrDefault(colour, 0);
-
-                // for each card add score accordingly
-                if (playerCardCount == highestColourCount) {
-                    // add one if matches highest count
-                    totalScore += 1;
-                } else {
-                    // add value of card
-                    totalScore += card.getValue();
+                if (playerCount == highest && maxPlayers == 1) {
+                    faceDown += playerCount; // 1pt per card if sole majority
                 }
             }
-            playerScoreCount.put(player, totalScore);
 
+            playerScoreCount.put(player, faceUp + faceDown);
         }
-
     }
 
-    /*** Method 4: Compares the player's score with all other players to determine if they are the winner */
-    public void isWinner (ArrayList<Player> playerList, Game game) {
-        
-        Player winner = null;
-        int winnerScore = 0;
-
-        // Get the player's score
-        calculateScore(playerList, game);
-
-        List<Map.Entry<Player, Integer>> entryList = new ArrayList<>(playerScoreCount.entrySet());
-
-        entryList.sort(Map.Entry.comparingByValue());
-
-        for (int i = 0; i < entryList.size() - 1; i++) {
-            Map.Entry<Player, Integer> current = entryList.get(i);
-            Map.Entry<Player, Integer> next = entryList.get(i + 1);
-
-            if (current.getValue().equals(next.getValue())) {
-                Player player1 = current.getKey();
-                Player player2 = next.getKey();
-
-                int p1TotalCards = player1.getAnonDeck().size();
-                int p2TotalCards = player2.getAnonDeck().size();
-
-                if (p1TotalCards < p2TotalCards) {
-                    winner = player1;
-                    winnerScore = current.getValue();
-                } else {
-                    winner = player2;
+    private void determineColorMajorities(ArrayList<Player> players) {
+            highestCount.clear();
+            playersWithMaxCount.clear();
+    
+            // Track counts for all players per color
+            HashMap<String, HashMap<Player, Integer>> colorCounts = new HashMap<>();
+            for (Player player : players) {
+                countPlayerCards(player);
+                for (String color : playerColouredCards.keySet()) {
+                    colorCounts.putIfAbsent(color, new HashMap<>());
+                    colorCounts.get(color).put(player, playerColouredCards.get(color));
                 }
             }
+            // Determine highest count and number of players with that count
+        for (String color : colorCounts.keySet()) {
+            int max = colorCounts.get(color).values().stream()
+                .max(Integer::compare).orElse(0);
+            highestCount.put(color, max);
+
+            int tiedPlayers = (int) colorCounts.get(color).values().stream()
+                .filter(v -> v == max)
+                .count();
+            playersWithMaxCount.put(color, tiedPlayers);
         }
-
-        output.broadcastToAll(winner + " has won with a score of " + winnerScore);
-
     }
+
 
     public static void calculateScore(){
         

@@ -45,6 +45,10 @@ public abstract class Player {
         Collections.rotate(players, rotateValue);
     }
 
+    public int getTotalCards() {
+        return openDeck.size() + closedDeck.size();
+    }
+
     public abstract int placeCard();
     public abstract void lastRound(Player p);
     

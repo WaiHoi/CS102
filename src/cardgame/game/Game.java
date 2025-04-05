@@ -1,6 +1,7 @@
 package cardgame.game;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.io.*;
 
 import cardgame.GameMenu;
@@ -24,7 +25,7 @@ public class Game {
     private static GameInput input;
     private static GameOutput output;
     private static TurnManager turnManager;
-
+    
     public static boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
         ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
@@ -156,6 +157,43 @@ public class Game {
         output.broadcastToAll("Total rounds played: " + currentRound);
     }
 
+    private static void determineWinner() {
+        Score scoreCalculator = new Score();
+        scoreCalculator.calculateScore(Player.players);
+
+        // Sort by score (ascending) and total cards (ascending)
+        List<Player> sortedPlayers = Player.players.stream()
+            .sorted(Comparator
+                .<Player>comparingInt(p -> scoreCalculator.playerScoreCount.get(p))
+                .thenComparingInt(Player::getTotalCards))
+            .collect(Collectors.toList());
+
+        Player winner = sortedPlayers.get(0);
+        int winningScore = scoreCalculator.playerScoreCount.get(winner);
+
+        // Check for ties
+        List<Player> tiedWinners = sortedPlayers.stream()
+            .filter(p -> scoreCalculator.playerScoreCount.get(p) == winningScore)
+            .collect(Collectors.toList());
+
+        // Broadcast results
+        output.broadcastToAll("\n=== FINAL SCORES ===");
+        Player.players.forEach(p -> output.broadcastToAll(
+            String.format("%s: %d points (%d cards)",
+                p.name,
+                scoreCalculator.playerScoreCount.get(p),
+                p.getTotalCards())
+        ));
+
+        if (tiedWinners.size() > 1) {
+            output.broadcastToAll("\nIt's a tie! Winners:");
+            tiedWinners.forEach(p -> output.broadcastToAll("- " + p.name));
+        } else {
+            output.broadcastToAll("\nWINNER: " + winner.name + " with " + winningScore + " points!");
+        }
+    }
+
+
     private static void executeLastRound() {
         output.broadcastToAll("\n----- FINAL ROUND -----\n");
 
@@ -165,5 +203,9 @@ public class Game {
             gameLogic(p, lastRoundTriggered);
             p.lastRound(p);
         }
+
+        // Game over logic
+        output.broadcastToAll("\n=== GAME OVER ===");
+        determineWinner();  // Add this line
     }
 }
