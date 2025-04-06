@@ -39,6 +39,14 @@ public abstract class Player {
         return name;
     }
 
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public synchronized void setName(String name) {
+        this.name = name;
+    }
+
     public static void randomizePlayers(){
         Random rand = new Random();
         int rotateValue = rand.nextInt(Player.players.size());

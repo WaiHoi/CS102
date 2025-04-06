@@ -20,10 +20,9 @@ public class Game {
 
     private static boolean lastRoundTriggered = false; // Flag for last round
 
-    // input and output 
+    // input and output
     private static GameInput input;
     private static GameOutput output;
-    private static TurnManager turnManager;
 
     public static boolean checkPlayersHandForCardFromEachColour(Player p) {
         // Define the required colors
@@ -55,8 +54,13 @@ public class Game {
 
     public static void gameLogic(Player p, boolean lastRound) {
 
-        int selectNumber = p.placeCard();
+        // check if its current player's turn
+        if (TurnManager.getNetworkMode() && !TurnManager.isMyTurn(p.getPlayerID())) {
+            return;
+        }
 
+        int selectNumber = p.placeCard();
+        
         Card c = p.closedDeck.get(selectNumber);
         p.closedDeck.remove(c);
         parade.add(c);
@@ -95,17 +99,23 @@ public class Game {
         // Show open deck
         output.sendPrivate("\nYour deck of cards:");
         output.sendPrivate(Card.printCards(p.openDeck, true, false) + "\n");
+
+        // move to next turn
+        TurnManager.nextTurn();
     }
 
-    public static void mainFunction() {
+    public static void mainFunction(boolean isNetworkMode) {
 
-        // initialise input and output
-        try {
-            ClientHandler handler = ClientHandler.getHandlerForPlayer(1);
-            input = new NetworkInput(handler, output);
-            output = new NetworkOutput(handler);
-        } catch (IOException e) {
-            System.err.println("Network initialization failed: " + e.getMessage());
+        if (isNetworkMode) {
+            // For network games, get the output from the first connected client
+            if (!ClientHandler.clients.isEmpty()) {
+                output = ClientHandler.clients.values().iterator().next().getOutput();
+            } else {
+                output = null;
+            }
+        } else {
+            // For local games, use console output
+            output = new ConsoleOutput();
         }
 
         output.broadcastToAll("\n----- Round " + currentRound + " -----\n");
@@ -115,40 +125,71 @@ public class Game {
             boolean processLastRound = false;
             Player triggeringPlayer = null;
 
-            // Process regular turns
-            for (Player p : Player.players) {
+            // get current player
+            int currentPlayerID = TurnManager.getCurrentPlayerID();
+            Player currentPlayer = Player.players.get(currentPlayerID - 1);
 
-                // sent to all
-                output.broadcastToAll(p.name + "'s turn!\n");
- 
-                // Play the current turn (regular or last round)
-                gameLogic(p, lastRoundTriggered);
+            // sent to all
+            output.broadcastToAll(currentPlayer.name + "'s turn!\n");
 
-                // Check for last round conditions
-                if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(p) || deck.isEmpty())) {
-                    lastRoundTriggered = true;
-                    triggeringPlayer = p;
-                    output.broadcastToAll("Last round triggered by " + p.name + "!");
-                    processLastRound = true;
-                }
+            // Play the current turn (regular or last round)
+            gameLogic(currentPlayer, lastRoundTriggered);
 
-                // If last round was just triggered, break to process final turns
-                if (processLastRound) {
-                    break;
-                }
+            // Check for last round conditions
+            if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(currentPlayer) ||
+                    deck.isEmpty())) {
+                lastRoundTriggered = true;
+                triggeringPlayer = currentPlayer;
+                output.broadcastToAll("Last round triggered by " + currentPlayer.name + "!");
+                processLastRound = true;
             }
 
-            // Process last round if triggered
+            // If last round was just triggered, break to process final turns
             if (processLastRound) {
                 executeLastRound();
-                break; // Exit the game loop after last round
+                break;
             }
 
-            // Only increment round if not in last round
-            if (!lastRoundTriggered) {
+            if (!lastRoundTriggered && TurnManager.getCurrentPlayerID() == 1) {
                 currentRound++;
                 output.broadcastToAll("\n----- Round " + currentRound + " -----\n");
             }
+
+            // // Process regular turns
+            // for (Player p : Player.players) {
+
+            // // sent to all
+            // output.broadcastToAll(p.name + "'s turn!\n");
+
+            // // Play the current turn (regular or last round)
+            // gameLogic(p, lastRoundTriggered);
+
+            // // Check for last round conditions
+            // if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(p) ||
+            // deck.isEmpty())) {
+            // lastRoundTriggered = true;
+            // triggeringPlayer = p;
+            // output.broadcastToAll("Last round triggered by " + p.name + "!");
+            // processLastRound = true;
+            // }
+
+            // // If last round was just triggered, break to process final turns
+            // if (processLastRound) {
+            // break;
+            // }
+            // }
+
+            // // Process last round if triggered
+            // if (processLastRound) {
+            // executeLastRound();
+            // break; // Exit the game loop after last round
+            // }
+
+            // // Only increment round if not in last round
+            // if (!lastRoundTriggered) {
+            // currentRound++;
+            // output.broadcastToAll("\n----- Round " + currentRound + " -----\n");
+            // }
         }
 
         // Game over logic
@@ -159,11 +200,29 @@ public class Game {
     private static void executeLastRound() {
         output.broadcastToAll("\n----- FINAL ROUND -----\n");
 
-        // Give each player one final turn
-        for (Player p : Player.players) {
-            output.broadcastToAll("\n" + p.name + "'s final turn!\n");
-            gameLogic(p, lastRoundTriggered);
+        // get player who triggered last round
+        int triggeringPlayerID = TurnManager.getCurrentPlayerID();
+        List<Player> finalRoundOrder = new ArrayList<>();
+
+        // add players from triggering player to end
+        for (int i = triggeringPlayerID - 1; i < Player.players.size(); i++) {
+            finalRoundOrder.add(Player.players.get(i));
+        }
+
+        // add players from start to triggering player
+        for (int i = 0; i < triggeringPlayerID - 1; i++) {
+            finalRoundOrder.add(Player.players.get(i));
+        }
+
+        for (Player p : finalRoundOrder) {
+            output.broadcastToAll("\n=====" + p.name + "'s final turn!=====\n");
+            
+            // set the current player for turn management
+            TurnManager.setCurrentPlayer(p.getPlayerID());
+            
+            gameLogic(p, true);
             p.lastRound(p);
         }
+
     }
 }

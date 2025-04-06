@@ -54,7 +54,7 @@ public class Human extends Player {
             p.closedDeck.remove(c);
             p.openDeck.add(c);
 
-            output.sendPrivate("You have picked" + c.getColour() + " " + c.getValue());
+            output.sendPrivate("You have picked " + c.getColour() + " " + c.getValue());
         }
         output.sendPrivate("Your current deck:");
         output.sendPrivate(Card.printCards(p.openDeck, true, false));

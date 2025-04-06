@@ -13,30 +13,12 @@ public class ParadeClient {
 
     /* ========= CONSTRUCTOR ========== */
     public ParadeClient(Socket socket, String username) throws IOException {
-        this.username = username;
         this.socket = socket;
+        this.username = username;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
     }
-
-    /* ========= HANDSHAKE PROTOCOL ========== */
-    private boolean waitForServerReady() throws IOException {
-        try {
-            String serverResponse = in.readLine();
-
-            if ("SERVER_READY".equals(serverResponse)) {
-                return true;
-            } else {
-                System.out.println("[ERROR] Invalid server handshake");
-                return false;
-            }
-        } catch (SocketTimeoutException e) {
-            System.out.println("[ERROR] Server handshake timeout");
-            return false;
-        }
-    }
-
 
     public void startClient() {
         try {
@@ -45,9 +27,8 @@ public class ParadeClient {
                 throw new IOException("Server handshake failed");
             }
 
-            out.write(username);
-            out.newLine();
-            out.flush();
+            // send username to server
+            sendToServer(username);
 
             // start a listener thread
             new Thread(this::listenForMessage).start();
@@ -61,28 +42,42 @@ public class ParadeClient {
         }
     }
 
+    /* ========= HANDSHAKE PROTOCOL ========== */
+    private boolean waitForServerReady() throws IOException {
+
+        try {
+            // timeout after 5 seconds
+            socket.setSoTimeout(5000);
+            String response = in.readLine();
+            System.out.println("[DEBUG] Server response: " + response);
+            // returns true 
+            return "SERVER_READY".equals(response);
+
+        } catch (SocketTimeoutException e) {
+            System.out.println("Server connection timeout");
+            return false;
+
+        } finally {
+            // resets timeout
+            socket.setSoTimeout(0);
+        }
+    }
+
     /* ========= MESSAGE HANDLING ========== */
     // listen for any messages
     public void listenForMessage() {
 
-        String message;
-
-        // waits for broadcast message
-        while (socket.isConnected()) {
-            try {
-                message = in.readLine();
-
-                if (message == null) {
-                    closeEverything(socket, in, out);
-                }
-
+        try {
+            // continuously listens for messages 
+            String message;
+            while (!Thread.currentThread().isInterrupted() &&
+                    (message = in.readLine()) != null) {
                 System.out.println(message);
-
-            } catch (IOException e) {
-                System.out.println("Connection lost");
-                closeEverything(socket, in, out);
-                break;
             }
+        } catch (IOException e) {
+            System.err.println("Server connection lost");
+        } finally {
+            closeEverything(socket, in, out);
         }
 
     }
@@ -104,7 +99,14 @@ public class ParadeClient {
                 continue;
             }
 
-            handleCommand(message);
+            if (message.equalsIgnoreCase("/quit") ||
+                message.equalsIgnoreCase("/help")) {
+                
+                handleCommand(message);
+            } else {
+                sendToServer(message);
+            }
+            
 
         }
     }
@@ -118,8 +120,6 @@ public class ParadeClient {
             case "/help":
                 displayHelp();
                 break;
-            default:
-                sendToServer(message);
         }
     }
 
@@ -127,6 +127,7 @@ public class ParadeClient {
 
         sendToServer("/quit");
         System.out.println("Disconnected from server");
+        closeEverything(socket, in, out);
 
     }
 
@@ -142,6 +143,7 @@ public class ParadeClient {
     // method to print to server from client
     private void sendToServer(String message) throws IOException {
         if (out != null) {
+            System.out.println("[DEBUG] Sending to server: " + message);
             out.write(message);
             out.newLine();
             out.flush();
@@ -166,6 +168,8 @@ public class ParadeClient {
             e.printStackTrace();
         }
     }
+
+    /* ===== FOR TESTING ===== */
 
     public static void main(String[] args) throws IOException {
 

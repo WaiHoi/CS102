@@ -32,19 +32,23 @@ public class ClientHandler implements Runnable {
 
     // network constructor
     public ClientHandler(Socket socket, int playerID) throws IOException {
+
+        if (socket == null) {
+            throw new IllegalArgumentException("Socket cannot be null");
+        }
+
         this.socket = socket;
         this.playerID = playerID;
         this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        
+        // input and output streams
+        this.output = new NetworkOutput(this);
+        this.input = new NetworkInput(this, output);
 
         // add to hashmap
         synchronized (clients) {
             clients.put(playerID, this);
         }
-        
-        // input and output streams
-        this.output = new NetworkOutput(this);
-        // this.input = new NetworkInput(socket.getInputStream(), output);
-        this.input = new NetworkInput(this, output);
 
     }
 
@@ -60,31 +64,26 @@ public class ClientHandler implements Runnable {
             out.newLine();
             out.flush();
 
-            // validate username
-            this.clientUsername = checkUsername();
-
-            // // add to hashmap
-            // synchronized (clients) {
-            //     clients.put(playerID, this);
-            // }
-            output.broadcastToAll(clientUsername + " has joined!");
+            // username validated in gamemenu
+            String username = input.readLine("");
+            System.out.println("[DEBUG] Received username: '" + username + "'");
+            if (username != null && !username.trim().isEmpty()) {
+                this.clientUsername = username.trim();
+                output.broadcastToAll(clientUsername + " has joined!");
+                // Store username in players list
+                if (Player.players.size() >= playerID) {
+                    Player.players.get(playerID-1).setName(clientUsername);
+                }
+            } else {
+                throw new IOException("Invalid username received");
+            }
+            // notify if it's this player's turn
+            if (TurnManager.isMyTurn(playerID)) {
+                ((NetworkOutput) output).broadcastTurnUpdate(playerID);
+            }
 
             /* === Read Client's Messages === */
-            // program will wait for client's message
-            // separate thread for each client => rest of program can still run
-            String messageFromClient;
-
-            while ((messageFromClient = input.readLine("")) != null) {
-
-                if (TurnManager.isMyTurn(playerID)) {
-
-                    System.out.println("[DEBUG] Message received");
-                    handleMessage(messageFromClient);
-
-                } else {
-                    output.sendError("Wait for your turn!");
-                }
-            }
+            processMessage();
 
         } catch (IOException e) {
             output.broadcastToAll(clientUsername + " disconnected");
@@ -98,37 +97,49 @@ public class ClientHandler implements Runnable {
     }
 
     /* ========= MESSAGE HANDLING ========== */
-    private void handleMessage(String rawMessage) throws IOException {
+    private void processMessage() throws IOException {
+
+        String messageFromClient;
+
+        while ((messageFromClient = input.readLine("")) != null) {
+
+            if (!TurnManager.isMyTurn(playerID)) {
+                output.sendError("Wait for your turn!");
+                continue;
+            } 
+
+            handleMessage(messageFromClient.trim());
+        }
+    }
+
+
+    private void handleMessage(String message) throws IOException {
 
         /* === EDGE CASE 1: Empty/Null Messages === */
-        if (rawMessage == null || rawMessage.trim().isEmpty()) {
+        if (message == null || message.isEmpty()) {
             return;
         }
 
-        String trimmed = rawMessage.trim();
-
         // 1. Handle commands (/quit, /help)
-        if (trimmed.startsWith("/")) {
-            handleGameCommand(trimmed);
+        if (message.startsWith("/")) {
+            handleGameCommand(message);
         } 
         // 2. Handle chat (@message)
-        else if (trimmed.startsWith("@")) {
-            handleChatMessage(trimmed.substring(1));
+        else if (message.startsWith("@")) {
+            handleChatMessage(message.substring(1));
         }
         // 3. Ignore numbers (processed by NetworkInput)
-        else if (trimmed.matches("\\d+")) {
+        else if (message.matches("\\d+")) {
             return; // No-op
         }
         // 4. Reject other garbage
         else {
-            output.sendError("Type @ to chat or /help for commands.");
+            output.sendError("Invalid command. Type /help");
         }
     }
 
     /* ========== COMMAND HANDLING ========== */
     private void handleGameCommand(String command) throws IOException {
-
-        command = command.toLowerCase().trim();
 
         switch (command.toLowerCase()) {
             case "/quit":
@@ -157,64 +168,16 @@ public class ClientHandler implements Runnable {
 
     /* ========= CHAT HANDLING ========== */
     private void handleChatMessage(String message) {
-        if (message.isEmpty()) {
-            output.sendError("Usage: @your_message_here");
-            return;
+        if (!message.isEmpty()) {
+            output.broadcastToAll(clientUsername + ": " + message);
         }
-        output.broadcastToAll(clientUsername + ": " + message);
     }
-
-    /* ========= GAME ACTIONS ========== */
-    // private void handleGameAction(String message) {
-    //     try {
-    //         // Case 1: Numeric input (card selection)
-    //         if (message.equals("\\d+")) {
-
-    //             int number = Integer.parseInt(message);
-
-    //             if (number >= 1 && number <= 5) {
-    //                 output.sendServer("" + number);
-
-    //             } else {
-    //                 output.sendError("Card positions must be 1-5");
-
-    //             }
-    //         }
-    //     } catch (Exception e) {
-    //         output.sendError("Processing error: " + e.getMessage());
-    //     }
-    // }
 
     /* ========= NETWORK METHODS ========== */
     public synchronized void send(String message) throws IOException {
         out.write(message);
         out.newLine();
         out.flush();
-    }
-
-    /* ========== UTILITY METHODS ========== */
-    private String checkUsername() throws IOException {
-
-        while (true) {
-            String requestedUsername = input.readLine("");
-
-            if (requestedUsername == null) {
-                throw new IOException("Client disconnected");
-            }
-
-            if (requestedUsername.isEmpty()) {
-                output.sendError("Username cannot be empty. Please try again:");
-                continue;
-            }
-
-            if (UsernameValidator.checkUsername(requestedUsername)) {
-                return requestedUsername;
-
-            } else {
-                output.sendError("Username already taken.\nPlease try another: \n");
-            }
-
-        }
     }
 
     /* ========== CLEANUP ========== */
@@ -268,7 +231,9 @@ public class ClientHandler implements Runnable {
 
     // get thread of current player
     public static ClientHandler getHandlerForPlayer(int playerID) {
-        return clients.get(playerID);
+        synchronized (clients) {
+            return clients.get(playerID);
+        }
     }
 
     /* ========== GETTERS & SETTERS ========== */

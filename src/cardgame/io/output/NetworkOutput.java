@@ -1,14 +1,13 @@
 package cardgame.io.output;
 
 import java.io.IOException;
-import java.util.*;
 
-import cardgame.network.ClientHandler;
+import cardgame.network.*;
 
 public class NetworkOutput implements GameOutput {
     private final ClientHandler currentClient;
     private final int currentPlayerId;
-    private static NetworkOutput instance = null;
+    private String lastSentGameState;
 
     public NetworkOutput(ClientHandler client) {
         this.currentClient = client;
@@ -88,10 +87,15 @@ public class NetworkOutput implements GameOutput {
 
     /* ===== GAME STATE METHODS ===== */
     public void broadcastGameState(String state) {
-        String formattedState = "\n----- GAME STATE UPDATE -----\n" + 
-                              state + 
-                              "\n-----------------------------\n";
-        broadcastToAll(formattedState);
+
+        if (!state.equals(lastSentGameState)) {
+            String formattedState = "\n----- GAME STATE UPDATE -----\n" + 
+                                    state + 
+                                    "\n-----------------------------\n";
+            broadcastToAll(formattedState);
+            lastSentGameState = state;
+        }
+
     }
 
     public void broadcastTurnUpdate(int currentPlayer) {

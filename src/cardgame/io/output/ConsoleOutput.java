@@ -1,10 +1,5 @@
 package cardgame.io.output;
 
-import java.io.IOException;
-import java.util.*;
-
-import cardgame.network.*;
-
 public class ConsoleOutput implements GameOutput {
 
     /* ===== CORE METHODS ===== */

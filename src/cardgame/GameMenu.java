@@ -93,7 +93,7 @@ public class GameMenu {
         }
     }
 
-    public static void readOption() {
+    public static void startGame() {
         boolean isRunning = true;
         Scanner sc = new Scanner(System.in);
 
@@ -133,22 +133,21 @@ public class GameMenu {
 
     private static List<String> getPlayerNames(int numPlayers) {
         Scanner sc = new Scanner(System.in);
-
         List<String> usernames = new ArrayList<>();
+        StringBuilder errorMsg = new StringBuilder();
 
 
         for (int i = 0; i < numPlayers; i++) {
 
             while (true) {
                 System.out.print("Enter name for Player " + (i + 1) + ": ");
-                String name = sc.nextLine().strip();
-    
-                if (UsernameValidator.checkUsername(name)) {
+                String name = sc.nextLine().trim();
+
+                if (UsernameValidator.validateUsername(name, errorMsg)) {
                     usernames.add("Player " + name);
                     break;
-                } else {
-                    System.out.println("Username '" + name + "' is taken. Try another.");
                 }
+                System.out.println(errorMsg);
             }
         }
         return usernames;
@@ -248,8 +247,10 @@ public class GameMenu {
             Player.players.add(new Bot("Bot " + i, new ConsoleOutput()));
         }
 
+        TurnManager.initialize(false, numHumans, numBots, new ConsoleOutput());
+
         Initialize.initializeVariables();
-        Game.mainFunction();
+        Game.mainFunction(false);
         Score.calculateScore();
 
     }
@@ -257,8 +258,18 @@ public class GameMenu {
     private static void connectToGame(String host) {
 
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter your username: ");
-        username = sc.nextLine().trim();
+        StringBuilder errorMsg = new StringBuilder();
+        String username;
+
+        while (true) {
+            System.out.println("Enter your username: ");
+            username = sc.nextLine().trim();
+
+            if (UsernameValidator.validateUsername(username, errorMsg)) {
+                break;
+            }
+            System.out.println(errorMsg);
+        }
 
         try {
             System.out.println("\nConnecting to the server");
@@ -267,6 +278,7 @@ public class GameMenu {
             client.startClient();
             
         } catch (IOException e) {
+            UsernameValidator.removeUsername(username);
             System.out.println("Failed to connect to server. Starting a local game instead.");
             startLocalGame();
         }
@@ -276,15 +288,9 @@ public class GameMenu {
 
         AnsiConsole.systemInstall();
 
-        // GameMenu menu = new GameMenu(); //static methods so dunnid to create object instance
-        readOption();
-
-        // Initialize.initializeVariables();
-        // Game.mainFunction();
+        startGame();
 
         AnsiConsole.systemUninstall();
-        // Score score = new Score();
-        // score.isWinner(g.players, g);
     }
 
 }

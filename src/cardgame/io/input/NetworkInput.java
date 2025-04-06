@@ -13,15 +13,7 @@ public class NetworkInput implements GameInput {
     private final BufferedReader reader;
     private final GameOutput output;
     private final ClientHandler handler;
-
-    // public NetworkInput(InputStream inputStream, GameOutput output) {
-    //     this.reader = new BufferedReader(new InputStreamReader(inputStream));
-    //     this.output = output;
-    // }
-
-    // public NetworkInput(ClientHandler handler, GameOutput output) throws IOException {
-    //     this(handler.getSocket().getInputStream(), output); // Reuse existing constructor
-    // }
+    private final Object readLock = new Object();
 
     public NetworkInput(ClientHandler handler, GameOutput output) throws IOException {
         this.handler = handler;
@@ -29,33 +21,36 @@ public class NetworkInput implements GameInput {
         this.reader = new BufferedReader(new InputStreamReader(is));
         this.output = output;
     }
-    
+
     @Override
     // read line
     public String readLine(String prompt) {
+        synchronized (readLock) {
+            try {
+                // send prompt to client
+                if (!prompt.isEmpty()) {
+                    output.print(prompt);
+                }
+                String line = reader.readLine();
+                System.out.println("[DEBUG] Received input: '" + line + "'");
 
-        try {
-            // send prompt to client 
-            if (!prompt.isEmpty()) {
-                output.print(prompt);
+                // return line
+                return line;
+
+            } catch (IOException e) {
+                throw new RuntimeException("Network input error", e);
             }
-            String line = reader.readLine();
-            System.out.println("[DEBUG] Received input: '" + line + "'");
-            return reader.readLine();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Network input error", e);
         }
     }
 
     @Override
     // read number
     public int readInt(String prompt, int min, int max) {
-        
+
         while (true) {
             try {
-                // send prompt to client 
-                output.print(prompt); 
+                // send prompt to client
+                output.print(prompt);
 
                 String input = reader.readLine();
                 int value = Integer.parseInt(input);
@@ -69,11 +64,11 @@ public class NetworkInput implements GameInput {
 
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number.");
-                
+
             } catch (IOException e) {
                 throw new RuntimeException("Network error", e);
             }
         }
-
     }
+
 }
