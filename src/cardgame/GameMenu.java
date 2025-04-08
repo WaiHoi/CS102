@@ -7,11 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import cardgame.*;
 import cardgame.game.*;
-import cardgame.io.input.*;
-import cardgame.io.output.*;
-import cardgame.model.Bot;
-import cardgame.model.Human;
-import cardgame.network.*;
+import cardgame.model.*;
 import cardgame.utility.*;
 
 import org.fusesource.jansi.AnsiConsole;
@@ -19,15 +15,19 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class GameMenu {
 
+    private static final int serverPort = 1234;
+    // create new thread
+    private static Thread serverThread;
+    // whether server is ready
+    private static final AtomicBoolean serverReady = new AtomicBoolean(false);  
+    // reading input
+    private static final Scanner sc = new Scanner(System.in);
+
     public static String username;
     public static List<String> usernames = new ArrayList<>();
     public static int numHumans;
     public static int numBots;
-
-    // create new thread
-    private static Thread serverThread;
-    private static final AtomicBoolean serverReady = new AtomicBoolean(false);    
-
+    
     public static void displayMainMenu() {
         System.out.println(
             ansi().fgBrightCyan().a("Welcome ")
@@ -42,10 +42,8 @@ public class GameMenu {
         );
         System.out.println(ansi().fgBrightGreen().a("Type /help for commands"));
         System.out.println("=====================================");
-        System.out.println(ansi().fgBrightCyan().a("1. Host & Play (Start Server + Client)"));
-        System.out.println(ansi().fgBrightMagenta().a("2. Join Existing Game (Client Only)"));
-        System.out.println(ansi().fgBrightYellow().a("3. Play Locally (Console Mode)"));
-        System.out.println(ansi().fgBrightRed().a("4. Exit\n"));
+        System.out.println(ansi().fgBrightCyan().a("1. Play Locally (Console Mode)"));
+        System.out.println(ansi().fgBrightMagenta().a("2. Exit"));
         System.out.print("Choose an option: ");
     }
 
@@ -94,10 +92,8 @@ public class GameMenu {
     }
 
     public static void startGame() {
-        boolean isRunning = true;
-        Scanner sc = new Scanner(System.in);
 
-        while (isRunning) {
+        while (true) {
             displayMainMenu();
             
             try {
@@ -106,19 +102,9 @@ public class GameMenu {
 
                 switch (choice) {
                     case 1:
-                        hostAndPlay();
-                        // exit menu after selection
-                        isRunning = false;
-                        break;
-                    case 2:
-                        joinGame();
-                        isRunning = false;
-                        break;
-                    case 3:
                         startLocalGame();
-                        isRunning = false;
-                        break;
-                    case 4:
+                        return;
+                    case 2:
                         System.out.println("Exiting game...");
                         System.exit(0);
                     default:
@@ -154,79 +140,7 @@ public class GameMenu {
 
     }
 
-    public static void hostAndPlay() {
-        
-        displayPlayerSetup();
-
-        // initialise network mode
-        ClientHandler.setNetworkMode(true);
-
-        // start server with thread management 
-        serverThread = new Thread(() -> {
-            try {
-                ServerSocket serverSocket = new ServerSocket(1234);
-                ParadeServer server = new ParadeServer(serverSocket, true, numHumans, numBots);
-                serverReady.set(true);
-                server.startServer();
-
-            } catch (IOException e) {
-                System.out.println("[SERVER] Failed to start the server.\nStarting local game...");
-                fallbackToLocalGame();
-            }
-        });
-        serverThread.start();
-
-        // wait for server to be ready
-        if (!waitForServerReady(5000)) {
-            System.out.println("[SERVER] Server startup timed out.\nStarting local game...");
-            fallbackToLocalGame();
-            return;
-        }
-
-        // 1 second buffer after port has opened
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // wait for connections
-        System.out.println("[SERVER] Waiting for connections...\n");
-        connectToGame("localhost");
-
-    }
-
-    // checks if server's port is open 
-    // wait for server before client connects 
-    private static boolean waitForServerReady(int timeout) {
-        long start = System.currentTimeMillis();
-        while (!serverReady.get() && (System.currentTimeMillis() - start) < timeout) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-        }
-        return serverReady.get();
-    }
-
-    private static void joinGame() {
-        connectToGame("localhost");
-
-    }
-
-    private static void fallbackToLocalGame() {
-        if (serverThread != null && serverThread.isAlive()) {
-            serverThread.interrupt();
-        }
-        ClientHandler.setNetworkMode(false);
-        startLocalGame();
-    }
-
     public static void startLocalGame() {
-
-        ClientHandler.setNetworkMode(false);
         
         displayPlayerSetup();
         Player.players.clear();
@@ -234,54 +148,12 @@ public class GameMenu {
         // unique usernames 
         usernames = getPlayerNames(numHumans);
 
-        /* === Initialise Players and Bots === */
-        // console mode
-        for (int i = 0; i < numHumans; i++) {
-            int playerID = i + 1;
-            ConsoleInput input = new ConsoleInput();
-            ConsoleOutput output = new ConsoleOutput();
-            Player.players.add(new Human(usernames.get(i), playerID, output, input));
-        }
+        TurnManager.initialize(false, numHumans, numBots);
 
-        for (int i = 0; i < numBots; i++) {
-            Player.players.add(new Bot("Bot " + i, new ConsoleOutput()));
-        }
-
-        TurnManager.initialize(false, numHumans, numBots, new ConsoleOutput());
-
-        Initialize.initializeVariables();
+        Initialize.initializeVariables(usernames, numHumans, numBots);
         Game.mainFunction(false);
         Score.calculateScore();
 
-    }
-
-    private static void connectToGame(String host) {
-
-        Scanner sc = new Scanner(System.in);
-        StringBuilder errorMsg = new StringBuilder();
-        String username;
-
-        while (true) {
-            System.out.println("Enter your username: ");
-            username = sc.nextLine().trim();
-
-            if (UsernameValidator.validateUsername(username, errorMsg)) {
-                break;
-            }
-            System.out.println(errorMsg);
-        }
-
-        try {
-            System.out.println("\nConnecting to the server");
-            Socket socket = new Socket(host, 1234);
-            ParadeClient client = new ParadeClient(socket, username);
-            client.startClient();
-            
-        } catch (IOException e) {
-            UsernameValidator.removeUsername(username);
-            System.out.println("Failed to connect to server. Starting a local game instead.");
-            startLocalGame();
-        }
     }
 
     public static void main(String[] args) {

@@ -4,10 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import cardgame.game.*;
-import cardgame.io.input.*;
-import cardgame.io.output.*;
 import cardgame.model.*;
-import cardgame.network.ClientHandler;
 import cardgame.*;
 
 import org.fusesource.jansi.AnsiConsole;
@@ -16,18 +13,16 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class Initialize {
 
-    private static GameOutput output;
-    private static GameInput input;
+    public static void initializeVariables(List<String> usernames, int numHumans, int numBots) {
 
-    public static void initializeVariables() {
+        // initialise players and bots 
+        for (int i = 0; i < numHumans; i++) {
+            int playerID = i + 1;
+            Player.players.add(new Human(usernames.get(i), playerID));
+        }
 
-        // initialise IO
-        if (ClientHandler.isNetworkMode()) {
-            output = ClientHandler.getCurrentClientOutput();
-            input = ClientHandler.getCurrentClientInput();
-        } else {
-            output = new ConsoleOutput();
-            input = new ConsoleInput();
+        for (int i = 0; i < numBots; i++) {
+            Player.players.add(new Bot("Bot " + i));
         }
 
         // import the cards from deck.txt
@@ -68,7 +63,7 @@ public class Initialize {
         }
 
         } catch (FileNotFoundException e) {
-            output.sendError("Invalid File");
+            System.out.println("Invalid File");
         }
 
     }
