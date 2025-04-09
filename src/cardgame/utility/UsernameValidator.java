@@ -8,7 +8,7 @@ public class UsernameValidator {
 
     // validation rules
     private static final Set<String> reservedNames = Set.of(
-        "bot", "system", "admin", "player", "guest", "computer", "ai"
+        "bot", "player"
     );
     private static final Pattern validChars = Pattern.compile("^[a-zA-Z0-9_-]+$");
     private static final int minLength = 3;

@@ -1,4 +1,4 @@
-package cardgame.utility;
+package cardgame.game;
 
 import java.util.concurrent.atomic.*;
 

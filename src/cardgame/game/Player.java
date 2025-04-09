@@ -1,10 +1,8 @@
 package cardgame.game;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Collections;
+import java.util.*;
 
-import cardgame.model.Card;
+import cardgame.model.*;
 
 public abstract class Player {
     public ArrayList<Card> closedDeck = new ArrayList<>();
@@ -52,6 +50,7 @@ public abstract class Player {
 
     public abstract int placeCard();
     public abstract void lastRound(Player p);
+    public abstract int placeCardLastRound(int listSize);
     
     
 }

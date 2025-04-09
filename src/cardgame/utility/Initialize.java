@@ -5,15 +5,10 @@ import java.util.*;
 
 import cardgame.game.*;
 import cardgame.model.*;
-import cardgame.*;
-
-import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.Ansi;
-import static org.fusesource.jansi.Ansi.ansi;
 
 public class Initialize {
-
-    public static void initializeVariables(List<String> usernames, int numHumans, int numBots) {
+    public static void initializeVariables(List<String> usernames, int numHumans, 
+                                            int numBots, BotDifficulty botDifficulty) {
 
         // initialise players and bots 
         for (int i = 0; i < numHumans; i++) {
@@ -22,7 +17,7 @@ public class Initialize {
         }
 
         for (int i = 0; i < numBots; i++) {
-            Player.players.add(new Bot("Bot " + i));
+            Player.players.add(new Bot("Bot " + (i + 1), botDifficulty));
         }
 
         // import the cards from deck.txt

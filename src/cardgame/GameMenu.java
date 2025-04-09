@@ -1,100 +1,151 @@
 package cardgame;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import cardgame.*;
 import cardgame.game.*;
 import cardgame.model.*;
 import cardgame.utility.*;
 
 import org.fusesource.jansi.AnsiConsole;
+
+import static org.fusesource.jansi.Ansi.DISABLE;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class GameMenu {
 
-    private static final int serverPort = 1234;
-    // create new thread
-    private static Thread serverThread;
-    // whether server is ready
-    private static final AtomicBoolean serverReady = new AtomicBoolean(false);  
-    // reading input
     private static final Scanner sc = new Scanner(System.in);
-
     public static String username;
     public static List<String> usernames = new ArrayList<>();
     public static int numHumans;
     public static int numBots;
+    public static BotDifficulty botDifficulty;
+    public static final int consoleWidth = 40;
     
     public static void displayMainMenu() {
-        System.out.println(
-            ansi().fgBrightCyan().a("Welcome ")
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║                                      ║");
+        System.out.println("║" +
+            ansi().fgBrightCyan().a("   Welcome ")
             .fgBrightYellow().a("to a ")
             .fgBrightMagenta().a("game ")
             .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!\n")
-            .fgBrightBlue().a("Enjoy ")
-            .fgBrightYellow().a("and ")
-            .fgBrightCyan().a("have fun!")
-            .reset()
+            .fgBrightRed().a("Parades!      ").reset() + "║"
         );
-        System.out.println(ansi().fgBrightGreen().a("Type /help for commands"));
-        System.out.println("=====================================");
-        System.out.println(ansi().fgBrightCyan().a("1. Play Locally (Console Mode)"));
-        System.out.println(ansi().fgBrightMagenta().a("2. Exit"));
-        System.out.print("Choose an option: ");
+        System.out.println("║" +
+            ansi().fgBrightBlue().a("        Enjoy ")
+            .fgBrightYellow().a("and ")
+            .fgBrightCyan().a("have fun!           ")
+            .reset() + "║"
+        );
+        System.out.println("║                                      ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.println(ansi().fgBrightCyan().a("[1] Play Locally (Console Mode)"));
+        System.out.println(ansi().fgBrightMagenta().a("[2] Exit").reset());
+        System.out.println("──────────────────────────────────────");
+
+
     }
 
     public static void displayPlayerSetup() {
         numHumans = 0;
         numBots = 0;
-        System.out.println(
-            ansi().fgBrightCyan().a("Welcome ")
-            .fgBrightYellow().a("to a ")
-            .fgBrightMagenta().a("game ")
-            .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!\n")
-            .fgBrightBlue().a("Enjoy ")
-            .fgBrightYellow().a("and ")
-            .fgBrightCyan().a("have fun!")
-            .reset()
-        );
+
+        System.out.println("\n╭──────────────────────────────────────╮");
+        System.out.println("│     Choose Number of Players         │");
+        System.out.println("╰──────────────────────────────────────╯");
+
 
         while (numHumans + numBots < 2 || numHumans + numBots > 6) {
-            try {
-                Scanner sc = new Scanner(System.in);
-                System.out.print(ansi().fgBrightCyan().a("Enter number of human players: ").reset());
-                numHumans = sc.nextInt();
-                sc.nextLine();
+            // human players input
+            while (true) {
+                try {
+                    System.out.print(ansi().fgBrightCyan().a("Enter number of human players: ").reset());
+                    numHumans = sc.nextInt();
+                    sc.nextLine();
 
-                if (numHumans < 0 || numHumans > 6) {
-                    throw new InputMismatchException();
+                    if (numHumans >= 0 && numHumans <= 6) {
+                        break;
+                    } else {
+                        System.out.println(ansi().fgRed().a("Number must be between 0 and 6!\n").reset());
+                    }
+
+                } catch (InputMismatchException e) {
+                    System.out.println(ansi().fgRed().a(
+                        "Input must be a positive integer and not more than 6!\n").reset());
+                    sc.nextLine();
                 }
-
-                System.out.print(ansi().fgBrightMagenta().a("Enter number of bot players: ").reset());
-                numBots = sc.nextInt();
-                sc.nextLine();
-
-                if (numBots < 0 || numBots > 6) {
-                    throw new InputMismatchException();
-                }
-
-                if (numHumans + numBots < 2 || numHumans + numBots > 6) {
-                    System.out.println(ansi().fgYellow().a("Total number of players and bots should be between 2 and 6!\n").reset());                
-                }
-            } catch (InputMismatchException e) {
-                System.out.println(ansi().fgRed().a("Input must be a positive integer and not more than 6!\n").reset());            
             }
-            
+
+            while (true) {
+                try {
+                    System.out.print(ansi().fgBrightMagenta().a("Enter number of bot players: ").reset());
+                    numBots = sc.nextInt();
+                    sc.nextLine();
+
+                    if (numBots >= 0 && numBots <= 6) {
+                        break;
+                    } else {
+                        System.out.println(ansi().fgRed().a("Number must be between 0 and 6!\n").reset());
+                    }
+
+                } catch (InputMismatchException e) {
+                    System.out.println(ansi().fgRed().a(
+                        "Input must be a positive integer and not more than 6!\n").reset());
+                    sc.nextLine();
+                }
+            }
+
+            if (numHumans + numBots < 2 || numHumans + numBots > 6) {
+                System.out.println(ansi().fgYellow().a(
+                    "Total number of players and bots should be between 2 and 6!\n").reset()); 
+            }
         }
     }
 
+    public static BotDifficulty setBotDifficulty() {
+        BotDifficulty difficulty = null;
+
+        System.out.println("\n╭──────────────────────────────────────╮");
+        System.out.println("│      Select bot difficulty level     │");
+        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("[1] Easy");
+        System.out.println("[2] Medium");
+        System.out.println("[3] Hard");
+        System.out.println("──────────────────────────────────────");
+
+        while (difficulty == null) {
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = sc.nextInt();
+                sc.nextLine();
+
+                switch (choice) {
+                    case 1:
+                        difficulty = BotDifficulty.EASY;
+                        break;
+                    case 2:
+                        difficulty = BotDifficulty.MEDIUM;
+                        break;
+                    case 3:
+                        difficulty = BotDifficulty.HARD;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please enter a number between 1 to 3.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a number between 1 to 3!");
+                sc.nextLine();
+            }
+        }
+        return difficulty;
+    }
+
     public static void startGame() {
+        displayMainMenu();
 
         while (true) {
-            displayMainMenu();
+            System.out.print("Enter a number: ");
             
             try {
                 int choice = sc.nextInt();
@@ -108,20 +159,22 @@ public class GameMenu {
                         System.out.println("Exiting game...");
                         System.exit(0);
                     default:
-                        System.out.println("Invalid choice. Please enter 1-4.");
+                        System.out.println("Invalid choice. Please enter either 1 or 2.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Please enter a number between 1-4!");
+                System.out.println("Please enter either 1 or 2!");
                 sc.nextLine();
             }
         }
+
     }
 
     private static List<String> getPlayerNames(int numPlayers) {
-        Scanner sc = new Scanner(System.in);
         List<String> usernames = new ArrayList<>();
         StringBuilder errorMsg = new StringBuilder();
-
+        System.out.println("\n╭──────────────────────────────────────╮");
+        System.out.println("│        Enter Names of Players        │");
+        System.out.println("╰──────────────────────────────────────╯");
 
         for (int i = 0; i < numPlayers; i++) {
 
@@ -148,12 +201,49 @@ public class GameMenu {
         // unique usernames 
         usernames = getPlayerNames(numHumans);
 
+        // set bot difficulty
+        if (numBots > 0) {
+            botDifficulty = setBotDifficulty();
+        }
+
         TurnManager.initialize(false, numHumans, numBots);
+        Initialize.initializeVariables(usernames, numHumans, numBots, botDifficulty);
 
-        Initialize.initializeVariables(usernames, numHumans, numBots);
+        displayGameState();
         Game.mainFunction(false);
-        Score.calculateScore();
+    }
 
+    public static void displayGameState() {
+        clearConsole();
+
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║                                      ║");
+        System.out.println("║          GAME HAS STARTED!           ║");
+        System.out.println("║                                      ║");
+        System.out.println("╚══════════════════════════════════════╝");
+
+        System.out.println("\n Players: ");
+        
+        for (int i = 0; i < Player.players.size(); i++) {
+            Player player = Player.players.get(i);
+
+            if (player instanceof Human) {
+                System.out.println("   " + (i + 1) + ". " + player.getPlayerName() + " (HUMAN)");
+            }
+
+            if (player instanceof Bot) {
+                System.out.println("   " + (i + 1) + ". " + player.getPlayerName() + " (" +
+                                    ((Bot) player).getDifficulty() + ")");
+            }
+        }
+        
+        System.out.println("\n Total Players: " + Player.players.size());
+        System.out.println("════════════════════════════════════════");
+    }
+
+    public static void clearConsole() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     public static void main(String[] args) {
