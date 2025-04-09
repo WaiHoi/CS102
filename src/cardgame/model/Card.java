@@ -1,6 +1,8 @@
 package cardgame.model;
 
 import java.util.*;
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class Card {
 
@@ -21,14 +23,36 @@ public class Card {
     }
 
     public static String printCards(ArrayList<Card> deck, boolean sorting, boolean displayCardOptions){
-        if(displayCardOptions){
+        if (displayCardOptions) {
             int counter = 1;
-            for(Card card : deck){
-                System.out.println(counter + ". " + card.colour + " " + card.number);
+            for(Card card : deck) {
+                // System.out.println(counter + ". " + card.colour + " " + card.number);
+                
+                switch (card.colour) {
+                    case "red":
+                        System.out.println(ansi().fgBrightRed().a(counter + ". " + card.colour + " " + card.number).reset());
+                        break;
+                    case "blue":
+                        System.out.println(ansi().fgBrightBlue().a(counter + ". " + card.colour + " " + card.number).reset());
+                        break;
+                    case "purple":
+                        System.out.println(ansi().fgBrightMagenta().a(counter + ". " + card.colour + " " + card.number).reset());
+                        break;
+                    case "green":
+                        System.out.println(ansi().fgBrightGreen().a(counter + ". " + card.colour + " " + card.number).reset());
+                        break;
+                    case "orange":
+                        System.out.println(ansi().fgBrightYellow().a(counter + ". " + card.colour + " " + card.number).reset());
+                        break;
+                    default:
+                        System.out.println(counter + ". " + card.colour + " " + card.number);
+                        break;
+                }
                 counter ++;
             }
             return "";
         }
+
         if (deck.isEmpty()) {
             return "[]";
         }

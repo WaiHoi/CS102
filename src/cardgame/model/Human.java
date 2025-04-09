@@ -3,6 +3,8 @@ package cardgame.model;
 import java.util.*;
 
 import cardgame.game.*;
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class Human extends Player {
     public Card card;
@@ -14,7 +16,7 @@ public class Human extends Player {
 
     public int placeCard() {
 
-        System.out.println("Your closed deck:");
+        System.out.println(ansi().fgBrightCyan().a("Your closed deck:").reset());
         System.out.println(Card.printCards(closedDeck, false, true));
         System.out.printf("Please choose a card to be added into the parade: ");
 
