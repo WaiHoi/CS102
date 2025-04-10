@@ -22,42 +22,27 @@ public class GameMenu {
     public static final int consoleWidth = 40;
     
     public static void displayMainMenu() {
-        char TOP_LEFT = '\u2554';
-        char TOP_RIGHT = '\u2557';
-        char BOTTOM_LEFT = '\u255A';
-        char BOTTOM_RIGHT = '\u255D';
-        char HORIZONTAL = '\u2550';
-        char VERTICAL = '\u2551';
-        
-        String topLine = TOP_LEFT + String.valueOf(HORIZONTAL).repeat(36) + TOP_RIGHT;
-        String bottomLine = BOTTOM_LEFT + String.valueOf(HORIZONTAL).repeat(36) + BOTTOM_RIGHT;
-        String verticalLine = VERTICAL + String.valueOf(" ").repeat(36) + VERTICAL;
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("\n" + topLine + "\n");
-        sb.append(verticalLine + "\n");
-        sb.append(VERTICAL);
-        sb.append(ansi().fgBrightCyan().a("   Welcome ")
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|                                      |");
+        System.out.println("|" +
+            ansi().fgBrightCyan().a("   Welcome ")
             .fgBrightYellow().a("to a ")
             .fgBrightMagenta().a("game ")
             .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!    ").reset());
-        sb.append(VERTICAL + "\n");
-        sb.append(VERTICAL);
-        sb.append(ansi().fgBrightBlue().a("       Enjoy ")
+            .fgBrightRed().a("Parades!      ").reset() + "║"
+        );
+        System.out.println("|" +
+            ansi().fgBrightBlue().a("        Enjoy ")
             .fgBrightYellow().a("and ")
-            .fgBrightCyan().a("have fun!          ")
-            .reset());
-        sb.append(VERTICAL + "\n");
-        sb.append(verticalLine + "\n");
-        sb.append(bottomLine);
-
-        System.out.println(sb.toString());
+            .fgBrightCyan().a("have fun!           ")
+            .reset() + "|"
+        );
+        System.out.println("|                                      |");
+        System.out.println("+--------------------------------------+");
         System.out.println(ansi().fgBrightCyan().a("[1] Play Locally (Console Mode)"));
         System.out.println(ansi().fgBrightMagenta().a("[2] Exit").reset());
-        System.out.println("──────────────────────────────────────");
-        
+        System.out.println("----------------------------------------");
+
     }
 
 
@@ -65,9 +50,9 @@ public class GameMenu {
         numHumans = 0;
         numBots = 0;
 
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│     Choose Number of Players         │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|     Choose Number of Players         |");
+        System.out.println("+--------------------------------------+");
 
 
         while (numHumans + numBots < 2 || numHumans + numBots > 6) {
@@ -120,13 +105,13 @@ public class GameMenu {
     public static BotDifficulty setBotDifficulty() {
         BotDifficulty difficulty = null;
 
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│      Select bot difficulty level     │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|      Select bot difficulty level     |");
+        System.out.println("+--------------------------------------+");
         System.out.println("[1] Easy");
         System.out.println("[2] Medium");
         System.out.println("[3] Hard");
-        System.out.println("──────────────────────────────────────");
+        System.out.println("----------------------------------------");
 
         while (difficulty == null) {
             System.out.print("Enter your choice: ");
@@ -187,9 +172,9 @@ public class GameMenu {
     private static List<String> getPlayerNames(int numPlayers) {
         List<String> usernames = new ArrayList<>();
         StringBuilder errorMsg = new StringBuilder();
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│        Enter Names of Players        │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|        Enter Names of Players        |");
+        System.out.println("+--------------------------------------+");
 
         for (int i = 0; i < numPlayers; i++) {
 
@@ -255,11 +240,11 @@ public class GameMenu {
     public static void displayGameState() {
         clearConsole();
 
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║                                      ║");
-        System.out.println("║          GAME HAS STARTED!           ║");
-        System.out.println("║                                      ║");
-        System.out.println("╚══════════════════════════════════════╝");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|                                      |");
+        System.out.println("|          GAME HAS STARTED!           |");
+        System.out.println("|                                      |");
+        System.out.println("+--------------------------------------+");
 
         System.out.println("\n Players: ");
         
@@ -277,7 +262,7 @@ public class GameMenu {
         }
         
         System.out.println("\n Total Players: " + Player.players.size());
-        System.out.println("════════════════════════════════════════");
+        System.out.println("----------------------------------------");
     }
 
     public static void clearConsole() {
