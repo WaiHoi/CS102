@@ -7,9 +7,9 @@ import cardgame.model.*;
 import cardgame.utility.*;
 
 import org.fusesource.jansi.AnsiConsole;
-
 import static org.fusesource.jansi.Ansi.DISABLE;
 import static org.fusesource.jansi.Ansi.ansi;
+
 
 public class GameMenu {
 
@@ -21,30 +21,18 @@ public class GameMenu {
     public static BotDifficulty botDifficulty;
     public static final int consoleWidth = 40;
     
+
+
     public static void displayMainMenu() {
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║                                      ║");
-        System.out.println("║" +
-            ansi().fgBrightCyan().a("   Welcome ")
-            .fgBrightYellow().a("to a ")
-            .fgBrightMagenta().a("game ")
-            .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!      ").reset() + "║"
-        );
-        System.out.println("║" +
-            ansi().fgBrightBlue().a("        Enjoy ")
-            .fgBrightYellow().a("and ")
-            .fgBrightCyan().a("have fun!           ")
-            .reset() + "║"
-        );
-        System.out.println("║                                      ║");
-        System.out.println("╚══════════════════════════════════════╝");
-        System.out.println(ansi().fgBrightCyan().a("[1] Play Locally (Console Mode)"));
-        System.out.println(ansi().fgBrightMagenta().a("[2] Exit").reset());
-        System.out.println("──────────────────────────────────────");
+        System.out.println(AnsiColors.colorize("Welcome to a game of ", AnsiColors.BRIGHT_CYAN) +
+            AnsiColors.colorize("Parades!", AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
 
+        System.out.println(AnsiColors.BOLD + AnsiColors.BRIGHT_YELLOW + "ENJOY AND HAVE FUN!" + AnsiColors.RESET);
 
+        System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
+        System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
     }
+    
 
     public static void displayPlayerSetup() {
         numHumans = 0;
