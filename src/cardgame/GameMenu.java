@@ -29,7 +29,7 @@ public class GameMenu {
             .fgBrightYellow().a("to a ")
             .fgBrightMagenta().a("game ")
             .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!      ").reset() + "║"
+            .fgBrightRed().a("Parades!      ").reset() + "|"
         );
         System.out.println("|" +
             ansi().fgBrightBlue().a("        Enjoy ")
