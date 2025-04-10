@@ -86,6 +86,10 @@ public class Game {
 
         // move to next turn
         TurnManager.nextTurn();
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Press Enter to continue> ");
+        sc.nextLine();
     }
 
     public static void mainFunction(boolean isNetworkMode) {
