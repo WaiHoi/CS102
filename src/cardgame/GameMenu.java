@@ -284,10 +284,14 @@ import org.fusesource.jansi.AnsiConsole;
 public class GameMenu {
 
     private static final Scanner scanner = new Scanner(System.in);
+
+    // get the minimum and maximum players allowed
     private static final int MIN_PLAYERS = 2;
     private static final int MAX_PLAYERS = 6;
+
     private static final int CONSOLE_WIDTH = 40;
 
+    //Varibles for storing user and bot data
     private static String username;
     private static List<String> usernames = new ArrayList<>();
     private static int numHumans;
@@ -302,22 +306,25 @@ public class GameMenu {
         System.out.println(AnsiColors.colorizeBold("ENJOY AND HAVE FUN!", AnsiColors.BRIGHT_YELLOW));
         printBorder();
 
+        // Displays the game options
         System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
         System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
         printBorder();
     }
 
-    // Display player setup menu
+    // Prompts user to set number of human and bot players
     public static void displayPlayerSetup() {
         numHumans = 0;
         numBots = 0;
 
         printHeader("Choose Number of Players");
 
+        // Keeps prompting until there are a valid number of players
         while (!isValidPlayerCount(numHumans, numBots)) {
             numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS);
             numBots = getValidatedInput("Enter number of bot players: ", 0, MAX_PLAYERS);
 
+            // Warns if the player count is invalid
             if (!isValidPlayerCount(numHumans, numBots)) {
                 System.out.println(AnsiColors.colorizeBold(
                         "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
@@ -326,6 +333,7 @@ public class GameMenu {
         }
     }
 
+    // Prompt users for player names and validate them
     private static List<String> getPlayerNames(int numPlayers) {
         List<String> usernames = new ArrayList<>();
         StringBuilder errorMsg = new StringBuilder();
@@ -339,8 +347,9 @@ public class GameMenu {
                 System.out.print("Enter name for Player " + (i + 1) + ": ");
                 String name = scanner.nextLine().trim();
 
+                // Use validator to check for errors in the name
                 if (UsernameValidator.validateUsername(name, errorMsg)) {
-                    usernames.add("Player " + name);
+                    usernames.add("Player " + name); // Prefixes the name with "Player"
                     break;
                 }
                 System.out.println(errorMsg);
@@ -370,6 +379,7 @@ public class GameMenu {
                             "Number must be between " + min + " and " + max + "!\n", AnsiColors.BRIGHT_RED));
                 }
             } catch (InputMismatchException e) {
+                //Catches invalid input characters
                 System.out.println(AnsiColors.colorizeBold(
                         "Input must be a positive integer!\n", AnsiColors.BRIGHT_RED));
                 scanner.nextLine(); // Clear invalid input
@@ -377,7 +387,7 @@ public class GameMenu {
         }
     }
 
-    // Set bot difficulty
+    // Lets the user choose the bot difficulty 
     public static BotDifficulty setBotDifficulty() {
         printHeader("Select Bot Difficulty Level");
         System.out.println("[1] Easy\n[2] Medium\n[3] Hard");
@@ -398,6 +408,7 @@ public class GameMenu {
                                 "Invalid choice! Please enter a number between 1 and 3.", AnsiColors.BRIGHT_RED));
                 }
             } catch (InputMismatchException e) {
+                //Handles non-integer inputs
                 System.out.println(AnsiColors.colorizeBold(
                         "Please enter a valid number between 1 and 3!", AnsiColors.BRIGHT_RED));
                 scanner.nextLine(); // Clear invalid input
@@ -428,6 +439,7 @@ public class GameMenu {
                                 "Invalid choice! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED));
                 }
             } catch (InputMismatchException e) {
+                //Handles the invalid menu option
                 System.out.println(AnsiColors.colorizeBold(
                         "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED));
                 scanner.nextLine(); // Clear invalid input
@@ -443,14 +455,14 @@ public class GameMenu {
         startGame();
     }
 
-    // Setup players
+    // Collects user input and player names
     private static void setupPlayers() {
         displayPlayerSetup();
         Player.players.clear();
         usernames = getPlayerNames(numHumans);
     }
 
-    // Setup bots
+    // Asks for difficulty if bots are present
     private static void setupBots() {
         if (numBots > 0) {
             botDifficulty = setBotDifficulty();
@@ -466,7 +478,7 @@ public class GameMenu {
         Game.mainFunction(false);
     }
 
-    // Display game state
+    // Display game state with all players listed
     public static void displayGameState() {
         clearConsole();
 
@@ -474,6 +486,7 @@ public class GameMenu {
 
         System.out.println("\nPlayers:");
         
+        // Lists all players whether they are human or bot
         for (int i = 0; i < Player.players.size(); i++) {
             Player player = Player.players.get(i);
 
