@@ -377,22 +377,28 @@ public class GameMenu {
         }
     }
 
-    // Set bot difficulty
     public static BotDifficulty setBotDifficulty() {
         printHeader("Select Bot Difficulty Level");
-        System.out.println("[1] Easy\n[2] Medium\n[3] Hard");
+    
+        // Display difficulty options with colors
+        System.out.println(AnsiColors.colorize("[1] Easy", AnsiColors.BRIGHT_GREEN));
+        System.out.println(AnsiColors.colorize("[2] Medium", AnsiColors.BRIGHT_YELLOW));
+        System.out.println(AnsiColors.colorize("[3] Hard", AnsiColors.BRIGHT_RED));
         printBorder();
-
+    
         while (true) {
             try {
                 System.out.print("Enter your choice: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
-
+    
                 switch (choice) {
-                    case 1: return BotDifficulty.EASY;
-                    case 2: return BotDifficulty.MEDIUM;
-                    case 3: return BotDifficulty.HARD;
+                    case 1:
+                        return BotDifficulty.EASY;
+                    case 2:
+                        return BotDifficulty.MEDIUM;
+                    case 3:
+                        return BotDifficulty.HARD;
                     default:
                         System.out.println(AnsiColors.colorizeBold(
                                 "Invalid choice! Please enter a number between 1 and 3.", AnsiColors.BRIGHT_RED));
@@ -404,6 +410,7 @@ public class GameMenu {
             }
         }
     }
+    
 
     // Start the game
     public static void startGame() {
