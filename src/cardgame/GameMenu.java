@@ -463,13 +463,9 @@ public class GameMenu {
         startGame();
     }
 
-<<<<<<< HEAD
     // Setup players
     private static void setupHumans() {
-=======
     // Collect user input and player names
-    private static void setupPlayers() {
->>>>>>> 59dfff8eac304d1f734ce4e520212088cc705f5c
         displayPlayerSetup();
         Player.players.clear();
         usernames = getPlayerNames(numHumans);
