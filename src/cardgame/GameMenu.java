@@ -437,14 +437,14 @@ public class GameMenu {
 
     // Start local game setup
     public static void startLocalGame() {
-        setupPlayers();
+        setupHumans();
         setupBots();
         initializeGame();
         startGame();
     }
 
     // Setup players
-    private static void setupPlayers() {
+    private static void setupHumans() {
         displayPlayerSetup();
         Player.players.clear();
         usernames = getPlayerNames(numHumans);
