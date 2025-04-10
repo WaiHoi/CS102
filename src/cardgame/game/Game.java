@@ -54,8 +54,8 @@ public class Game {
             addNewCard(p);
         }
 
-        System.out.println("\nOpening up your card now...");
-        System.out.println("You have drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
+        System.out.println("\nOpening up " + p.getPlayerName() + "'s card now...");
+        System.out.println(p.getPlayerName() + " has drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
 
         // Print current parade
         System.out.println("Updated Parade:\n" + Card.printCards(parade, false, false));
@@ -77,11 +77,11 @@ public class Game {
         }
 
         // Show cards drawn in the current round.
-        System.out.println("\nCards that you collected this round:");
+        System.out.println("\nCards that " + p.getPlayerName() + " has collected this round:");
         System.out.println(Card.printCards(cardsDrawn, false, false));
 
         // Show open deck
-        System.out.println("\nYour deck of cards:");
+        System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
         System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
 
         // move to next turn
