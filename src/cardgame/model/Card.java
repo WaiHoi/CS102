@@ -6,8 +6,8 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class Card {
 
-    public int number;
-    public String colour;
+    private int number;
+    private String colour;
 
     public Card(int n, String c) {
         this.number = n;

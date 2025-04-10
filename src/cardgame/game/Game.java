@@ -63,12 +63,12 @@ public class Game {
         ArrayList<Card> cardsDrawn = new ArrayList<>();
 
         // Check collectible cards
-        for (int i = parade.size() - c.number - 2; i >= 0; i--) {
+        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) {
             if (i < 0)
                 break;
             Card currentCard = parade.get(i);
 
-            if (currentCard.getColour().equals(c.getColour()) || currentCard.number <= c.number) {
+            if (currentCard.getColour().equals(c.getColour()) || currentCard.getValue() <= c.getValue()) {
                 parade.remove(currentCard);
                 p.openDeck.add(currentCard);
 
