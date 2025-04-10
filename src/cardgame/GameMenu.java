@@ -22,29 +22,44 @@ public class GameMenu {
     public static final int consoleWidth = 40;
     
     public static void displayMainMenu() {
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║                                      ║");
-        System.out.println("║" +
-            ansi().fgBrightCyan().a("   Welcome ")
+        char TOP_LEFT = '\u2554';
+        char TOP_RIGHT = '\u2557';
+        char BOTTOM_LEFT = '\u255A';
+        char BOTTOM_RIGHT = '\u255D';
+        char HORIZONTAL = '\u2550';
+        char VERTICAL = '\u2551';
+        
+        String topLine = TOP_LEFT + String.valueOf(HORIZONTAL).repeat(36) + TOP_RIGHT;
+        String bottomLine = BOTTOM_LEFT + String.valueOf(HORIZONTAL).repeat(36) + BOTTOM_RIGHT;
+        String verticalLine = VERTICAL + String.valueOf(" ").repeat(36) + VERTICAL;
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\n" + topLine + "\n");
+        sb.append(verticalLine + "\n");
+        sb.append(VERTICAL);
+        sb.append(ansi().fgBrightCyan().a("   Welcome ")
             .fgBrightYellow().a("to a ")
             .fgBrightMagenta().a("game ")
             .fgBrightGreen().a("of ")
-            .fgBrightRed().a("Parades!      ").reset() + "║"
-        );
-        System.out.println("║" +
-            ansi().fgBrightBlue().a("        Enjoy ")
+            .fgBrightRed().a("Parades!    ").reset());
+        sb.append(VERTICAL + "\n");
+        sb.append(VERTICAL);
+        sb.append(ansi().fgBrightBlue().a("       Enjoy ")
             .fgBrightYellow().a("and ")
-            .fgBrightCyan().a("have fun!           ")
-            .reset() + "║"
-        );
-        System.out.println("║                                      ║");
-        System.out.println("╚══════════════════════════════════════╝");
+            .fgBrightCyan().a("have fun!          ")
+            .reset());
+        sb.append(VERTICAL + "\n");
+        sb.append(verticalLine + "\n");
+        sb.append(bottomLine);
+
+        System.out.println(sb.toString());
         System.out.println(ansi().fgBrightCyan().a("[1] Play Locally (Console Mode)"));
         System.out.println(ansi().fgBrightMagenta().a("[2] Exit").reset());
         System.out.println("──────────────────────────────────────");
-
-
+        
     }
+
 
     public static void displayPlayerSetup() {
         numHumans = 0;
@@ -162,7 +177,7 @@ public class GameMenu {
                         System.out.println("Invalid choice. Please enter either 1 or 2.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Please enter either 1 or 2!");
+                System.out.println("Invalid choice. Please enter either 1 or 2.");
                 sc.nextLine();
             }
         }
@@ -190,27 +205,51 @@ public class GameMenu {
             }
         }
         return usernames;
-
     }
 
-    public static void startLocalGame() {
-        
-        displayPlayerSetup();
-        Player.players.clear();
-
-        // unique usernames 
-        usernames = getPlayerNames(numHumans);
-
-        // set bot difficulty
-        if (numBots > 0) {
-            botDifficulty = setBotDifficulty();
-        }
-
+    private static void initializeGame() {
         TurnManager.initialize(false, numHumans, numBots);
         Initialize.initializeVariables(usernames, numHumans, numBots, botDifficulty);
 
         displayGameState();
         Game.mainFunction(false);
+    }
+
+    private static void setupBots() {
+        // set bot difficulty
+        if (numBots > 0) {
+            botDifficulty = setBotDifficulty();
+        }
+    }
+
+    private static void setupPlayers() {
+        displayPlayerSetup();
+        Player.players.clear();
+        usernames = getPlayerNames(numHumans);
+    }
+
+    public static void startLocalGame() {
+        setupPlayers();
+        setupBots();
+        initializeGame();
+        startGame();
+
+        // displayPlayerSetup();
+        // Player.players.clear();
+
+        // // unique usernames 
+        // usernames = getPlayerNames(numHumans);
+
+        // // set bot difficulty
+        // if (numBots > 0) {
+        //     botDifficulty = setBotDifficulty();
+        // }
+
+        // TurnManager.initialize(false, numHumans, numBots);
+        // Initialize.initializeVariables(usernames, numHumans, numBots, botDifficulty);
+
+        // displayGameState();
+        // Game.mainFunction(false);
     }
 
     public static void displayGameState() {
