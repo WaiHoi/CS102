@@ -63,12 +63,12 @@ public class Game {
         ArrayList<Card> cardsDrawn = new ArrayList<>();
 
         // Check collectible cards
-        for (int i = parade.size() - c.number - 2; i >= 0; i--) {
+        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) {
             if (i < 0)
                 break;
             Card currentCard = parade.get(i);
 
-            if (currentCard.getColour().equals(c.getColour()) || currentCard.number <= c.number) {
+            if (currentCard.getColour().equals(c.getColour()) || currentCard.getValue() <= c.getValue()) {
                 parade.remove(currentCard);
                 p.openDeck.add(currentCard);
 
@@ -86,6 +86,10 @@ public class Game {
 
         // move to next turn
         TurnManager.nextTurn();
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Press Enter to continue> ");
+        sc.nextLine();
     }
 
     public static void mainFunction(boolean isNetworkMode) {
@@ -102,9 +106,9 @@ public class Game {
             Player currentPlayer = Player.players.get(currentPlayerID - 1);
 
             // sent to all
-            System.out.println("\n──────────────────────────");
+            System.out.println("\n--------------------------");
             System.out.println("    " + currentPlayer.name + "'s turn!    ");
-            System.out.println("──────────────────────────\n");
+            System.out.println("--------------------------\n");
 
             // Play the current turn (regular or last round)
             gameLogic(currentPlayer, lastRoundTriggered);
@@ -128,15 +132,15 @@ public class Game {
                 displayRoundHeader(currentRound);
         
             } else {
-                System.out.println("══════════════════════════════");
+                System.out.println("------------------------------");
             }
 
         }
 
         // Game over logic
-        System.out.println("\n╭──────────────────────╮");
-        System.out.println("│      GAME OVER       │");
-        System.out.println("╰══════════════════════╯");
+        System.out.println("+----------------------+");
+        System.out.println("|      GAME OVER       |");
+        System.out.println("+----------------------+");
 
         Score score = new Score();
 
@@ -160,9 +164,9 @@ public class Game {
     }
 
     private static void executeLastRound() {
-        System.out.println("\n╭─────────────────────────╮");
-        System.out.println("│       FINAL ROUND       │");
-        System.out.println("╰═════════════════════════╯");
+        System.out.println("\n+-------------------------+");
+        System.out.println("|       FINAL ROUND       |");
+        System.out.println("+-------------------------+");
 
         // get player who triggered last round
         int triggeringPlayerID = TurnManager.getCurrentPlayerID();
@@ -179,9 +183,9 @@ public class Game {
         }
 
         for (Player p : finalRoundOrder) {
-            System.out.println("\n───────────────────────────────");
+            System.out.println("\n-------------------------------");
             System.out.println("    " + p.name + "'s final turn!    ");
-            System.out.println("───────────────────────────────\n");
+            System.out.println("-------------------------------\n");
             
             // set the current player for turn management
             TurnManager.setCurrentPlayer(p.getPlayerID());
@@ -199,9 +203,9 @@ public class Game {
     }
 
     public static void displayRoundHeader(int currentRound) {
-        System.out.println("\n╭──────────────────────╮");
-        System.out.printf ("│       ROUND %-2d       │\n", currentRound);
-        System.out.println("╰══════════════════════╯");
+        System.out.println("\n+----------------------+");
+        System.out.printf ("|       ROUND %-2d       |\n", currentRound);
+        System.out.println("+----------------------+");
     }
 
 }

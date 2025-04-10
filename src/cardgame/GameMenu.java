@@ -24,23 +24,29 @@ public class GameMenu {
 
 
     public static void displayMainMenu() {
+        // Print welcome message
+        System.out.println("----------------------------------------");
         System.out.println(AnsiColors.colorize("Welcome to a game of ", AnsiColors.BRIGHT_CYAN) +
             AnsiColors.colorize("Parades!", AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
-
         System.out.println(AnsiColors.BOLD + AnsiColors.BRIGHT_YELLOW + "ENJOY AND HAVE FUN!" + AnsiColors.RESET);
-
+        System.out.println("----------------------------------------");
+    
+        // Print menu options
         System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
         System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
+        System.out.println("----------------------------------------");
     }
     
+    
+
 
     public static void displayPlayerSetup() {
         numHumans = 0;
         numBots = 0;
 
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│     Choose Number of Players         │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|     Choose Number of Players         |");
+        System.out.println("+--------------------------------------+");
 
 
         while (numHumans + numBots < 2 || numHumans + numBots > 6) {
@@ -93,13 +99,13 @@ public class GameMenu {
     public static BotDifficulty setBotDifficulty() {
         BotDifficulty difficulty = null;
 
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│      Select bot difficulty level     │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|      Select bot difficulty level     |");
+        System.out.println("+--------------------------------------+");
         System.out.println("[1] Easy");
         System.out.println("[2] Medium");
         System.out.println("[3] Hard");
-        System.out.println("──────────────────────────────────────");
+        System.out.println("----------------------------------------");
 
         while (difficulty == null) {
             System.out.print("Enter your choice: ");
@@ -150,7 +156,7 @@ public class GameMenu {
                         System.out.println("Invalid choice. Please enter either 1 or 2.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Please enter either 1 or 2!");
+                System.out.println("Invalid choice. Please enter either 1 or 2.");
                 sc.nextLine();
             }
         }
@@ -160,9 +166,9 @@ public class GameMenu {
     private static List<String> getPlayerNames(int numPlayers) {
         List<String> usernames = new ArrayList<>();
         StringBuilder errorMsg = new StringBuilder();
-        System.out.println("\n╭──────────────────────────────────────╮");
-        System.out.println("│        Enter Names of Players        │");
-        System.out.println("╰──────────────────────────────────────╯");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|        Enter Names of Players        |");
+        System.out.println("+--------------------------------------+");
 
         for (int i = 0; i < numPlayers; i++) {
 
@@ -178,22 +184,9 @@ public class GameMenu {
             }
         }
         return usernames;
-
     }
 
-    public static void startLocalGame() {
-        
-        displayPlayerSetup();
-        Player.players.clear();
-
-        // unique usernames 
-        usernames = getPlayerNames(numHumans);
-
-        // set bot difficulty
-        if (numBots > 0) {
-            botDifficulty = setBotDifficulty();
-        }
-
+    private static void initializeGame() {
         TurnManager.initialize(false, numHumans, numBots);
         Initialize.initializeVariables(usernames, numHumans, numBots, botDifficulty);
 
@@ -201,14 +194,51 @@ public class GameMenu {
         Game.mainFunction(false);
     }
 
+    private static void setupBots() {
+        // set bot difficulty
+        if (numBots > 0) {
+            botDifficulty = setBotDifficulty();
+        }
+    }
+
+    private static void setupPlayers() {
+        displayPlayerSetup();
+        Player.players.clear();
+        usernames = getPlayerNames(numHumans);
+    }
+
+    public static void startLocalGame() {
+        setupPlayers();
+        setupBots();
+        initializeGame();
+        startGame();
+
+        // displayPlayerSetup();
+        // Player.players.clear();
+
+        // // unique usernames 
+        // usernames = getPlayerNames(numHumans);
+
+        // // set bot difficulty
+        // if (numBots > 0) {
+        //     botDifficulty = setBotDifficulty();
+        // }
+
+        // TurnManager.initialize(false, numHumans, numBots);
+        // Initialize.initializeVariables(usernames, numHumans, numBots, botDifficulty);
+
+        // displayGameState();
+        // Game.mainFunction(false);
+    }
+
     public static void displayGameState() {
         clearConsole();
 
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║                                      ║");
-        System.out.println("║          GAME HAS STARTED!           ║");
-        System.out.println("║                                      ║");
-        System.out.println("╚══════════════════════════════════════╝");
+        System.out.println("\n+--------------------------------------+");
+        System.out.println("|                                      |");
+        System.out.println("|          GAME HAS STARTED!           |");
+        System.out.println("|                                      |");
+        System.out.println("+--------------------------------------+");
 
         System.out.println("\n Players: ");
         
@@ -226,7 +256,7 @@ public class GameMenu {
         }
         
         System.out.println("\n Total Players: " + Player.players.size());
-        System.out.println("════════════════════════════════════════");
+        System.out.println("----------------------------------------");
     }
 
     public static void clearConsole() {
