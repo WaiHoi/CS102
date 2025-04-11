@@ -85,11 +85,7 @@ public class GameMenu {
 
     //Prompt the user for player names and validate them
     private static List<String> getPlayerNames(int numPlayers) {
-        // clear any name from before
-        Player.players.clear();
-        usernames.clear();
 
-        List<String> usernames = new ArrayList<>();
         StringBuilder errorMsg = new StringBuilder(); //used to capture why a username is invalid?
         System.out.println("\n+--------------------------------------+");
         System.out.println("|        Enter Names of Players        |");

@@ -15,32 +15,6 @@ public class Score {
     ArrayList<String> colours = new ArrayList<>(Arrays.asList(
                 "blue", "green", "grey", "purple", "orange", "red"));
 
-    /*
-     * method 1: count player cards
-     * -> count number of cards based on colour
-     * -> update playerCount
-     *
-     * method 2: find highest number of cards for each number
-     * -> use method 2
-     * -> compare and find highest number
-     * -> update highestCount
-     *
-     * method 3: calculate score
-     * -> if-else
-     * -> if respective colour and number matches highest number
-     * -> total + 1
-     * -> else
-     * -> get value of card and add to total
-     * method 4 : determine winner
-     * -> use method 3 to get player's score
-     * -> compare player's score with all other players
-     * -> if any other player has a higher score
-     * -> return false (not winner)
-     * -> else
-     * -> return true (winner)
-     */
-
-
     /*** Method 1: Count Player's Coloured Cards ***/
     public void countPlayerCards(Player p) {
 
@@ -70,7 +44,7 @@ public class Score {
         for(String colour : colours){
             int p1colouredCardNumbers = Player.players.get(0).playerColouredCards.get(colour);
 
-            if(p1colouredCardNumbers - Player.players.get(0).playerColouredCards.get(colour) >= 2){
+            if(p1colouredCardNumbers - Player.players.get(1).playerColouredCards.get(colour) >= 2){
                 Player.players.get(0).playerScoreCount += Player.players.get(0).playerColouredCards.get(colour);
     
                 Iterator<Card> iterator = Player.players.get(0).calculateScoreDeck.iterator();
@@ -80,10 +54,10 @@ public class Score {
                         iterator.remove();
                     }
                 }
-            }else if(p1colouredCardNumbers - Player.players.get(0).playerColouredCards.get(colour) >= 2){
-                Player.players.get(1).playerScoreCount += Player.players.get(0).playerColouredCards.get(colour);
+            }else if(Player.players.get(1).playerColouredCards.get(colour) - p1colouredCardNumbers >= 2){
+                Player.players.get(1).playerScoreCount += Player.players.get(1).playerColouredCards.get(colour);
     
-                Iterator<Card> iterator = Player.players.get(0).calculateScoreDeck.iterator();
+                Iterator<Card> iterator = Player.players.get(1).calculateScoreDeck.iterator();
                 while (iterator.hasNext()) {
                     Card c = iterator.next();
                     if (c != null && colour.equals(c.getColour())) {

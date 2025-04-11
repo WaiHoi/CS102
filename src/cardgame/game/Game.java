@@ -3,6 +3,7 @@ package cardgame.game;
 import java.util.*;
 
 import cardgame.model.*;
+import cardgame.utility.UsernameValidator;
 
 public class Game {
     public static int currentRound = 1;
@@ -92,6 +93,9 @@ public class Game {
     }
 
     public static void mainFunction() {
+
+        // new game always starts with false
+        lastRoundTriggered = false;
 
         displayRoundHeader(currentRound);
 
@@ -185,6 +189,17 @@ public class Game {
         lastRound = 0;
         score = new Score();
         lastRoundTriggered = false;
+
+        for (Player p : Player.players) {
+            p.openDeck.clear();
+            p.closedDeck.clear();
+        }
+
+        // clear all players from last game
+        Player.players.clear();
+        // clear previous usernames
+        UsernameValidator.clearAllUsernames();
+
     }
 
 }
