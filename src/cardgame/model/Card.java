@@ -26,23 +26,28 @@ public class Card {
     private List<String> renderCardAscii() {
         String colorCode = getColorCode();
         List<String> lines = new ArrayList<>();
-
+    
         // Define the ASCII art structure
-        String topBottomBorder = colorCode + "+-----------+" + AnsiColors.RESET;
-        String numberLine = colorCode + String.format("| %-9s |", number) + AnsiColors.RESET;
-        String emptyLine = colorCode + "|           |" + AnsiColors.RESET;
-        String colorLine = colorCode + String.format("|   %-6s  |", colour) + AnsiColors.RESET;
-
+        String topBottomBorder = colorCode + "+-----------+" + AnsiColors.RESET; // Border remains the same width
+        String topNumberLine = colorCode + String.format("| %-9s |", number) + AnsiColors.RESET; // Top number (left-aligned)
+        String emptyLine = colorCode + "|           |" + AnsiColors.RESET; // Empty line
+        String colorLine = colorCode + String.format("|   %-6s  |", colour) + AnsiColors.RESET; // Centered color text
+        String bottomNumberLine = colorCode + String.format("| %9s |", number) + AnsiColors.RESET; // Bottom number (right-aligned)
+    
+        // Add lines to represent the card
         lines.add(topBottomBorder);
-        lines.add(numberLine);
+        lines.add(topNumberLine);
         lines.add(emptyLine);
+        lines.add(emptyLine); // Additional empty line for extra length
         lines.add(colorLine);
         lines.add(emptyLine);
-        lines.add(numberLine);
+        lines.add(emptyLine); // Additional empty line for extra length
+        lines.add(bottomNumberLine);
         lines.add(topBottomBorder);
-
+    
         return lines;
     }
+    
 
     /**
      * Returns the ANSI color code based on the card's colour.
@@ -67,7 +72,7 @@ public class Card {
             }
 
             // Print each line of the cards side by side
-            for (int line = 0; line < 7; line++) { // Each card has 7 lines
+            for (int line = 0; line < 9 ; line++) { // Each card has NINE lines
                 StringBuilder combinedLine = new StringBuilder();
                 for (List<String> cardLines : allCardsLines) {
                     if (line < cardLines.size()) {
