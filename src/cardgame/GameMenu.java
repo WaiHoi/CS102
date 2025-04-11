@@ -306,7 +306,7 @@ public class GameMenu {
 
     // Display the main menu
     public static void displayMainMenu() {
-        printBorder(); //print border "+---...-----+" deined in GameMenu class
+        printBorder(); //print border "+---...-----+" defined in GameMenu class
         System.out.println(AnsiColors.colorize("Welcome to a game of ", AnsiColors.BRIGHT_CYAN) +
         // AnsiColors.colorize(...) calls a method from AnsiColors.java that adds color formatting to the text. 
         // AnsiColors.BRIGHT_CYAN is a constant string from AnsiColors.java that represents the ANSI code for bright cyan.
@@ -352,7 +352,7 @@ public class GameMenu {
             //evaluate again after players key in numHuman and numBots
                 System.out.println(AnsiColors.colorizeBold(
                         "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
-                        AnsiColors.BRIGHT_YELLOW));
+                        AnsiColors.BRIGHT_YELLOW)); //explanation in line 310
             }
         }
     }
@@ -360,7 +360,7 @@ public class GameMenu {
     //Prompt the user for player names and validate them
     private static List<String> getPlayerNames(int numPlayers) {
         List<String> usernames = new ArrayList<>();
-        StringBuilder errorMsg = new StringBuilder();
+        StringBuilder errorMsg = new StringBuilder(); //used to capture why a username is invalid?
         System.out.println("\n+--------------------------------------+");
         System.out.println("|        Enter Names of Players        |");
         System.out.println("+--------------------------------------+");
@@ -507,8 +507,8 @@ public class GameMenu {
     private static void setupHumans() {
     // Collect user input and player names
         displayPlayerSetup(); //call displayPlayerSetup method (line 332)
-        Player.players.clear();
-        usernames = getPlayerNames(numHumans);
+        Player.players.clear(); //clears the current list of players, ensuring theres no leftover players from the previous game
+        usernames = getPlayerNames(numHumans); //usernames is of type List<String>
     }
 
     // Ask for difficulty level if bots are present

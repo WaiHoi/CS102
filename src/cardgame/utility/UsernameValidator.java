@@ -12,7 +12,7 @@ public class UsernameValidator {
 
     // Validation rules
     private static final Set<String> RESERVED_NAMES = Set.of("bot", "player");
-    private static final Pattern VALID_CHARS = Pattern.compile("^[a-zA-Z0-9_-]+$");
+    private static final Pattern VALID_CHARS = Pattern.compile("^[a-zA-Z0-9_-]+$"); // Matches full string: ^ = start, [a-zA-Z0-9_-] = allowed chars, + = 1+ times, $ = end
     private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 20;
 
