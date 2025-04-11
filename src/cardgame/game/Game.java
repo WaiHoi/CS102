@@ -11,6 +11,7 @@ public class Game {
     public static int lastRound = 0;
     public static Card card;
     public static Player player;
+    public static Score score = new Score();
 
     private static boolean lastRoundTriggered = false; // Flag for last round
 
@@ -143,20 +144,7 @@ public class Game {
 
         Score score = new Score();
 
-        // calculate scores
-        score.calculateScore(Player.players);
-
-        // print scores for each player
-        System.out.println("Scores:");
-        for (Map.Entry<Player, Integer> entry : score.getPlayerScoreCount().entrySet()) {
-            System.out.println(entry.getKey().getPlayerName() + ": " + entry.getValue());
-        }
-
-        // determine winner
-        Player winner = score.determineWinner(Player.players);
-        int winnerScore = score.getPlayerScore(winner);
-
-        System.out.println(winner.getPlayerName() + " has a score of " + winnerScore);
+        // System.out.println(winner.getPlayerName() + " has a score of " + winnerScore);
 
 
         System.out.println("Total rounds played: " + currentRound);
@@ -193,6 +181,8 @@ public class Game {
             gameLogic(p, true);
             p.lastRound(p);
         }
+
+        score.calculateScore();
     }
 
     public static void resetGameState() {
