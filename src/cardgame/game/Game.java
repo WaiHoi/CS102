@@ -86,86 +86,63 @@ public class Game {
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
         Card.printCards(p.openDeck, true, true, true); // displayCardOptions = true, lineNumber = true
 
-        // move to next turn
-        TurnManager.nextTurn();
-
         Scanner sc = new Scanner(System.in);
         System.out.print("\nPress Enter to continue> ");
         sc.nextLine();
     }
 
-    public static void mainFunction(boolean isNetworkMode) {
+    public static void mainFunction() {
 
         displayRoundHeader(currentRound);
 
         while (true) {    
-            boolean processLastRound = false;
 
-            // get current player
-            int currentPlayerID = TurnManager.getCurrentPlayerID();
-            Player currentPlayer = Player.players.get(currentPlayerID - 1);
+            for (Player currentPlayer : Player.players) {
+                // sent to all
+                System.out.println("\n--------------------------");
+                System.out.println("    " + currentPlayer.name + "'s turn!    ");
+                System.out.println("--------------------------\n");
+    
+                System.out.println("Parade:\n");
+                Card.printCards(parade, false, true, true); // displayCardOptions = true, isParade = true
+    
+                // Play the current turn (regular or last round)
+                gameLogic(currentPlayer, lastRoundTriggered);
 
-            // sent to all
-            System.out.println("\n--------------------------");
-            System.out.println("    " + currentPlayer.name + "'s turn!    ");
-            System.out.println("--------------------------\n");
+                // Check for last round conditions
+                if (!lastRoundTriggered && 
+                    (checkPlayersHandForCardFromEachColour(currentPlayer) || deck.isEmpty())) {
 
-            System.out.println("Parade:\n");
-            Card.printCards(parade, false, true, true); // displayCardOptions = true, isParade = true
+                    lastRoundTriggered = true;
+                    System.out.println("Last round triggered by " + currentPlayer.name + "!\n");
+                    executeLastRound(currentPlayer);
 
-            // Play the current turn (regular or last round)
-            gameLogic(currentPlayer, lastRoundTriggered);
-
-            // Check for last round conditions
-            if (!lastRoundTriggered && (checkPlayersHandForCardFromEachColour(currentPlayer) ||
-                    deck.isEmpty())) {
-                lastRoundTriggered = true;
-                System.out.println("Last round triggered by " + currentPlayer.name + "!\n");
-                processLastRound = true;
+                    // end game after last round
+                    return;
+                }
             }
-
-            // If last round was just triggered, break to process final turns
-            if (processLastRound) {
-                executeLastRound();
-                break;
-            }
-
-            if (!lastRoundTriggered && TurnManager.getCurrentPlayerID() == 1) {
-                currentRound++;
-                displayRoundHeader(currentRound);
-            } 
-
+            // after every player has played
+            currentRound++;
+            displayRoundHeader(currentRound);
         }
-
-        // Game over logic
-        System.out.println("+----------------------+");
-        System.out.println("|      GAME OVER       |");
-        System.out.println("+----------------------+");
-
-        Score score = new Score();
-
-        // System.out.println(winner.getPlayerName() + " has a score of " + winnerScore);
-
-
-        System.out.println("Total rounds played: " + currentRound);
     }
 
-    private static void executeLastRound() {
+    private static void executeLastRound(Player triggeringPlayer) {
         System.out.println("\n+-------------------------+");
         System.out.println("|       FINAL ROUND       |");
         System.out.println("+-------------------------+");
 
         // get player who triggered last round
-        int triggeringPlayerID = TurnManager.getCurrentPlayerID();
+        int startIndex = Player.players.indexOf(triggeringPlayer);
         List<Player> finalRoundOrder = new ArrayList<>();
 
         // add players from triggering player to end
-        for (int i = triggeringPlayerID - 1; i < Player.players.size(); i++) {
+        for (int i = startIndex; i < Player.players.size(); i++) {
             finalRoundOrder.add(Player.players.get(i));
         }
 
         // add players from start to triggering player
-        for (int i = 0; i < triggeringPlayerID - 1; i++) {
+        for (int i = 0; i < startIndex; i++) {
             finalRoundOrder.add(Player.players.get(i));
         }
 
@@ -185,17 +162,29 @@ public class Game {
         score.calculateScore();
     }
 
-    public static void resetGameState() {
-        currentRound = 1;
-        deck.clear();
-        parade.clear();
-        lastRoundTriggered = false;
+    private static void showGameOver() {
+        System.out.println("+----------------------+");
+        System.out.println("|      GAME OVER       |");
+        System.out.println("+----------------------+");
+
+        Score score = new Score();
+        System.out.println("Total rounds played: " + currentRound);
     }
 
     public static void displayRoundHeader(int currentRound) {
         System.out.println("\n+----------------------+");
         System.out.printf ("|       ROUND %-2d       |\n", currentRound);
         System.out.println("+----------------------+");
+    }
+
+    public static void resetGame() {
+        // Reset all static variables
+        currentRound = 1;
+        deck.clear();
+        parade.clear();
+        lastRound = 0;
+        score = new Score();
+        lastRoundTriggered = false;
     }
 
 }

@@ -120,16 +120,17 @@ public class Bot extends Player {
         System.out.println("Picking 2 cards by random...\n");
 
         for (int j = 0; j < 2; j++) {
-            int listSize = 4 - j;
+            int listSize = p.closedDeck.size();;
             int selectNumber = p.placeCardLastRound(listSize);
             Card c = p.closedDeck.get(selectNumber);
+            p.closedDeck.remove(c);
             p.openDeck.add(c);
 
             System.out.println("Randomly picked " + c.getColour() + " " + c.getValue());
         }
 
         System.out.println("\nYour current deck:");
-        Card.printCards(p.openDeck, true, false, true);
+        Card.printCards(p.openDeck, true, true, true);
 
     }
 
@@ -138,8 +139,6 @@ public class Bot extends Player {
         ArrayList<Card> originalClosedDeck = new ArrayList<>(this.closedDeck);
         
         try {
-            // get size 
-            this.closedDeck = new ArrayList<>(this.closedDeck.subList(0, listSize));
             
             // use existing difficulty methods
             switch (botDifficulty) {

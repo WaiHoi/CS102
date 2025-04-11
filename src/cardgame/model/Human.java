@@ -85,13 +85,13 @@ public class Human extends Player {
                     break; // valid input, exit loop
                 } else {
                     System.out.println("Invalid Entry!");
-                    System.out.printf("Please enter only numbers from 1 to %d: ", listSize);
+                    System.out.printf("Please enter only numbers from 1 to %d: ", listSize + 1);
                 }
 
             } catch (InputMismatchException e) {
                 sc.nextLine();
                 System.out.println("Invalid Entry!");
-                System.out.printf("Please enter only numbers from 1 to %d: ", listSize);
+                System.out.printf("Please enter only numbers from 1 to %d: ", listSize + 1);
             }
         }
         return selectNumber;
