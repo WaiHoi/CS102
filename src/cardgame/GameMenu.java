@@ -349,6 +349,7 @@ public class GameMenu {
             //max is initialized as 0 for the case of 0 human players, 6 bot players
             //Warning if total number of players is not within the limits
             if (!isValidPlayerCount(numHumans, numBots)) {
+            //evaluate again after players key in numHuman and numBots
                 System.out.println(AnsiColors.colorizeBold(
                         "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
                         AnsiColors.BRIGHT_YELLOW));
