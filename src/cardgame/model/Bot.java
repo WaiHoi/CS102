@@ -31,7 +31,6 @@ public class Bot extends Player {
     }
 
     public int easyDifficulty() {
-        System.out.println("[DEBUG] Bot easy difficulty");
         // chooses a random card 
         Random rand = new Random();
         int selectNumber = rand.nextInt(closedDeck.size());
@@ -39,7 +38,6 @@ public class Bot extends Player {
     }
 
     public int mediumDifficulty() {
-        System.out.println("[DEBUG] Bot medium difficulty");
         // place uncommon coloured card into the parade
 
         // 20% chance to pick randomly
@@ -73,7 +71,6 @@ public class Bot extends Player {
     }
 
     public int hardDifficulty() {
-        System.out.println("[DEBUG] Bot hard difficulty");
         // choose best card 
         // simulate outcome of each move
         // pick the one that results in lowest cost
@@ -132,7 +129,7 @@ public class Bot extends Player {
         }
 
         System.out.println("\nYour current deck:");
-        System.out.println(Card.printCards(p.openDeck, true, false));
+        Card.printCards(p.openDeck, true, false, true);
 
     }
 

@@ -57,10 +57,6 @@ public class Game {
         System.out.println("\nOpening up " + p.getPlayerName() + "'s card now...");
         System.out.println(p.getPlayerName() + " has drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
 
-        // Print current parade as ASCII cards
-        System.out.println("Updated Parade:");
-        Card.printCards(parade, false, true); // displayCardOptions = true
-
         ArrayList<Card> cardsDrawn = new ArrayList<>();
 
         // Check collectible cards
@@ -77,19 +73,23 @@ public class Game {
             }
         }
 
+        // Print current parade as ASCII cards
+        System.out.println("Updated Parade:\n");
+        Card.printCards(parade, false, true, true); // displayCardOptions = true, lineNumber = true
+
         // Show cards drawn as ASCII cards
         System.out.println("\nCards that " + p.getPlayerName() + " has collected this round:");
-        Card.printCards(cardsDrawn, false, true); // displayCardOptions = true
+        Card.printCards(cardsDrawn, false, true, true); // displayCardOptions = true, lineNumber = true
 
         // Show open deck as ASCII cards
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
-        Card.printCards(p.openDeck, true, true); // displayCardOptions = true
+        Card.printCards(p.openDeck, true, true, true); // displayCardOptions = true, lineNumber = true
 
         // move to next turn
         TurnManager.nextTurn();
 
         Scanner sc = new Scanner(System.in);
-        System.out.print("Press Enter to continue> ");
+        System.out.print("\nPress Enter to continue> ");
         sc.nextLine();
     }
 
@@ -97,10 +97,7 @@ public class Game {
 
         displayRoundHeader(currentRound);
 
-        while (true) {
-            System.out.println("\nParade:");
-            Card.printCards(parade, false, true); // displayCardOptions = true
-    
+        while (true) {    
             boolean processLastRound = false;
 
             // get current player
@@ -111,6 +108,9 @@ public class Game {
             System.out.println("\n--------------------------");
             System.out.println("    " + currentPlayer.name + "'s turn!    ");
             System.out.println("--------------------------\n");
+
+            System.out.println("Parade:\n");
+            Card.printCards(parade, false, true, true); // displayCardOptions = true, isParade = true
 
             // Play the current turn (regular or last round)
             gameLogic(currentPlayer, lastRoundTriggered);
@@ -132,10 +132,7 @@ public class Game {
             if (!lastRoundTriggered && TurnManager.getCurrentPlayerID() == 1) {
                 currentRound++;
                 displayRoundHeader(currentRound);
-        
-            } else {
-                System.out.println("------------------------------");
-            }
+            } 
 
         }
 
@@ -190,8 +187,8 @@ public class Game {
             System.out.println("-------------------------------\n");
     
             // Display parade as ASCII cards
-            System.out.println("Parade:");
-            Card.printCards(parade, false, true); // displayCardOptions = true
+            System.out.println("\nParade:\n");
+            Card.printCards(parade, false, true, true); // displayCardOptions = true, lineNumber = true
     
             gameLogic(p, true);
             p.lastRound(p);

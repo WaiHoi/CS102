@@ -16,9 +16,9 @@ public class Human extends Player {
 
     public int placeCard() {
 
-        System.out.println(ansi().fgBrightCyan().a("Your closed deck:").reset());
-        System.out.println(Card.printCards(closedDeck, false, true));
-        System.out.printf("Please choose a card to be added into the parade: ");
+        System.out.println(ansi().fgBrightCyan().a("\nYour closed deck:\n").reset());
+        Card.printCards(closedDeck, false, true, false);
+        System.out.printf("\nPlease choose a card to be added into the parade: ");
 
         int selectNumber = 0;
 
@@ -52,6 +52,9 @@ public class Human extends Player {
         };
 
         for (int j = 0; j < 2; j++) {
+            System.out.println(ansi().fgBrightCyan().a("\nYour closed deck:\n").reset());
+            Card.printCards(closedDeck, false, true, false);
+    
             System.out.print(messages[j] + "\n> ");
 
             int listSize = 3 - j;
@@ -64,12 +67,12 @@ public class Human extends Player {
 
         }
         System.out.println("Your current deck:");
-        System.out.println(Card.printCards(p.openDeck, true, false));
+        Card.printCards(p.openDeck, true, true, true);
         System.out.println("\nThank you, your last 2 cards will be discarded now.");
     }
 
     public int placeCardLastRound(int listSize) {
-
+        
         int selectNumber = 0;
 
         Scanner sc = new Scanner(System.in);
