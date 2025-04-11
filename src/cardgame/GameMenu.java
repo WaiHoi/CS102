@@ -278,6 +278,12 @@ import java.util.*;
 import cardgame.game.*;
 import cardgame.model.*;
 import cardgame.utility.*;
+//java.lang.*; is automatically done by java complier for every single java file
+/* Automatically done behind the scenes:
+import java.lang.System;
+import java.lang.String;
+import java.lang.Math;
+... and many more*/
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -300,30 +306,47 @@ public class GameMenu {
 
     // Display the main menu
     public static void displayMainMenu() {
-        printBorder();
+        printBorder(); //print border "+---...-----+" deined in GameMenu class
         System.out.println(AnsiColors.colorize("Welcome to a game of ", AnsiColors.BRIGHT_CYAN) +
-                AnsiColors.colorize("Parades!", AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
+        // AnsiColors.colorize(...) calls a method from AnsiColors.java that adds color formatting to the text. 
+        // AnsiColors.BRIGHT_CYAN is a constant string from AnsiColors.java that represents the ANSI code for bright cyan.
+        // just like how values are passed into printf() to format a string.
+        // For example: printf("Hello, %s", name) inserts the value of 'name' —
+        // similarly, colorize(text, color) applies the given color to the text.
+        
+        AnsiColors.colorize("Parades!", AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
+        // same idea on colorization as the above
         System.out.println(AnsiColors.colorizeBold("ENJOY AND HAVE FUN!", AnsiColors.BRIGHT_YELLOW));
-        printBorder();
+        // same idea on colorization as the above
+        printBorder(); // same idea as mentioned
 
         //Display the game options
         System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
+        // same idea on colorization as the above
         System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
-        printBorder();
+        // same idea on colorization as the above
+        printBorder(); // same idea as mentioned
     }
 
     // Prompts user to setup the number of bots and players
     public static void displayPlayerSetup() {
-        numHumans = 0;
-        numBots = 0;
+        numHumans = 0; //initialize numHumans as 0
+        numBots = 0; //initialize numBots as 0
 
-        printHeader("Choose Number of Players");
+        printHeader("Choose Number of Players"); //call printHeader() method (line 562)
 
         //Keep asking until valid player count is entered
         while (!isValidPlayerCount(numHumans, numBots)) {
-            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS);
+            //while number of players is either less than 2 or more than 6
+            //isValidPlayerCount() method in line 379
+            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS); 
+            //calls getValidatedInput() method in line 391. 
+            //min is initialized as 0 for the case of 0 human players, 6 bot players
+            //max is initialized as MAX_PlAYERS for the case of 6 human players, 0 bot players
             numBots = getValidatedInput("Enter number of bot players: ", 0, MAX_PLAYERS);
-
+            //calls getValidatedInput() method in line 391. 
+            //min is initialized as MAX_PlAYERS for the case of 6 human players, 0 bot players
+            //max is initialized as 0 for the case of 0 human players, 6 bot players
             //Warning if total number of players is not within the limits
             if (!isValidPlayerCount(numHumans, numBots)) {
                 System.out.println(AnsiColors.colorizeBold(
@@ -361,7 +384,10 @@ public class GameMenu {
     // Check if total players are within the acceptable limits
     private static boolean isValidPlayerCount(int humans, int bots) {
         int totalPlayers = humans + bots;
-        return totalPlayers >= MIN_PLAYERS && totalPlayers <= MAX_PLAYERS;
+        return totalPlayers >= MIN_PLAYERS && totalPlayers <= MAX_PLAYERS; 
+        //MIN_PLAYER is initialized as 2 and MAX_PLAYER is initialized as 6. 
+        //we need at least 2 players to play the game and we cannot have more than 6 players
+        //returns true if number of players is between 2 to 6 (inclusive)
     }
 
     // Get validated input from the user
@@ -370,7 +396,7 @@ public class GameMenu {
             try {
                 System.out.print(AnsiColors.colorize(prompt, AnsiColors.BRIGHT_CYAN));
                 int input = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                scanner.nextLine(); //same explanation as in line 
 
                 if (input >= min && input <= max) {
                     return input;
@@ -426,47 +452,60 @@ public class GameMenu {
 
     // Start the game
     public static void startGame() {
-        displayMainMenu();
+        displayMainMenu(); // call displayMainMenu from GameMenu class (line 308)
 
         while (true) {
+            //Starts an infinite loop that keeps running until you explicitly return or System.exit(0);.
+            //This is used to keep asking the player for valid input choice = 1 or choice = 2, until they give it.
             try {
                 System.out.print("Enter your choice: ");
-                int choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                int choice = scanner.nextInt(); 
+                //scanner.nextInt() Reads just the number, 
+                //Leaves the newline \n (the Enter key) in the input buffer
+                scanner.nextLine(); 
+                //Sees the leftover \n sitting there
+                //Reads everything up to and including the \n
+                //Returns an empty string ("") because there was nothing typed before the newline
+                //returns to nothing because its not assigned to a variable
+                //Clears the buffer
+                //note: without scanner.nextLine() above any following nextLine() would immediately return an empty string
+                //because it would just read the leftover \n instead of waiting for actual input.
 
-                switch (choice) {
+                switch (choice) {//switch case
                     case 1:
-                        startLocalGame();
-                        return;
+                        startLocalGame(); //call startLocalGmae() method (line 488)
+                        return; //exits the start game method completely, no return variable type as its a void method
                     case 2:
                         System.out.println("Exiting game...");
-                        System.exit(0);
-                        break;
-                    default:
+                        System.exit(0);// teminates the program by calling the static exit method from System
+                    default:  // Handles cases where the user enters an integer other than 1 or 2
                         System.out.println(AnsiColors.colorizeBold(
-                                "Invalid choice! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED));
+                                "Invalid choice! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); 
+                                //explanation for this mentioned in displayMainMenu() method
+                                //no need for scanner.nextLine() as the user has already entered an integer, so 
+                                //the newline has already been cleared by the scanner.nextLine() right after it (in line 455)
                 }
-            } catch (InputMismatchException e) {
-                //Handle invalid menu option
+            } catch (InputMismatchException e) { //
+                //Handle invalid cases when the input, choice, is not a integer
                 System.out.println(AnsiColors.colorizeBold(
-                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED));
-                scanner.nextLine(); // Clear invalid input
+                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); // explanation for this is in displayMainMenu() method
+                scanner.nextLine(); //clears the line by returning the invalid String input. its invalid because int is the required datatype, not String.
             }
         }
     }
 
     // Start local game setup
     public static void startLocalGame() {
-        setupHumans();
-        setupBots();
-        initializeGame();
-        startGame();
+        setupHumans(); //call setupHumans() method 
+        setupBots(); //call setupBots() method
+        initializeGame(); //call initializeGame method
+        startGame(); // call startGame method
     }
 
     // Setup players
     private static void setupHumans() {
     // Collect user input and player names
-        displayPlayerSetup();
+        displayPlayerSetup(); //call displayPlayerSetup method (line 332)
         Player.players.clear();
         usernames = getPlayerNames(numHumans);
     }
@@ -519,8 +558,8 @@ public class GameMenu {
 
     // Print header with borders
     private static void printHeader(String header) {
-        printBorder();
-        System.out.printf("|%s|\n", centerText(header, CONSOLE_WIDTH));
+        printBorder(); 
+        System.out.printf("|%s|\n", centerText(header, CONSOLE_WIDTH)); // centres the header
         printBorder();
     }
 
@@ -532,13 +571,39 @@ public class GameMenu {
     // Center text within a fixed width
     private static String centerText(String text, int width) {
         int padding = Math.max((width - text.length()) / 2, 0);
+        // Calculate the number of spaces to pad on each side.
+        // (width - text.length()) gives total extra space available.
+        // Dividing by 2 gives the padding on one side.\
+        // Math.max(..., 0) ensures the padding is not negative. The '0' makes the width at least 0, even if its negative
         return String.format("%" + padding + "s%s%" + padding + "s", "", text, "");
+        // Construct the centered string using String.format.
+        // "%" + padding + "s" creates a formatted string field that pads with spaces to a total width of 'padding'.
+        // The first "%" + padding + "s" adds left padding, then %s is where the text goes,
+        // and the second "%" + padding + "s" adds right padding.
+        // For example, if padding is 3 and text is "Hello", the format becomes "%3s%s%3s"
+        // and with the arguments ("", "Hello", "") it produces "   Hello   ". (this is the portions after the comma in the String.format in line 568)
+        // and if arguments were ("a", "Hello", "a"), it produces "     aHello     a"
+
     }
 
     public static void main(String[] args) {
-        AnsiConsole.systemInstall();
-        
-        startGame();
+        AnsiConsole.systemInstall(); 
+        // AnsiConsole.systemInstall() comes from the Jansi library:
+        // (import org.fusesource.jansi.AnsiConsole)
+        //It wraps System.out and System.err with special streams that interpret those ANSI escape codes
+        // — so even on Windows CMD, the output looks properly styled.
+
+        // It replaces the standard System.out and System.err with special streams
+        // that support ANSI escape codes (e.g. \033[31m → red text) — enabling things like:
+        // - Colored text
+        // - Bold text
+        // - Cursor movement
+        // - Background colors
+
+        // This ensures that ANSI formatting works properly even on terminals
+        // (like Windows CMD) that don’t support ANSI codes by default.
+
+        startGame(); //calls startGame method from GameMenu
 
         AnsiConsole.systemUninstall();
     }
