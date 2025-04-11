@@ -57,8 +57,9 @@ public class Game {
         System.out.println("\nOpening up " + p.getPlayerName() + "'s card now...");
         System.out.println(p.getPlayerName() + " has drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
 
-        // Print current parade
-        System.out.println("Updated Parade:\n" + Card.printCards(parade, false, false));
+        // Print current parade as ASCII cards
+        System.out.println("Updated Parade:");
+        Card.printCards(parade, false, true); // displayCardOptions = true
 
         ArrayList<Card> cardsDrawn = new ArrayList<>();
 
@@ -76,13 +77,13 @@ public class Game {
             }
         }
 
-        // Show cards drawn in the current round.
+        // Show cards drawn as ASCII cards
         System.out.println("\nCards that " + p.getPlayerName() + " has collected this round:");
-        System.out.println(Card.printCards(cardsDrawn, false, false));
+        Card.printCards(cardsDrawn, false, true); // displayCardOptions = true
 
-        // Show open deck
+        // Show open deck as ASCII cards
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
-        System.out.println(Card.printCards(p.openDeck, true, false) + "\n");
+        Card.printCards(p.openDeck, true, true); // displayCardOptions = true
 
         // move to next turn
         TurnManager.nextTurn();
@@ -97,7 +98,8 @@ public class Game {
         displayRoundHeader(currentRound);
 
         while (true) {
-            System.out.println("\nParade:\n" + Card.printCards(parade, false, false));
+            System.out.println("\nParade:");
+            Card.printCards(parade, false, true); // displayCardOptions = true
     
             boolean processLastRound = false;
 
@@ -186,10 +188,11 @@ public class Game {
             System.out.println("\n-------------------------------");
             System.out.println("    " + p.name + "'s final turn!    ");
             System.out.println("-------------------------------\n");
-            
-            // set the current player for turn management
-            TurnManager.setCurrentPlayer(p.getPlayerID());
-            
+    
+            // Display parade as ASCII cards
+            System.out.println("Parade:");
+            Card.printCards(parade, false, true); // displayCardOptions = true
+    
             gameLogic(p, true);
             p.lastRound(p);
         }
