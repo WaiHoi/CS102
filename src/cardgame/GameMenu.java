@@ -232,8 +232,8 @@ public class GameMenu {
     // Setup players
     private static void setupHumans() {
     // Collect user input and player names
-        displayPlayerSetup(); //call displayPlayerSetup method (line 332)
-        usernames = getPlayerNames(numHumans); //usernames is of type List<String>
+        displayPlayerSetup(); //call displayPlayerSetup method (line 58)
+        usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
     }
 
     // Ask for difficulty level if bots are present
