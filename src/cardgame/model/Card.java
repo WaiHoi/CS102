@@ -20,33 +20,84 @@ public class Card {
         return number;
     }
 
+    private List<String> getAsciiArt(String color) {
+        String colorCode = getColorCode(); // Get the ANSI color code for this card's color
+        switch (color.toLowerCase()) {
+            case "blue": // Princess
+                return Arrays.asList(
+                    colorCode + "|   \\^_^/   |" + AnsiColors.RESET,
+                    colorCode + "|  ( 'o' )  |" + AnsiColors.RESET,
+                    colorCode + "|   \\_=_/   |" + AnsiColors.RESET
+                );
+            case "red": // Clown
+                return Arrays.asList(
+                    colorCode + "|   *<:o)   |" + AnsiColors.RESET,
+                    colorCode + "|  <(:o)>   |" + AnsiColors.RESET,
+                    colorCode + "|   <:o*>   |" + AnsiColors.RESET
+                );
+            case "green": // Dwarf
+                return Arrays.asList(
+                    colorCode + "|   o==[]   |" + AnsiColors.RESET,
+                    colorCode + "|  ( o_o )  |" + AnsiColors.RESET,
+                    colorCode + "|   \\___/   |" + AnsiColors.RESET
+                );
+            case "orange": // Duck
+                return Arrays.asList(
+                    colorCode + "|   ~<')    |" + AnsiColors.RESET,
+                    colorCode + "|  ~<')___  |" + AnsiColors.RESET,
+                    colorCode + "|     \"     |" + AnsiColors.RESET
+                );
+            case "grey": // Bunny
+                return Arrays.asList(
+                    colorCode + "|   ('>     |" + AnsiColors.RESET,
+                    colorCode + "|  /rr *\\)) |" + AnsiColors.RESET,
+                    colorCode + "| ((`\\___   |" + AnsiColors.RESET
+                );
+            case "purple": // Cat
+                return Arrays.asList(
+                    colorCode + "|   /\\_/\\   |" + AnsiColors.RESET,
+                    colorCode + "|  ( o.o )  |" + AnsiColors.RESET,
+                    colorCode + "|   > ^ <   |" + AnsiColors.RESET
+                );
+            default: // Default empty art
+                return Arrays.asList(
+                    colorCode + "|           |" + AnsiColors.RESET,
+                    colorCode + "|           |" + AnsiColors.RESET,
+                    colorCode + "|           |" + AnsiColors.RESET
+                );
+        }
+    }
+    
+    
     /**
      * Generates ASCII art for the card with colored borders and text.
      */
     private List<String> renderCardAscii() {
-        String colorCode = getColorCode();
-        List<String> lines = new ArrayList<>();
-    
-        // Define the ASCII art structure
-        String topBottomBorder = colorCode + "+-----------+" + AnsiColors.RESET; // Border remains the same width
-        String topNumberLine = colorCode + String.format("| %-9s |", number) + AnsiColors.RESET; // Top number (left-aligned)
-        String emptyLine = colorCode + "|           |" + AnsiColors.RESET; // Empty line
-        String colorLine = colorCode + String.format("|   %-6s  |", colour) + AnsiColors.RESET; // Centered color text
-        String bottomNumberLine = colorCode + String.format("| %9s |", number) + AnsiColors.RESET; // Bottom number (right-aligned)
-    
-        // Add lines to represent the card
-        lines.add(topBottomBorder);
-        lines.add(topNumberLine);
-        lines.add(emptyLine);
-        lines.add(emptyLine); // Additional empty line for extra length
-        lines.add(colorLine);
-        lines.add(emptyLine);
-        lines.add(emptyLine); // Additional empty line for extra length
-        lines.add(bottomNumberLine);
-        lines.add(topBottomBorder);
-    
-        return lines;
-    }
+    String colorCode = getColorCode();
+    List<String> lines = new ArrayList<>();
+
+    // Define the borders and other card elements
+    String topBottomBorder = colorCode + "+-----------+" + AnsiColors.RESET; // Border width unchanged
+    String topNumberLine = colorCode + String.format("| %-9s |", number) + AnsiColors.RESET; // Top number (left-aligned)
+    String emptyLine = colorCode + "|           |" + AnsiColors.RESET;
+
+    // Get the ASCII art for this card's color
+    List<String> asciiArt = getAsciiArt(colour);
+
+    String bottomNumberLine = colorCode + String.format("| %9s |", number) + AnsiColors.RESET; // Bottom number (right-aligned)
+
+    // Add lines to represent the card
+    lines.add(topBottomBorder);
+    lines.add(topNumberLine);
+    lines.add(emptyLine);
+    lines.addAll(asciiArt); // Insert the ASCII art here
+    lines.add(emptyLine);
+    lines.add(bottomNumberLine);
+    lines.add(topBottomBorder);
+
+    return lines;
+}
+
     
 
     /**
