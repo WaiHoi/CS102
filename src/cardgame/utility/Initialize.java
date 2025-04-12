@@ -18,8 +18,8 @@ public class Initialize {
      */
     public static void initializeVariables(List<String> usernames, int numHumans, 
                                            int numBots, BotDifficulty botDifficulty) {
-        initializePlayers(usernames, numHumans);
-        initializeBots(numBots, botDifficulty);
+        initializePlayers(usernames, numHumans); //line 34
+        initializeBots(numBots, botDifficulty); //
         initializeDeck();
         dealCardsToPlayers();
         initializeParade();
@@ -31,10 +31,13 @@ public class Initialize {
      * @param usernames List of usernames for human players.
      * @param numHumans Number of human players.
      */
+
+    //This method creates and adds numHumans Human players (subclass of Player) to the shared list Player.players,
+    //using the names from the usernames list and assigning each a unique ID.
     private static void initializePlayers(List<String> usernames, int numHumans) {
         for (int i = 0; i < numHumans; i++) {
             int playerID = i + 1;
-            Player.players.add(new Human(usernames.get(i), playerID));
+            Player.players.add(new Human(usernames.get(i), playerID)); 
         }
     }
 
@@ -44,9 +47,12 @@ public class Initialize {
      * @param numBots       Number of bot players.
      * @param botDifficulty Difficulty level for bots.
      */
+
+    // Creates and adds numBots Bot players (subclass of Player) to Player.players,
+    // each with a name like "Bot 1" and the specified difficulty level.
     private static void initializeBots(int numBots, BotDifficulty botDifficulty) {
         for (int i = 0; i < numBots; i++) {
-            Player.players.add(new Bot("Bot " + (i + 1), botDifficulty));
+            Player.players.add(new Bot("Bot " + (i + 1), botDifficulty)); //
         }
     }
 
