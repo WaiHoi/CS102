@@ -59,25 +59,39 @@ public class GameMenu {
         printBorder(); // Print border "+---...-----+" defined in GameMenu class
     }
 
-    // Prompts user to setup the number of bots and players
     public static void displayPlayerSetup() {
-        numHumans = 0; //initialize numHumans as 0
-        numBots = 0; //initialize numBots as 0
-
-        printHeader("Choose Number of Players"); //call printHeader() method 
-
-        //Keep asking until valid player count is entered
+        numHumans = 0; // Initialize numHumans as 0
+        numBots = 0; // Initialize numBots as 0
+    
+        // Generate Figlet-style header for "Choose Number of Players"
+        try {
+            String headerAsciiArt = FigletFont.convertOneLine("Choose Players");
+            System.out.println(AnsiColors.colorize(headerAsciiArt, AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
+    
+        // Keep asking until valid player count is entered
         while (!isValidPlayerCount(numHumans, numBots)) {
-            //while number of players is either less than 2 or more than 6
-            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS); //min = 0, max = MAX_PLAYERS
-            numBots = getValidatedInput("Enter number of bot players: ", 0, MAX_PLAYERS);
-
-            //Warning if total number of players is not within the limits
+            // Prompt for number of human players
+            numHumans = getValidatedInput(
+                AnsiColors.colorize("Enter number of human players: ", AnsiColors.BRIGHT_CYAN),
+                0, MAX_PLAYERS
+            );
+    
+            // Prompt for number of bot players
+            numBots = getValidatedInput(
+                AnsiColors.colorize("Enter number of bot players: ", AnsiColors.BRIGHT_CYAN),
+                0, MAX_PLAYERS
+            );
+    
+            // Warning if total number of players is not within limits
             if (!isValidPlayerCount(numHumans, numBots)) {
-            //evaluate again after players key in numHuman and numBots
                 System.out.println(AnsiColors.colorizeBold(
-                        "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
-                        AnsiColors.BRIGHT_YELLOW)); //explanation in line 310
+                    "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
+                    AnsiColors.BRIGHT_RED
+                ));
             }
         }
     }

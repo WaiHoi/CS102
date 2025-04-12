@@ -38,7 +38,7 @@ public class Card {
             case "green": // Dwarf
                 return Arrays.asList(
                     colorCode + "|  .-==-.   |" + AnsiColors.RESET,  // Helmet
-                    colorCode + "|  (◕ᴥ◕)    |" + AnsiColors.RESET,    // Face with beard
+                    colorCode + "|  (o_o)    |" + AnsiColors.RESET,    // Face with beard
                     colorCode + "|  /_\\_/\\   |" + AnsiColors.RESET);    // Beard and body
     
             case "orange": // Duck
