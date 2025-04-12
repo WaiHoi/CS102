@@ -25,41 +25,48 @@ public class Card {
         switch (color.toLowerCase()) {
             case "blue": // Princess
                 return Arrays.asList(
-                        colorCode + "|   \\^_^/   |" + AnsiColors.RESET,
-                        colorCode + "|  ( 'o' )  |" + AnsiColors.RESET,
-                        colorCode + "|   \\_=_/   |" + AnsiColors.RESET);
+                    colorCode + "|   .---.   |" + AnsiColors.RESET,  // Crown (aligned to 11 chars)
+                    colorCode + "|  ( ^_^ )  |" + AnsiColors.RESET,  // Smiling face
+                    colorCode + "|   / A \\   |" + AnsiColors.RESET);   // Dress with an "A-line" shape
+    
             case "red": // Clown
                 return Arrays.asList(
-                        colorCode + "|   *<:o)   |" + AnsiColors.RESET,
-                        colorCode + "|  <(:o)>   |" + AnsiColors.RESET,
-                        colorCode + "|   <:o*>   |" + AnsiColors.RESET);
+                    colorCode + "|   .---.   |" + AnsiColors.RESET,  // Hat
+                    colorCode + "|  ( @.@ )  |" + AnsiColors.RESET,  // Face with a red nose
+                    colorCode + "|   \\_v_/   |" + AnsiColors.RESET); // Smile
+    
             case "green": // Dwarf
                 return Arrays.asList(
-                        colorCode + "|   o==[]   |" + AnsiColors.RESET,
-                        colorCode + "|  ( o_o )  |" + AnsiColors.RESET,
-                        colorCode + "|   \\___/   |" + AnsiColors.RESET);
+                    colorCode + "|  .-==-.   |" + AnsiColors.RESET,  // Helmet
+                    colorCode + "|  (◕ᴥ◕)    |" + AnsiColors.RESET,    // Face with beard
+                    colorCode + "|  /_\\_/\\   |" + AnsiColors.RESET);    // Beard and body
+    
             case "orange": // Duck
                 return Arrays.asList(
-                        colorCode + "|   ~<')    |" + AnsiColors.RESET,
-                        colorCode + "|  ~<')___  |" + AnsiColors.RESET,
-                        colorCode + "|     \"     |" + AnsiColors.RESET);
+                    colorCode + "|   __      |" + AnsiColors.RESET,  // Duck head outline
+                    colorCode + "| <(o )___  |" + AnsiColors.RESET,  // Duck face with beak
+                    colorCode + "|   ^^ ^^   |" + AnsiColors.RESET);   // Duck body or feet
+    
             case "grey": // Bunny
                 return Arrays.asList(
-                        colorCode + "|   ('>     |" + AnsiColors.RESET,
-                        colorCode + "|  /rr *\\)) |" + AnsiColors.RESET,
-                        colorCode + "| ((`\\___   |" + AnsiColors.RESET);
+                    colorCode + "|   (\\_/)   |" + AnsiColors.RESET,  // Bunny ears and head
+                    colorCode + "|  (='.'=)  |" + AnsiColors.RESET,  // Bunny face with nose
+                    colorCode + "|  (\")_(\")  |" + AnsiColors.RESET);   // Bunny body with paws
+    
             case "purple": // Cat
                 return Arrays.asList(
-                        colorCode + "|   /\\_/\\   |" + AnsiColors.RESET,
-                        colorCode + "|  ( o.o )  |" + AnsiColors.RESET,
-                        colorCode + "|   > ^ <   |" + AnsiColors.RESET);
+                    colorCode + "|   /\\_/\\   |" + AnsiColors.RESET,
+                    colorCode + "|  ( o.o )  |" + AnsiColors.RESET,
+                    colorCode + "|   > ^ <   |" + AnsiColors.RESET);
+    
             default: // Default empty art
                 return Arrays.asList(
-                        colorCode + "|           |" + AnsiColors.RESET,
-                        colorCode + "|           |" + AnsiColors.RESET,
-                        colorCode + "|           |" + AnsiColors.RESET);
+                    colorCode + "|           |" + AnsiColors.RESET,
+                    colorCode + "|           |" + AnsiColors.RESET,
+                    colorCode + "|           |" + AnsiColors.RESET);
         }
     }
+    
 
     /**
      * Generates ASCII art for the card with colored borders and text.
