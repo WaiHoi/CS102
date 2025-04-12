@@ -50,51 +50,73 @@ public class Game {
 
     public static void gameLogic(Player p, boolean lastRound) {
 
+        // Ask the player to choose which card to play (e.g. lowest risk card if it's a bot)
         int selectNumber = p.placeCard();
+    
+        // Take the selected card from the player's closed hand
         Card c = p.closedDeck.get(selectNumber);
+    
+        // Remove that card from their hand (closedDeck)
         p.closedDeck.remove(c);
+    
+        // Add the played card to the end of the parade line
         parade.add(c);
-
-        // if last round, do not add new card
+    
+        // If it’s not the final round, let the player draw 1 replacement card
         if (!lastRound) {
-            addNewCard(p);
+            addNewCard(p); // refill hand after playing a card
         }
-
+    
+        // Reveal what card the player just played
         System.out.println("\nOpening up " + p.getPlayerName() + "'s card now...");
         System.out.println(p.getPlayerName() + " has drawn the card: " + c.getColour() + " " + c.getValue() + "\n");
-
+    
+        // Track which parade cards will be collected this round
         ArrayList<Card> cardsDrawn = new ArrayList<>();
-
-        // Check collectible cards
-        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) {
+    
+        // Simulate the Parade rule: If I play this card, which earlier cards will I collect?
+        // → Skip 'c.getValue()' number of cards, then check all cards before that
+        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) { //-1, index of the new card, -1 iterete to before the skipped zone
+    
+            // If index goes negative, break to avoid out-of-bounds error
             if (i < 0)
                 break;
+    
+            // Check each card in the parade that may be collectible
             Card currentCard = parade.get(i);
-
+    
+            // If it matches the played card’s colour or is less than or equal in value, I must collect it
             if (currentCard.getColour().equals(c.getColour()) || currentCard.getValue() <= c.getValue()) {
+    
+                // Remove collectible card from the parade
                 parade.remove(currentCard);
+    
+                // Add it to the player’s open deck (face-up scoring pile)
                 p.openDeck.add(currentCard);
-
+    
+                // Also track it in this round’s collected cards (for printing)
                 cardsDrawn.add(currentCard);
             }
         }
-
-        // Print current parade as ASCII cards
+    
+        // Show the updated parade after card was added + any cards collected
         System.out.println("Updated Parade:\n");
-        Card.printCards(parade, false, true, true); // displayCardOptions = true, lineNumber = true
-
-        // Show cards drawn as ASCII cards
+        Card.printCards(parade, false, true, true); // prints parade as ASCII art with line labels
+    
+        // Show what cards the player collected this round
         System.out.println("\nCards that " + p.getPlayerName() + " has collected this round:");
-        Card.printCards(cardsDrawn, false, true, true); // displayCardOptions = true, lineNumber = true
-
-        // Show open deck as ASCII cards
+        Card.printCards(cardsDrawn, false, true, true); // show collected cards
+    
+        // Show the player’s open scoring deck after collecting
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
-        Card.printCards(p.openDeck, true, true, true); // displayCardOptions = true, lineNumber = true
-
+        Card.printCards(p.openDeck, true, true, true); // show total collected cards
+    
+        // Pause the game so the next player doesn’t start immediately
         Scanner sc = new Scanner(System.in);
         System.out.print("\nPress Enter to continue> ");
         sc.nextLine();
     }
+    
 
     public static void mainFunction() {
 

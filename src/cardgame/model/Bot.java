@@ -95,13 +95,14 @@ public int mediumDifficulty() {
         for (int i = 0; i < closedDeck.size(); i++) {
             // get bots hand
             Card card = closedDeck.get(i);
-            // simulate what would happen if card is played
+
+            //"If I played this card, how many points would I lose by collecting cards from the parade? Store that result in score."
             int score = scorePerCard(card);
     
-            // get the lowest penalty 
+            //If this card’s penalty is lower than the best one we've seen so far..
             if (score < minScore) {
-                minScore = score;
-                selectNumber = i;
+                minScore = score; //“Okay, this card is currently the best option. Let’s remember this score as the lowest.”
+                selectNumber = i; //And let’s remember the index of this card — we’ll play it later.”
             }
         }
         return selectNumber;
@@ -111,7 +112,9 @@ public int mediumDifficulty() {
         int score = 0;
 
         for (int i = card.getValue(); i < Game.parade.size(); i++) {
-            Card c = Game.parade.get(i);
+            //This mimics the Parade rule: "Skip a number of cards equal to the value of the card played"
+
+            Card c = Game.parade.get(i); //assess "each non safe" card
 
             // matches the same colour or if value is less than or equal
             if (c.getColour().equals(card.getColour()) || c.getValue() <= card.getValue()) {
