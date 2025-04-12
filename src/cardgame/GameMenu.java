@@ -214,16 +214,7 @@ public class GameMenu {
             try {
                 System.out.print("Enter your choice: ");
                 int choice = scanner.nextInt(); 
-                //scanner.nextInt() Reads just the number, 
-                //Leaves the newline \n (the Enter key) in the input buffer
                 scanner.nextLine(); 
-                //Sees the leftover \n sitting there
-                //Reads everything up to and including the \n
-                //Returns an empty string ("") because there was nothing typed before the newline
-                //returns to nothing because its not assigned to a variable
-                //Clears the buffer
-                //note: without scanner.nextLine() above any following nextLine() would immediately return an empty string
-                //because it would just read the leftover \n instead of waiting for actual input.
 
                 switch (choice) {//switch case
                     case 1:
@@ -235,15 +226,12 @@ public class GameMenu {
                     default:  // Handles cases where the user enters an integer other than 1 or 2
                         System.out.println(AnsiColors.colorizeBold(
                                 "Invalid choice! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); 
-                                //explanation for this mentioned in displayMainMenu() method
-                                //no need for scanner.nextLine() as the user has already entered an integer, so 
-                                //the newline has already been cleared by the scanner.nextLine() right after it (in line 455)
                 }
             } catch (InputMismatchException e) { //
                 //Handle invalid cases when the input, choice, is not a integer
                 System.out.println(AnsiColors.colorizeBold(
-                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); // explanation for this is in displayMainMenu() method
-                scanner.nextLine(); //clears the line by returning the invalid String input. its invalid because int is the required datatype, not String.
+                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); 
+                scanner.nextLine(); 
             }
         }
     }
