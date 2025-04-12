@@ -3,6 +3,7 @@ package cardgame.game;
 import java.util.*;
 
 import cardgame.model.*;
+import cardgame.utility.*;
 
 public class Score {
 
@@ -52,7 +53,7 @@ public class Score {
     }
 
     /*
-     *Calculate scores for 2 players
+     * Calculate scores for 2 players
      */
     public void twoPlayers() {
         for (String colour : colours) {
@@ -67,8 +68,10 @@ public class Score {
                 playerToDeduct = 1;
             }
 
-            if(playerToDeduct != -1){
-                Player.players.get(playerToDeduct).playerScoreCount += Player.players.get(playerToDeduct).playerColouredCards.get(colour);
+            if (playerToDeduct != -1) {
+                Player.players
+                        .get(playerToDeduct).playerScoreCount += Player.players.get(playerToDeduct).playerColouredCards
+                                .get(colour);
 
                 Iterator<Card> iterator = Player.players.get(playerToDeduct).calculateScoreDeck.iterator();
                 while (iterator.hasNext()) {
@@ -82,7 +85,7 @@ public class Score {
     }
 
     /*
-     *Calculate scores for 3 players and above
+     * Calculate scores for 3 players and above
      */
     public void threePlayersAndAbove() {
 
@@ -150,11 +153,32 @@ public class Score {
             }
         }
 
-        // Display player's scoring
-        for (Player p : Player.players) {
-            System.out.println(p.name + " score: " + p.playerScoreCount);
-        }
+        Collections.sort(Player.players, new ScoreCardComparator());
 
+        // Display player's scoring
+        List<Player> sortedPlayers = Player.players; // already sorted as described
+
+        String[] labels = { "[WINNER]", "[SECOND]", "[THIRD]", "[FOURTH]", "[FIFTH]", "[SIXTH]" }; // Extend if needed
+
+        for (int i = 0; i < sortedPlayers.size(); i++) {
+            Player current = sortedPlayers.get(i);
+            String label = (i < labels.length) ? labels[i] : "[" + (i + 1) + "TH]";
+
+            if (i + 1 < sortedPlayers.size()) {
+                Player next = sortedPlayers.get(i + 1);
+
+                if (current.playerScoreCount == next.playerScoreCount) {
+                    int cardDifference = next.openDeck.size() - current.openDeck.size();
+                    System.out.println(label + " " + current.name + " wins " + next.name +
+                            " by " + cardDifference + " cards with score " + current.playerScoreCount);
+                } else {
+                    System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+                }
+            } else {
+                // Last player (no one to compare to)
+                System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+            }
+        }
 
     }
 }
