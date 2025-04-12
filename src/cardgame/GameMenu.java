@@ -4,6 +4,7 @@ import java.util.*;
 import cardgame.game.*;
 import cardgame.model.*;
 import cardgame.utility.*;
+
 //java.lang.*; is automatically done by java complier for every single java file
 /* Automatically done behind the scenes:
 import java.lang.System;
@@ -12,6 +13,9 @@ import java.lang.Math;
 ... and many more*/
 
 import org.fusesource.jansi.AnsiConsole;
+
+import com.github.lalyos.jfiglet.FigletFont;
+
 
 public class GameMenu {
 
@@ -30,28 +34,29 @@ public class GameMenu {
     private static int numBots;
     private static BotDifficulty botDifficulty;
 
-    // Display the main menu
-    public static void displayMainMenu() {
-        printBorder(); //print border "+---...-----+" defined in GameMenu class
-        System.out.println(AnsiColors.colorize("Welcome to a game of ", AnsiColors.BRIGHT_CYAN) +
-        // AnsiColors.colorize(...) calls a method from AnsiColors.java that adds color formatting to the text. 
-        // AnsiColors.BRIGHT_CYAN is a constant string from AnsiColors.java that represents the ANSI code for bright cyan.
-        // just like how values are passed into printf() to format a string.
-        // For example: printf("Hello, %s", name) inserts the value of 'name' —
-        // similarly, colorize(text, color) applies the given color to the text.
-        
-        AnsiColors.colorize("Parades!", AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
-        // same idea on colorization as the above
-        System.out.println(AnsiColors.colorizeBold("ENJOY AND HAVE FUN!", AnsiColors.BRIGHT_YELLOW));
-        // same idea on colorization as the above
-        printBorder(); // same idea as mentioned
 
-        //Display the game options
+    public static void displayMainMenu() {
+        printBorder(); // Print border "+---...-----+" defined in GameMenu class
+    
+        try {
+            // Generate big bold ASCII art for "Parades"
+            String asciiArt = FigletFont.convertOneLine("Parades");
+    
+            // Apply colors to the ASCII art
+            String coloredAsciiArt = AnsiColors.colorize(asciiArt, AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD);
+    
+            // Display the colored ASCII art
+            System.out.println(coloredAsciiArt);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
+    
+        // Add additional menu options with colors
         System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
-        // same idea on colorization as the above
         System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
-        // same idea on colorization as the above
-        printBorder(); // same idea as mentioned
+    
+        printBorder(); // Print border "+---...-----+" defined in GameMenu class
     }
 
     // Prompts user to setup the number of bots and players

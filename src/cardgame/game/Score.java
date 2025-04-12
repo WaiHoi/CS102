@@ -19,6 +19,7 @@ public class Score {
     public void countPlayerCards(Player p) {
 
         // reset count for new player
+        
         p.playerColouredCards.clear();
 
         // use player attribute to get card arraylist
