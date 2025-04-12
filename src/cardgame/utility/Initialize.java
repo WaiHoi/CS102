@@ -66,7 +66,7 @@ public class Initialize {
                 String[] attributes = scanner.nextLine().split(","); // Split the line by comma into attributes
                 Card card = new Card(Integer.parseInt(attributes[0]), attributes[1]);  //index will always only be 0 or 1 because each line in deck.txt only has number first then color
                 // Create a Card object using the parsed values
-                // First value is an integer (e.g., power or ID), second is a string (e.g., suit or name)
+                // First value is an integer, second is a string
                 deckUnshuffled.add(card); //add the cards
             }
         } catch (FileNotFoundException e) {
@@ -84,15 +84,11 @@ public class Initialize {
      * @param deckUnshuffled The unshuffled deck read from the file.
      */
     private static void shuffleDeck(ArrayList<Card> deckUnshuffled) {
-        Random random = new Random();
-        // Creates a new random number generator with a unique seed
-        // So we can randomly pick card positions
+        Random random = new Random(); // Creates a new random number generator 
         while (!deckUnshuffled.isEmpty()) {
             //while unshuffiled deck still has cards
             int randomIndex = random.nextInt(deckUnshuffled.size()); //This picks a random number between 0 and the size of the deck - 1.
-            Game.deck.add(deckUnshuffled.remove(randomIndex)); 
-            //deckUnshuffled.remove(randomIndex) → takes out the card from the unshuffled list. 
-            //Game.deck.add(...) → puts that card into the final deck you're going to use in the game.
+            Game.deck.add(deckUnshuffled.remove(randomIndex)); // Remove card from unshuffled list and add to final deck
         }
     }
 
