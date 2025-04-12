@@ -30,11 +30,10 @@ public class Score {
     
             // Look up how many cards the player already has of this colour
             // If it’s not found in the map, treat it as 0 for now
-            int count = p.playerColouredCards.getOrDefault(colour, 0);
+            int count = p.playerColouredCards.getOrDefault(colour, 0); //returns the integer value associated with the colour key
     
-            // Add 1 to the count and store it back into the map
-            // This means we’ve now seen one more card of this colour
-            p.playerColouredCards.put(colour, count + 1);
+            // increment 1 to the count (count + 1) and store it back into the map each time the color is found
+            p.playerColouredCards.put(colour, count + 1); 
         }
     
         // Make sure all colours are included in the map
@@ -60,26 +59,39 @@ public class Score {
      * Calculate scores for 2 players
      */
     public void twoPlayers() {
-        for (String colour : colours) {
-            int playerToDeduct = -1;
 
+        // Loop through each colour in the game
+        for (String colour : colours) {
+    
+            int playerToDeduct = -1; // Initialize: no player selected for penalty yet
+    
+            // Get how many cards of this colour each player has
             int p1colouredCardNumbers = Player.players.get(0).playerColouredCards.get(colour);
             int p2colouredCardNumbers = Player.players.get(1).playerColouredCards.get(colour);
-
+    
+            // If player 1 has 2 or more cards of this colour than player 2, penalize player 1
             if (p1colouredCardNumbers - p2colouredCardNumbers >= 2) {
                 playerToDeduct = 0;
-            } else if (p2colouredCardNumbers - p1colouredCardNumbers >= 2) {
+            }
+            // If player 2 has 2 or more cards of this colour than player 1, penalize player 2
+            else if (p2colouredCardNumbers - p1colouredCardNumbers >= 2) {
                 playerToDeduct = 1;
             }
-
+    
+            // If there is a player to penalize for majority
             if (playerToDeduct != -1) {
+    
+                // Add the full value of that colour to their score (penalty)
                 Player.players
-                        .get(playerToDeduct).playerScoreCount += Player.players.get(playerToDeduct).playerColouredCards
-                                .get(colour);
-
+                    .get(playerToDeduct).playerScoreCount += Player.players
+                    .get(playerToDeduct).playerColouredCards.get(colour);
+    
+                // Then remove all cards of that colour from their scoring deck
                 Iterator<Card> iterator = Player.players.get(playerToDeduct).calculateScoreDeck.iterator();
                 while (iterator.hasNext()) {
                     Card c = iterator.next();
+                    
+                    // If the card matches the penalized colour, remove it
                     if (c != null && colour.equals(c.getColour())) {
                         iterator.remove();
                     }
@@ -87,6 +99,7 @@ public class Score {
             }
         }
     }
+    
 
     /*
      * Calculate scores for 3 players and above

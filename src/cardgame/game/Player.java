@@ -7,8 +7,8 @@ import cardgame.model.*;
 public abstract class Player {
     public ArrayList<Card> closedDeck = new ArrayList<>();
     public ArrayList<Card> openDeck = new ArrayList<>();
+    public ArrayList<Card> calculateScoreDeck = new ArrayList<>(); //deep copy of open deck, only used in final score calculation
     public static ArrayList<Player> players = new ArrayList<>();
-    public ArrayList<Card> calculateScoreDeck = new ArrayList<>();
     public TreeMap<String, Integer> playerColouredCards = new TreeMap<>();
     public int playerScoreCount;
 
