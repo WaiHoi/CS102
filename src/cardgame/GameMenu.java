@@ -93,7 +93,7 @@ public class GameMenu {
 
                 //Use validator to check for errors in the name
                 if (UsernameValidator.validateUsername(name, errorMsg)) {
-                    usernames.add("Player " + name); // Prefix the name with "Player"
+                    usernames.add("Player " + name); // Prefix the name with "Player", username variable belongs in GameMenu
                     break;
                 }
                 System.out.println(errorMsg);
@@ -217,9 +217,12 @@ public class GameMenu {
 
     // Start local game setup
     public static void startLocalGame() {
-        setupHumans(); 
-        setupBots(); 
+        setupHumans(); //select the number of humans and bots, 2 <= number of players <= 6
+        setupBots();  //sets up bot difficulty (from level 1 to 3) if numBots > 0, bot difficulty is the same for all bots
         initializeGame(); 
+        //resets the game, adds all Bots and humans to players, 
+        //shuffles the deck, deals the card to players and puts the following 6 cards into Parade, 
+        //and displays game state, handles the loop of the game
         startGame(); 
     }
 
