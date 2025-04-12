@@ -72,7 +72,7 @@ public class Game {
     
         // Simulate the Parade rule: If I play this card, which earlier cards will I collect?
         // → Skip 'c.getValue()' number of cards, then check all cards before that
-        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) {
+        for (int i = parade.size() - c.getValue() - 2; i >= 0; i--) { //-1, index of the new card, -1 iterete to before the skipped zone
     
             // If index goes negative, break to avoid out-of-bounds error
             if (i < 0)
