@@ -239,7 +239,7 @@ public class GameMenu {
     // Ask for difficulty level if bots are present
     private static void setupBots() {
         if (numBots > 0) {
-            botDifficulty = setBotDifficulty();
+            botDifficulty = setBotDifficulty(); // calls setBotDifficulty() method (line 144)
         }
     }
 
