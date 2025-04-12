@@ -18,28 +18,31 @@ public class Score {
      */
     public void countPlayerCards(Player p) {
 
-        // reset count for new player
-        
+        // Clear any previous counts so we start fresh for this player
+        // If the player already had colour counts stored, we wipe it now
         p.playerColouredCards.clear();
-
-        // use player attribute to get card arraylist
+    
+        // Loop through every card in the player's score deck
         for (Card card : p.calculateScoreDeck) {
-
-            // use card attribute to get card colour
+    
+            // Get the colour of the current card
             String colour = card.getColour();
-
-            // get current count
-            // default to 0 if not present
+    
+            // Look up how many cards the player already has of this colour
+            // If it’s not found in the map, treat it as 0 for now
             int count = p.playerColouredCards.getOrDefault(colour, 0);
-
-            // increment the count by one
+    
+            // Add 1 to the count and store it back into the map
+            // This means we’ve now seen one more card of this colour
             p.playerColouredCards.put(colour, count + 1);
         }
-
-        // If colour not found, put value 0 into map
+    
+        // Make sure all colours are included in the map
+        // Even if a player has 0 of a colour, add it with a value of 0
+        // This avoids null checks later during score comparison
         colours.stream().forEach(colour -> p.playerColouredCards.putIfAbsent(colour, 0));
-
     }
+    
 
     /*
      * Deep copy of player's opendeck Cards array;
