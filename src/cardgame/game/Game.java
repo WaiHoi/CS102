@@ -7,8 +7,8 @@ import cardgame.utility.UsernameValidator;
 
 public class Game {
     public static int currentRound = 1;
-    public static ArrayList<Card> deck = new ArrayList<>();
-    public static ArrayList<Card> parade = new ArrayList<>();
+    public static ArrayList<Card> deck = new ArrayList<>(); //the pile that players draw from 
+    public static ArrayList<Card> parade = new ArrayList<>(); //actual line of cards that the players lay out in the middle
     public static int lastRound = 0;
     public static Card card;
     public static Player player;

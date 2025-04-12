@@ -85,9 +85,14 @@ public class Initialize {
      */
     private static void shuffleDeck(ArrayList<Card> deckUnshuffled) {
         Random random = new Random();
+        // Creates a new random number generator with a unique seed
+        // So we can randomly pick card positions
         while (!deckUnshuffled.isEmpty()) {
-            int randomIndex = random.nextInt(deckUnshuffled.size());
-            Game.deck.add(deckUnshuffled.remove(randomIndex));
+            //while unshuffiled deck still has cards
+            int randomIndex = random.nextInt(deckUnshuffled.size()); //This picks a random number between 0 and the size of the deck - 1.
+            Game.deck.add(deckUnshuffled.remove(randomIndex)); 
+            //deckUnshuffled.remove(randomIndex) → takes out the card from the unshuffled list. 
+            //Game.deck.add(...) → puts that card into the final deck you're going to use in the game.
         }
     }
 
