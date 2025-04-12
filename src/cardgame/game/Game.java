@@ -204,7 +204,8 @@ public class Game {
             finalRoundOrder.add(Player.players.get(i));
         }
     
-        // Now that the order is set, give each player one final turn in this order
+        // Now that the order is set, give each player one final turn in this order 
+        // Note the player who triggered the final round will start first
         for (Player p : finalRoundOrder) {
             System.out.println("\n-------------------------------");
             System.out.println("    " + p.name + "'s final turn!    ");
