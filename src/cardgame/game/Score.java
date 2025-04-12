@@ -19,13 +19,10 @@ public class Score {
     public void countPlayerCards(Player p) {
 
         // Clear any previous counts so we start fresh for this player
-        // If the player already had colour counts stored, we wipe it now
         p.playerColouredCards.clear();
 
-        // Loop through every card in the player's score deck
         for (Card card : p.calculateScoreDeck) {
 
-            // Get the colour of the current card
             String colour = card.getColour();
 
             // Look up how many cards the player already has of this colour
@@ -157,19 +154,13 @@ public class Score {
      */
     public void calculateScore() {
 
-        // For every player, make a deep copy of their openDeck
-        // This is used for scoring without modifying their actual deck
+        // Create deep copies of open decks for calculation
         for (Player p : Player.players) {
             p.calculateScoreDeck = deepCopyCards(p.openDeck);
-
-            // Count how many cards the player has for each colour
-            // Used later for majority bonus or penalty calculations
             countPlayerCards(p);
         }
 
-        // Apply different scoring logic based on player count
-        // Two players use one scoring rule, three or more use another
-        // adds 1 to all the face down cards
+        // Process the scoring for 3 players and above, or 2 players
         if (Player.players.size() == 2) {
             twoPlayers();
         } else {
@@ -177,42 +168,56 @@ public class Score {
         }
 
         // Add up the face value of all cards in each player's score deck
-        // This gives the final numeric score for each player
         for (Player p : Player.players) {
             for (Card c : p.calculateScoreDeck) {
                 p.playerScoreCount += c.getValue();
             }
         }
 
-        // Sort players by score (lower score is better in Parade)
+        // Sort players by score and number of cards (lower is better in Parade)
         Collections.sort(Player.players, new ScoreCardComparator());
 
-        // Prepare labels like [WINNER], [SECOND], etc. for displaying rankings
         List<Player> sortedPlayers = Player.players;
         String[] labels = { "[WINNER]", "[SECOND]", "[THIRD]", "[FOURTH]", "[FIFTH]", "[SIXTH]" };
 
-        // Loop through each player in ranking order
+        // Get winner (first player in sorted list)
+        Player possibleWinner = sortedPlayers.get(0);
+        int possibleWinnerScore = possibleWinner.playerScoreCount;
+        int possibleWinnerDeckSize = possibleWinner.openDeck.size();
+
+        System.out.println("[WINNER] " + possibleWinner.name + " wins with score " + 
+                            possibleWinnerScore);
+
+        // Loop through players 
         for (int i = 0; i < sortedPlayers.size(); i++) {
-            Player current = sortedPlayers.get(i);
+            Player p = sortedPlayers.get(i);
             String label = (i < labels.length) ? labels[i] : "[" + (i + 1) + "TH]";
 
-            // Compare current player to the next player, if one exists
-            if (i + 1 < sortedPlayers.size()) {
-                Player next = sortedPlayers.get(i + 1);
+            if (p == possibleWinner) {
+                continue;
+            }
 
-                // If both players have the same score, resolve tie using number of cards
-                if (current.playerScoreCount == next.playerScoreCount) {
-                    int cardDifference = current.openDeck.size() - next.openDeck.size();
+            // Print tiebreaker note
+            if (p.playerScoreCount == possibleWinnerScore) {
+                int cardDiff = p.openDeck.size() - possibleWinnerDeckSize;
 
-                    System.out.println(label + " " + current.name + " wins " + next.name +
-                            " by " + cardDifference + " cards with score " + current.playerScoreCount);
+                // same score and number of cards
+                if (cardDiff == 0) {
+                    System.out.println(" -> " + possibleWinner.name + " wins tiebreak against " + 
+                                        p.name + " with equal number of cards (" + 
+                                        possibleWinnerDeckSize + ")");
+                // same score and fewer cards
                 } else {
-                    // Normal case: current player has a better score than the next
-                    System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+                    System.out.println(" -> " + possibleWinner.name + 
+                                        " wins tiebreak against " + p.name + 
+                                        " by " + cardDiff + " fewer cards (score: " +
+                                        possibleWinnerScore + ")");
                 }
+                System.out.println(label + " " + p.name + 
+                                    " got a score of " + p.playerScoreCount);
             } else {
-                // Last player in the list (no one to compare against)
-                System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+                System.out.println(label + " " + p.name + 
+                                    " got a score of " + p.playerScoreCount);
             }
         }
     }
