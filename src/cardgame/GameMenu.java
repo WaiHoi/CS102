@@ -64,20 +64,14 @@ public class GameMenu {
         numHumans = 0; //initialize numHumans as 0
         numBots = 0; //initialize numBots as 0
 
-        printHeader("Choose Number of Players"); //call printHeader() method (line 562)
+        printHeader("Choose Number of Players"); //call printHeader() method 
 
         //Keep asking until valid player count is entered
         while (!isValidPlayerCount(numHumans, numBots)) {
             //while number of players is either less than 2 or more than 6
-            //isValidPlayerCount() method in line 379
-            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS); 
-            //calls getValidatedInput() method in line 391. 
-            //min is initialized as 0 for the case of 0 human players, 6 bot players
-            //max is initialized as MAX_PlAYERS for the case of 6 human players, 0 bot players
+            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS); //min = 0, max = MAX_PLAYERS
             numBots = getValidatedInput("Enter number of bot players: ", 0, MAX_PLAYERS);
-            //calls getValidatedInput() method in line 391. 
-            //min is initialized as MAX_PlAYERS for the case of 6 human players, 0 bot players
-            //max is initialized as 0 for the case of 0 human players, 6 bot players
+
             //Warning if total number of players is not within the limits
             if (!isValidPlayerCount(numHumans, numBots)) {
             //evaluate again after players key in numHuman and numBots
@@ -104,7 +98,7 @@ public class GameMenu {
 
                 //Use validator to check for errors in the name
                 if (UsernameValidator.validateUsername(name, errorMsg)) {
-                    usernames.add("Player " + name); // Prefix the name with "Player"
+                    usernames.add("Player " + name); // Prefix the name with "Player", username variable belongs in GameMenu
                     break;
                 }
                 System.out.println(errorMsg);
@@ -128,7 +122,7 @@ public class GameMenu {
             try {
                 System.out.print(AnsiColors.colorize(prompt, AnsiColors.BRIGHT_CYAN));
                 int input = scanner.nextInt();
-                scanner.nextLine(); //same explanation as in line 
+                scanner.nextLine(); 
 
                 if (input >= min && input <= max) {
                     return input;
@@ -205,7 +199,7 @@ public class GameMenu {
 
                 switch (choice) {//switch case
                     case 1:
-                        startLocalGame(); //call startLocalGmae() method (line 488)
+                        startLocalGame(); 
                         return; //exits the start game method completely, no return variable type as its a void method
                     case 2:
                         System.out.println("Exiting game...");
@@ -228,16 +222,19 @@ public class GameMenu {
 
     // Start local game setup
     public static void startLocalGame() {
-        setupHumans(); //call setupHumans() method (line 233)
-        setupBots(); //call setupBots() method (line 240)
-        initializeGame(); //call initializeGame method (line 247)
-        startGame(); // call startGame method (line 181)
+        setupHumans(); //select the number of humans and bots, 2 <= number of players <= 6
+        setupBots();  //sets up bot difficulty (from level 1 to 3) if numBots > 0, bot difficulty is the same for all bots
+        initializeGame(); 
+        //resets the game, adds all Bots and humans to players, 
+        //shuffles the deck, deals the card to players and puts the following 6 cards into Parade, 
+        //and displays game state, handles the loop of the game
+        startGame(); 
     }
 
     // Setup players
     private static void setupHumans() {
     // Collect user input and player names
-        displayPlayerSetup(); //call displayPlayerSetup method (line 58)
+        displayPlayerSetup(); 
         usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
     }
 
@@ -245,7 +242,6 @@ public class GameMenu {
     private static void setupBots() {
         if (numBots > 0) {
             botDifficulty = setBotDifficulty(); 
-            // calls setBotDifficulty() method (line 144) 
             //how bot difficulty affects how the cards are being selected for bot is defined in Bot.java
         }
     }

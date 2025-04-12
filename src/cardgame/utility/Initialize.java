@@ -18,11 +18,11 @@ public class Initialize {
      */
     public static void initializeVariables(List<String> usernames, int numHumans, 
                                            int numBots, BotDifficulty botDifficulty) {
-        initializePlayers(usernames, numHumans); //line 34
-        initializeBots(numBots, botDifficulty); //line 53
-        initializeDeck();
-        dealCardsToPlayers();
-        initializeParade();
+        initializePlayers(usernames, numHumans); //adds all Humans to players
+        initializeBots(numBots, botDifficulty); //adds Bots to Players
+        initializeDeck(); //reads deck from the file, populate and shuffles it
+        dealCardsToPlayers(); //each player gets 5 cards, followed by the next player
+        initializeParade(); //the next 6 cards after the all players gets their cards, will be the cards for the parade
     }
 
     /**

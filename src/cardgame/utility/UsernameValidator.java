@@ -28,14 +28,14 @@ public class UsernameValidator {
         errorMessage.setLength(0);
 
         // Perform validation checks
-        if (isNullOrEmpty(username, errorMessage)) return false; //line 65
-        if (isInvalidLength(username, errorMessage)) return false;//line 76
-        if (hasInvalidCharacters(username, errorMessage)) return false;//line 91
-        if (isReservedName(username, errorMessage)) return false;//line 102
-        if (!isUnique(username, errorMessage)) return false;//line 113
+        if (isNullOrEmpty(username, errorMessage)) return false; 
+        if (isInvalidLength(username, errorMessage)) return false; 
+        if (hasInvalidCharacters(username, errorMessage)) return false; 
+        if (isReservedName(username, errorMessage)) return false; 
+        if (!isUnique(username, errorMessage)) return false; 
 
         // If all checks pass, add the username to the set and return true
-        usernames.add(username);
+        usernames.add(username); //username here belongs to UsernameValidator
         return true;
     }
 
@@ -111,7 +111,7 @@ public class UsernameValidator {
      * Checks if a username is unique.
      */
     private static boolean isUnique(String username, StringBuilder errorMessage) {
-        if (!usernames.add(username)) {
+        if (!usernames.add(username)) { //add is boolean. if usename not unique, cannot be added to set
             appendError(errorMessage, "Username already in use.");
             return false;
         }

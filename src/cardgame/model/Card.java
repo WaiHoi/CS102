@@ -119,6 +119,15 @@ public class Card {
         }
     }
 
+    /**
+    * Prints a list of cards either as ASCII art or simple text.
+    * 
+    * @param deck               The list of cards to print
+    * @param sorting            If true when invoked, sorts cards by colour and value before printing
+    * @param displayCardOptions If true, prints full ASCII card art; if false, prints summary string
+    * @param lineNumber         If true, shows "Line X:" labels (used for parade); 
+    *                           if false, shows numbered labels above cards (used for player hands)
+    */
     public static String printCards(ArrayList<Card> deck, boolean sorting, boolean displayCardOptions, 
                                         boolean lineNumber) {
         if (deck.isEmpty()) {
@@ -126,45 +135,44 @@ public class Card {
             return "";
         }
 
-        if (sorting) {
+        if (sorting) {// If sorting == true, sort cards by colour (A-Z), then by value (low to high)
             deck.sort((card1, card2) -> {
                 int colorComparison = card1.getColour().compareTo(card2.getColour());
                 return (colorComparison != 0) ? colorComparison : Integer.compare(card1.getValue(), card2.getValue());
             });
         }
 
-        // For non-display mode, return a formatted string of card values
-        if (!displayCardOptions) {
+        if (!displayCardOptions) { // If displayCardOptions == false, return cards as simple text summary
             StringBuilder printedCards = new StringBuilder("[");
             for (int i = 0; i < deck.size(); i++) {
                 printedCards.append(deck.get(i).number).append(" of ").append(deck.get(i).colour);
                 if (i < deck.size() - 1)
-                    printedCards.append("; ");
+                    printedCards.append("; "); // Add a semicolon between cards
             }
             printedCards.append("]");
-            return printedCards.toString();
+            return printedCards.toString(); //return a formatted summary string
         }
 
-        // Set console width 
-        final int CONSOLE_WIDTH = 120;
+        final int CONSOLE_WIDTH = 120;  // Total width of the console display
 
         // Render ASCII art for all cards and display them horizontally
-        List<List<String>> allCardsLines = new ArrayList<>();
+        List<List<String>> allCardsLines = new ArrayList<>(); // Holds the ASCII art lines for each card
         for (Card card : deck) {
-            allCardsLines.add(card.renderCardAscii());
+            allCardsLines.add(card.renderCardAscii()); // Generate ASCII lines for each card
         }
 
         // Calculate card width 
-        int cardWidth = 13;
+        int cardWidth = 13; // Width (in characters) of a single ASCII card
         // Determine how many cards can fit per line
-        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth);
+        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth); 
 
-        // Process cards in groups 
+        // Print cards in groups that fit within the console width
         for (int group = 0; group < allCardsLines.size(); group += cardsPerLine) {
             int groupEnd = Math.min(group + cardsPerLine, allCardsLines.size());
             
             if (!lineNumber) {
-                // Add number above card for closedDeck
+                // If lineNumber == false → we're printing a player's hand (closedDeck)
+                // Show numbered labels like [1] [2] above each card
                 StringBuilder numberLine = new StringBuilder();
                 for (int i = group; i < groupEnd; i++) {
                     int label = i - group + 1;
@@ -182,24 +190,25 @@ public class Card {
                 System.out.println(numberLine.toString());
 
             } else {
-                // Add line number for parade
+                // If lineNumber == true → we're printing the parade
+                // Add a label like "Line 1:", "Line 2:", etc.
                 System.out.println("Line " + (group / cardsPerLine + 1) + ":");
 
             }
 
-            // Print all cards side by side
+            // Print the 9 lines of ASCII art for each card, side by side
             for (int line = 0; line < 9; line++) {
                 StringBuilder combinedLine = new StringBuilder();
 
                 for (int i = group; i < groupEnd; i++) {
                     if (line < allCardsLines.get(i).size()) {
                         String cardLine = allCardsLines.get(i).get(line);
-                        combinedLine.append(cardLine).append("  "); // Consistent 2-space separation
+                        combinedLine.append(cardLine).append("  "); // Add space between cards
                     }
                 }
-                System.out.println(combinedLine.toString());
+                System.out.println(combinedLine.toString()); // Print full row of card lines
             }
         }
-        return "";
+        return ""; // No string result needed in full ASCII mode
     }
 }

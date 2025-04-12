@@ -94,42 +94,53 @@ public class Game {
 
     public static void mainFunction() {
 
-        // new game always starts with false
+        // At the start of a new game, the last round hasn't been triggered
         lastRoundTriggered = false;
-
+    
+        // Display round header (e.g., "Round 1")
         displayRoundHeader(currentRound);
-
-        while (true) {    
-
+    
+        // Main game loop — continues until the game ends
+        while (true) {
+    
+            // Loop through each player for their turn
             for (Player currentPlayer : Player.players) {
-                // sent to all
+    
+                // Display whose turn it is
                 System.out.println("\n--------------------------");
                 System.out.println("    " + currentPlayer.name + "'s turn!    ");
                 System.out.println("--------------------------\n");
     
+                // Show the current parade cards
                 System.out.println("Parade:\n");
-                Card.printCards(parade, false, true, true); // displayCardOptions = true, isParade = true
+                Card.printCards(parade, false, true, true); 
+                // Parameters: (playerCardOptions = false, displayCardOptions = true, isParade = true)
     
-                // Play the current turn (regular or last round)
+                // Execute the player's turn (handles regular and last round logic)
                 gameLogic(currentPlayer, lastRoundTriggered);
-
-                // Check for last round conditions
-                if (!lastRoundTriggered && 
+    
+                // Check if last round should be triggered
+                if (!lastRoundTriggered &&
                     (checkPlayersHandForCardFromEachColour(currentPlayer) || deck.isEmpty())) {
-
+    
+                    // Trigger last round conditions
                     lastRoundTriggered = true;
                     System.out.println("Last round triggered by " + currentPlayer.name + "!\n");
+    
+                    // Let all other players finish their final turns
                     executeLastRound(currentPlayer);
-
-                    // end game after last round
+    
+                    // End the game
                     return;
                 }
             }
-            // after every player has played
+    
+            // Increase round counter after all players have taken a turn
             currentRound++;
             displayRoundHeader(currentRound);
         }
     }
+    
 
     private static void executeLastRound(Player triggeringPlayer) {
         System.out.println("\n+-------------------------+");
