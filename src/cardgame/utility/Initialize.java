@@ -19,7 +19,7 @@ public class Initialize {
     public static void initializeVariables(List<String> usernames, int numHumans, 
                                            int numBots, BotDifficulty botDifficulty) {
         initializePlayers(usernames, numHumans); //line 34
-        initializeBots(numBots, botDifficulty); //
+        initializeBots(numBots, botDifficulty); //line 53
         initializeDeck();
         dealCardsToPlayers();
         initializeParade();
@@ -62,10 +62,12 @@ public class Initialize {
     private static void initializeDeck() {
         ArrayList<Card> deckUnshuffled = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File("deck.txt"))) {
-            while (scanner.hasNext()) {
-                String[] attributes = scanner.nextLine().split(",");
-                Card card = new Card(Integer.parseInt(attributes[0]), attributes[1]);
-                deckUnshuffled.add(card);
+            while (scanner.hasNext()) {// Read each line of the file
+                String[] attributes = scanner.nextLine().split(","); // Split the line by comma into attributes
+                Card card = new Card(Integer.parseInt(attributes[0]), attributes[1]);  //index will always only be 0 or 1 because each line in deck.txt only has number first then color
+                // Create a Card object using the parsed values
+                // First value is an integer (e.g., power or ID), second is a string (e.g., suit or name)
+                deckUnshuffled.add(card); //add the cards
             }
         } catch (FileNotFoundException e) {
             System.out.println("ERROR: Deck file not found. Please ensure 'deck.txt' exists.");
@@ -73,7 +75,7 @@ public class Initialize {
         }
 
         // Shuffle the cards
-        shuffleDeck(deckUnshuffled);
+        shuffleDeck(deckUnshuffled);//line 86
     }
 
     /**
