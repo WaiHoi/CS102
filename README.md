@@ -61,19 +61,16 @@ To run this project, ensure you have:
     - Terminal or IDE capable of running Java programs
         - e.g. cmd, shell
 
-### Installion
+### Installation
 <!-- Instructions on setting up the project locally -->
 1. Clone this repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/WaiHoi/CS102.git
 ```
 
 2. Navigate to the project directory
-```bash
-cd <directory>
-```
 
-3. Compile the program
+3. Compile the program using `compile.bat` or `compile,sh`
 ```bash
 # windows 
 ./compile
@@ -84,7 +81,7 @@ bash compile.sh
 
 ### Executing Program
 <!-- How to run the program -->
-To run the program
+To run the program, run `run.bat` or `run.sh`
 ```bash
 # windows 
 ./run
@@ -93,11 +90,18 @@ To run the program
 bash run.sh
 ```
 
-## Authors 
+## Group Members 
 <!-- Contributors name and info-->
+1. CHEE BO'EN MALCOLM
+2. WAI HOI
+3. TIEW CHUN YONG ETHAN
+4. ONG ZHENG HAN
+5. LYNUS PHUA YI XUAN
+6. SWAYAM JAIN
 
-## Acknowledgement
+## Acknowledgements
 <!-- 
 *** Any code snippets or examples
 *** format: [text](link)
 -->
+- [Jansi Library for colours](https://github.com/fusesource/jansi.git)
