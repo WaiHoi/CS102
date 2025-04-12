@@ -5,6 +5,10 @@ import java.util.*;
 import cardgame.model.*;
 import cardgame.utility.UsernameValidator;
 
+import org.fusesource.jansi.AnsiConsole;
+
+import com.github.lalyos.jfiglet.FigletFont;
+
 public class Game {
     public static int currentRound = 1;
     public static ArrayList<Card> deck = new ArrayList<>(); //the pile that players draw from 
@@ -176,16 +180,21 @@ public class Game {
     
 
     private static void executeLastRound(Player triggeringPlayer) {
-        // We’ve reached the final round — display a header to let everyone know
-        System.out.println("\n+-------------------------+");
-        System.out.println("|       FINAL ROUND       |");
-        System.out.println("+-------------------------+");
+        try {
+            // Generate Figlet-style ASCII art for "FINAL ROUND"
+            String finalRoundArt = FigletFont.convertOneLine("FINAL ROUND");
+            // Wrap the ASCII art in purple ANSI color codes
+            System.out.println("\033[95m" + finalRoundArt + "\033[0m");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
     
-        // Find the position of the player who triggered the final round
+        // Get player who triggered last round
         int startIndex = Player.players.indexOf(triggeringPlayer);
         List<Player> finalRoundOrder = new ArrayList<>();
     
-        // First, add all players starting from the one who triggered it up to the last player
+        // Add players from triggering player to end
         for (int i = startIndex; i < Player.players.size(); i++) {
             finalRoundOrder.add(Player.players.get(i));
         }
@@ -218,19 +227,32 @@ public class Game {
     
 
     private static void showGameOver() {
-        System.out.println("+----------------------+");
-        System.out.println("|      GAME OVER       |");
-        System.out.println("+----------------------+");
-
+        try {
+            // Generate Figlet-style ASCII art for "GAME OVER"
+            String gameOverArt = FigletFont.convertOneLine("GAME OVER");
+            // Wrap the ASCII art in red ANSI color codes
+            System.out.println("\033[91m" + gameOverArt + "\033[0m");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
+    
         Score score = new Score();
         System.out.println("Total rounds played: " + currentRound);
     }
 
     public static void displayRoundHeader(int currentRound) {
-        System.out.println("\n+----------------------+");
-        System.out.printf ("|       ROUND %-2d       |\n", currentRound);
-        System.out.println("+----------------------+");
+        try {
+            // Generate Figlet-style ASCII art for "ROUND X" where X is the current round
+            String roundHeaderArt = FigletFont.convertOneLine("ROUND " + currentRound);
+            // Wrap the ASCII art in purple ANSI color codes
+            System.out.println("\033[95m" + roundHeaderArt + "\033[0m"); // Purple color
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
     }
+    
 
     public static void resetGame() {
         // Reset all static variables

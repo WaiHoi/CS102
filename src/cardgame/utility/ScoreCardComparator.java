@@ -12,6 +12,6 @@ public class ScoreCardComparator implements Comparator<Player>{
             return cmp;
         }
 
-        return p1.openDeck.size() - p1.openDeck.size();
+        return p1.openDeck.size() - p2.openDeck.size();
     }
 }
