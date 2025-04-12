@@ -248,7 +248,9 @@ public class GameMenu {
     private static void setupHumans() {
     // Collect user input and player names
         displayPlayerSetup(); 
-        usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
+        if (numHumans > 0) {
+            usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
+        }
     }
 
     // Ask for difficulty level if bots are present
@@ -312,12 +314,12 @@ public class GameMenu {
         System.out.println("+--------------------------------------+");
     }
 
- // Centers the given text within the specified width by padding spaces on both sides.
-// Ensures padding is non-negative to avoid formatting issues.
-private static String centerText(String text, int width) {
-    int padding = Math.max((width - text.length()) / 2, 0);
-    return String.format("%" + padding + "s%s%" + padding + "s", "", text, "");
-}
+    // Centers the given text within the specified width by padding spaces on both sides.
+    // Ensures padding is non-negative to avoid formatting issues.
+    private static String centerText(String text, int width) {
+        int padding = Math.max((width - text.length()) / 2, 0);
+        return String.format("%" + padding + "s%s%" + padding + "s", "", text, "");
+    }
 
 
     /*  AnsiConsole.systemInstall() comes from the Jansi library:
