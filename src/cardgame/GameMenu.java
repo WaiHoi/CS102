@@ -36,7 +36,6 @@ public class GameMenu {
 
 
     public static void displayMainMenu() {
-        printBorder(); // Print border "+---...-----+" defined in GameMenu class
     
         try {
             // Generate big bold ASCII art for "Parades"
@@ -56,54 +55,74 @@ public class GameMenu {
         System.out.println(AnsiColors.colorize("[1] Play Locally (Console Mode)", AnsiColors.BRIGHT_CYAN));
         System.out.println(AnsiColors.colorize("[2] Exit", AnsiColors.BRIGHT_RED));
     
-        printBorder(); // Print border "+---...-----+" defined in GameMenu class
     }
 
-    // Prompts user to setup the number of bots and players
     public static void displayPlayerSetup() {
-        numHumans = 0; //initialize numHumans as 0
-        numBots = 0; //initialize numBots as 0
-
-        printHeader("Choose Number of Players"); //call printHeader() method 
-
-        //Keep asking until valid player count is entered
+        numHumans = 0; // Initialize numHumans as 0
+        numBots = 0; // Initialize numBots as 0
+    
+        // Generate Figlet-style header for "Choose Number of Players"
+        try {
+            String headerAsciiArt = FigletFont.convertOneLine("Choose Players");
+            System.out.println(AnsiColors.colorize(headerAsciiArt, AnsiColors.BRIGHT_MAGENTA + AnsiColors.BOLD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
+    
+        // Keep asking until valid player count is entered
         while (!isValidPlayerCount(numHumans, numBots)) {
-            //while number of players is either less than 2 or more than 6
-            numHumans = getValidatedInput("Enter number of human players: ", 0, MAX_PLAYERS); //min = 0, max = MAX_PLAYERS
-            numBots = getValidatedInput("Enter number of bot players: ", 0, MAX_PLAYERS);
-
-            //Warning if total number of players is not within the limits
+            // Prompt for number of human players
+            numHumans = getValidatedInput(
+                AnsiColors.colorize("Enter number of human players: ", AnsiColors.BRIGHT_CYAN),
+                0, MAX_PLAYERS
+            );
+    
+            // Prompt for number of bot players
+            numBots = getValidatedInput(
+                AnsiColors.colorize("Enter number of bot players: ", AnsiColors.BRIGHT_CYAN),
+                0, MAX_PLAYERS
+            );
+    
+            // Warning if total number of players is not within limits
             if (!isValidPlayerCount(numHumans, numBots)) {
-            //evaluate again after players key in numHuman and numBots
                 System.out.println(AnsiColors.colorizeBold(
-                        "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
-                        AnsiColors.BRIGHT_YELLOW)); //explanation in line 310
+                    "Total number of players must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + "!\n",
+                    AnsiColors.BRIGHT_RED
+                ));
             }
         }
     }
 
-    //Prompt the user for player names and validate them
     private static List<String> getPlayerNames(int numPlayers) {
-
-        StringBuilder errorMsg = new StringBuilder(); //used to capture why a username is invalid?
-        System.out.println("\n+--------------------------------------+");
-        System.out.println("|        Enter Names of Players        |");
-        System.out.println("+--------------------------------------+");
-
+        StringBuilder errorMsg = new StringBuilder(); // Used to capture why a username is invalid
+    
+        // Generate Figlet-style header for "Enter Names of Players"
+        try {
+            String headerAsciiArt = FigletFont.convertOneLine("Enter Names");
+            System.out.println(AnsiColors.colorize(headerAsciiArt, AnsiColors.BRIGHT_CYAN + AnsiColors.BOLD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
+    
+        // Prompt for player names
         for (int i = 0; i < numPlayers; i++) {
-
             while (true) {
-                System.out.print("Enter name for Player " + (i + 1) + ": ");
+                System.out.print(AnsiColors.colorize("Enter name for Player " + (i + 1) + ": ", AnsiColors.BRIGHT_YELLOW));
                 String name = scanner.nextLine().trim();
-
-                //Use validator to check for errors in the name
+    
+                // Use validator to check for errors in the name
                 if (UsernameValidator.validateUsername(name, errorMsg)) {
-                    usernames.add("Player " + name); // Prefix the name with "Player", username variable belongs in GameMenu
+                    usernames.add("Player " + name); // Prefix the name with "Player"
                     break;
                 }
-                System.out.println(errorMsg);
+    
+                // Display error message in red
+                System.out.println(AnsiColors.colorize(errorMsg.toString(), AnsiColors.BRIGHT_RED));
             }
         }
+    
         return usernames;
     }
 
@@ -139,19 +158,24 @@ public class GameMenu {
         }
     }
 
-    //Lets user choose the bot difficulty level
     public static BotDifficulty setBotDifficulty() {
-        printHeader("Select Bot Difficulty Level");
+        // Generate Figlet-style header for "Select Bot Difficulty Level"
+        try {
+            String headerAsciiArt = FigletFont.convertOneLine("Bot Difficulty");
+            System.out.println(AnsiColors.colorize(headerAsciiArt, AnsiColors.BRIGHT_CYAN + AnsiColors.BOLD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating ASCII art.");
+        }
     
         // Display difficulty options with colors
         System.out.println(AnsiColors.colorize("[1] Easy", AnsiColors.BRIGHT_GREEN));
         System.out.println(AnsiColors.colorize("[2] Medium", AnsiColors.BRIGHT_YELLOW));
         System.out.println(AnsiColors.colorize("[3] Hard", AnsiColors.BRIGHT_RED));
-        printBorder();
     
         while (true) {
             try {
-                System.out.print("Enter your choice: ");
+                System.out.print(AnsiColors.colorize("Enter your choice: ", AnsiColors.BRIGHT_MAGENTA));
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
     
@@ -162,12 +186,12 @@ public class GameMenu {
                         return BotDifficulty.MEDIUM;
                     case 3:
                         return BotDifficulty.HARD;
-                    default: // if user keys in an int that is not 1, 2 or 3
+                    default: // If user keys in an int that is not 1, 2, or 3
                         System.out.println(AnsiColors.colorizeBold(
                                 "Invalid choice! Please enter a number between 1 and 3.", AnsiColors.BRIGHT_RED));
                 }
             } catch (InputMismatchException e) {
-                //Handles non integer input
+                // Handles non-integer input
                 System.out.println(AnsiColors.colorizeBold(
                         "Please enter a valid number between 1 and 3!", AnsiColors.BRIGHT_RED));
                 scanner.nextLine(); // Clear invalid input
