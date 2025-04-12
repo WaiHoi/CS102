@@ -38,7 +38,7 @@ public class Card {
             case "green": // Dwarf
                 return Arrays.asList(
                     colorCode + "|  .-==-.   |" + AnsiColors.RESET,  // Helmet
-                    colorCode + "|  (o_o)    |" + AnsiColors.RESET,    // Face with beard
+                    colorCode + "|  (◕ᴥ◕)    |" + AnsiColors.RESET,    // Face with beard
                     colorCode + "|  /_\\_/\\   |" + AnsiColors.RESET);    // Beard and body
     
             case "orange": // Duck
@@ -72,7 +72,8 @@ public class Card {
      * Generates ASCII art for the card with colored borders and text.
      */
     private List<String> renderCardAscii() {
-        String colorCode = getColorCode();
+        String colorCode = getColorCode();// colorCode is based on the card's colour, since renderCardAscii() is called on a Card object
+
         List<String> lines = new ArrayList<>();
 
         // Define the borders and other card elements
@@ -90,13 +91,13 @@ public class Card {
         // Add lines to represent the card
         lines.add(topBottomBorder);
         lines.add(topNumberLine);
-        lines.add(emptyLine);
-        lines.addAll(asciiArt); // Insert the ASCII art here
-        lines.add(emptyLine);
+        lines.add(emptyLine); //padding
+        lines.addAll(asciiArt); // Middle lines (symbol/art)
+        lines.add(emptyLine); //padding
         lines.add(bottomNumberLine);
         lines.add(topBottomBorder);
 
-        return lines;
+        return lines; // Return the full card as a list of lines (ready to print)
     }
 
     /**
@@ -135,10 +136,16 @@ public class Card {
             return "";
         }
 
-        if (sorting) {// If sorting == true, sort cards by colour (A-Z), then by value (low to high)
+        if (sorting) { // If sorting == true, sort cards by colour (A–Z), then by value (low to high)
             deck.sort((card1, card2) -> {
+        
+                // Compare colours alphabetically (based on Unicode of first different letter)
                 int colorComparison = card1.getColour().compareTo(card2.getColour());
-                return (colorComparison != 0) ? colorComparison : Integer.compare(card1.getValue(), card2.getValue());
+        
+                // If colours are different, return the result of colorComparison
+                // If colours are the same (colorComparison == 0), compare the card values instead
+                return (colorComparison != 0) ? colorComparison 
+                       : Integer.compare(card1.getValue(), card2.getValue());
             });
         }
 
@@ -150,12 +157,16 @@ public class Card {
                     printedCards.append("; "); // Add a semicolon between cards
             }
             printedCards.append("]");
-            return printedCards.toString(); //return a formatted summary string
+            return printedCards.toString(); //return a formatted summary string, somthing like [2 of Blue; 5 of Green; 9 of Red]
         }
 
         final int CONSOLE_WIDTH = 120;  // Total width of the console display
 
-        // Render ASCII art for all cards and display them horizontally
+        //This creates a visual representation of each card as ASCII art — like rows of strings. 
+        //visual representation below:
+        /*List<String> red1 = ["╔═══════╗", "║ Red   ║", "║   1   ║", "╚═══════╝"];
+        List<String> blue3 = ["╔═══════╗", "║ Blue  ║", "║   3   ║", "╚═══════╝"];
+        List<String> green7 = ["╔═══════╗", "║Green  ║", "║   7   ║", "╚═══════╝"];*/
         List<List<String>> allCardsLines = new ArrayList<>(); // Holds the ASCII art lines for each card
         for (Card card : deck) {
             allCardsLines.add(card.renderCardAscii()); // Generate ASCII lines for each card
