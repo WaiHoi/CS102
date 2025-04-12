@@ -163,7 +163,7 @@ public class GameMenu {
                         return BotDifficulty.MEDIUM;
                     case 3:
                         return BotDifficulty.HARD;
-                    default:
+                    default: // if user keys in an int that is not 1, 2 or 3
                         System.out.println(AnsiColors.colorizeBold(
                                 "Invalid choice! Please enter a number between 1 and 3.", AnsiColors.BRIGHT_RED));
                 }
@@ -223,10 +223,10 @@ public class GameMenu {
 
     // Start local game setup
     public static void startLocalGame() {
-        setupHumans(); //call setupHumans() method 
-        setupBots(); //call setupBots() method
-        initializeGame(); //call initializeGame method
-        startGame(); // call startGame method
+        setupHumans(); //call setupHumans() method (line 233)
+        setupBots(); //call setupBots() method (line 240)
+        initializeGame(); //call initializeGame method (line 247)
+        startGame(); // call startGame method (line 181)
     }
 
     // Setup players
