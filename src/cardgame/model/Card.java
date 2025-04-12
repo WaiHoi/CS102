@@ -175,11 +175,11 @@ public class Card {
         // Calculate card width 
         int cardWidth = 13; // Width (in characters) of a single ASCII card
         // Determine how many cards can fit per line
-        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth); 
+        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth); //cardsPerLine = 9
 
         // Print cards in groups that fit within the console width
-        for (int group = 0; group < allCardsLines.size(); group += cardsPerLine) {
-            int groupEnd = Math.min(group + cardsPerLine, allCardsLines.size());
+        for (int group = 0; group < allCardsLines.size(); group += cardsPerLine) { //allCardsLines.size() is number of Cards
+            int groupEnd = Math.min(group + cardsPerLine, allCardsLines.size()); //This line calculates the end index of the current group (or row) of cards you want to print on the screen.
             
             if (!lineNumber) {
                 // If lineNumber == false → we're printing a player's hand (closedDeck)
@@ -204,7 +204,6 @@ public class Card {
                 // If lineNumber == true → we're printing the parade
                 // Add a label like "Line 1:", "Line 2:", etc.
                 System.out.println("Line " + (group / cardsPerLine + 1) + ":");
-
             }
 
             // Print the 9 lines of ASCII art for each card, side by side

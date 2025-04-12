@@ -37,38 +37,44 @@ public class Bot extends Player {
         return selectNumber;
     }
 
-    public int mediumDifficulty() {
-        // place uncommon coloured card into the parade
+// Medium difficulty bot strategy: 
+// 80% of the time → play card whose colour appears least in the parade
+// 20% of the time → act like easy bot (random or lowest value)
+public int mediumDifficulty() {
 
-        // 20% chance to pick randomly
-        Random rand = new Random();
-        if (rand.nextInt(100) < 20) {
-            return easyDifficulty();
-        }
-
-        int selectNumber = 0;
-        // start with highest possible number
-        int fewestMatchingColours = Integer.MAX_VALUE;
-
-        for (int i = 0; i < closedDeck.size(); i++) {
-            Card card = closedDeck.get(i);
-            String colour = card.getColour();
-
-            // count number of cards in parade with the same colour
-            int cardCount = 0;
-            for (Card paradeCard : Game.parade) {
-                if (paradeCard.getColour().equals(colour)) {
-                    cardCount++;
-                }
-            }
-
-            if (cardCount < fewestMatchingColours) {
-                fewestMatchingColours = cardCount;
-                selectNumber = i;
-            }
-        }
-        return selectNumber;
+    // 20% chance to play like easyDifficulty()
+    Random rand = new Random();
+    if (rand.nextInt(100) < 20) {
+        return easyDifficulty(); // fallback to easy mode
     }
+
+    int selectNumber = 0; // index of the card to be selected
+    int fewestMatchingColours = Integer.MAX_VALUE; // start with very high count
+
+    // Loop through all cards in the bot's closed deck
+    for (int i = 0; i < closedDeck.size(); i++) {
+        Card card = closedDeck.get(i); // current card
+        String colour = card.getColour(); // get card's colour
+
+        // Count how many cards in the parade have the same colour
+        int cardCount = 0;
+        for (Card paradeCard : Game.parade) {
+            if (paradeCard.getColour().equals(colour)) {
+                cardCount++; // increase count if colour matches
+            }
+        }
+
+        // If this colour is less common than previous best, select this card
+        if (cardCount < fewestMatchingColours) {
+            fewestMatchingColours = cardCount; // update fewest seen
+            selectNumber = i; // update best index so far
+        }
+    }
+
+    // Return the index of the selected card
+    return selectNumber;
+}
+
 
     public int hardDifficulty() {
         // choose best card 
