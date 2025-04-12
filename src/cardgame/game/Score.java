@@ -65,7 +65,7 @@ public class Score {
 
             if (p1colouredCardNumbers - p2colouredCardNumbers >= 2) {
                 playerToDeduct = 0;
-            } else if (p1colouredCardNumbers - p2colouredCardNumbers >= 2) {
+            } else if (p2colouredCardNumbers - p1colouredCardNumbers >= 2) {
                 playerToDeduct = 1;
             }
 
@@ -169,7 +169,7 @@ public class Score {
                 Player next = sortedPlayers.get(i + 1);
 
                 if (current.playerScoreCount == next.playerScoreCount) {
-                    int cardDifference = next.openDeck.size() - current.openDeck.size();
+                    int cardDifference = current.openDeck.size() - next.openDeck.size();
                     System.out.println(label + " " + current.name + " wins " + next.name +
                             " by " + cardDifference + " cards with score " + current.playerScoreCount);
                 } else {

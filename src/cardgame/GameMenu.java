@@ -95,6 +95,10 @@ public class GameMenu {
     }
 
     private static List<String> getPlayerNames(int numPlayers) {
+
+        // clear usernames
+        usernames.clear();
+
         StringBuilder errorMsg = new StringBuilder(); // Used to capture why a username is invalid
     
         // Generate Figlet-style header for "Enter Names of Players"
