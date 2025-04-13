@@ -52,6 +52,41 @@ Three or More Players
 
 The winner is the player with the lowest score!
 
+## Features 
+### Core Game Features 
+- Deck Initialisation 
+    - 66 cards: 6 colours, numbered from 0-10
+- Card Shuffling 
+    - Randomise deck order at game start 
+- Card Dealing 
+    - Deal 5 cards to each player 
+- Parade Line
+    - Shows cards currently in the parade
+- Hand Management
+    - Players can view and select which cards to play from their hand
+- Card Play Logic
+- Score Calculation
+- Endgame Trigger
+- Winner Determination 
+- Input Validation
+    - Prevent any invalid card players 
+    - Handles incorrect inputs 
+
+### Multiplayer Features 
+- Local Multiplayer
+    - Supports up to 6 players 
+    - On a single machine
+
+### Bot Players 
+- Easy Difficulty
+    - Random cards will be chosen and played
+- Medium Difficulty
+    - Play card with least common colour 
+    - 20% chance to play random card
+- Hard Difficulty
+    - Simulates outcomes and plays the best card 
+    - 10% chance to play random card
+
 ## Getting Started
 ### Prerequisites
 <!-- Software required for the program to run -->
