@@ -54,38 +54,26 @@ The winner is the player with the lowest score!
 
 ## Features 
 ### Core Game Features 
-- Deck Initialisation 
-    - 66 cards: 6 colours, numbered from 0-10
-- Card Shuffling 
-    - Randomise deck order at game start 
-- Card Dealing 
-    - Deal 5 cards to each player 
-- Parade Line
-    - Shows cards currently in the parade
-- Hand Management
-    - Players can view and select which cards to play from their hand
-- Card Play Logic
-- Score Calculation
-- Endgame Trigger
-- Winner Determination 
-- Input Validation
-    - Prevent any invalid card players 
-    - Handles incorrect inputs 
+- **Deck Initialization**: 66 cards — 6 colours, numbered 0–10.
+- **Card Shuffling**: Randomized deck at the start of each game.
+- **Card Dealing**: 5 cards dealt to each player.
+- **Parade Line**: Dynamic central line where played cards are added.
+- **Hand Management**: Players can view and choose cards from their hand.
+- **Card Play Logic**: Enforces game rules when playing a card.
+- **Score Calculation**: Computes scores based on remaining hand.
+- **Endgame Trigger**: Ends game when deck is exhausted or a player has no cards.
+- **Winner Determination**: Declares winner based on lowest score and lowest number of cards collected
+- **Input Validation**: 
+    - Prevents invalid moves and handles incorrect inputs.
+    - Ensures player usernames are unique
 
 ### Multiplayer Features 
-- Local Multiplayer
-    - Supports up to 6 players 
-    - On a single machine
+- **Local Multiplayer**: Supports up to 6 players on a single machine.
 
 ### Bot Players 
-- Easy Difficulty
-    - Random cards will be chosen and played
-- Medium Difficulty
-    - Play card with least common colour 
-    - 20% chance to play random card
-- Hard Difficulty
-    - Simulates outcomes and plays the best card 
-    - 10% chance to play random card
+- **Easy (Random)**: Plays randomly selected cards.
+- **Medium (Heuristic)**: Plays least common color with 20% random variation.
+- **Hard (Simulated)**: Evaluates outcomes to play best card with 10% randomness.
 
 ## Getting Started
 ### Prerequisites
