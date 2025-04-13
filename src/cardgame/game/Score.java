@@ -1,6 +1,7 @@
 package cardgame.game;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import cardgame.model.*;
 import cardgame.utility.*;
@@ -8,8 +9,6 @@ import cardgame.utility.*;
 import com.github.lalyos.jfiglet.FigletFont;
 
 public class Score {
-
-    public Player player;
 
     // colours array
     ArrayList<String> colours = new ArrayList<>(Arrays.asList(
@@ -24,23 +23,20 @@ public class Score {
 
         p.playerColouredCards.clear();
 
-        // use player attribute to get card arraylist
         for (Card card : p.calculateScoreDeck) {
 
-            // use card attribute to get card colour
             String colour = card.getColour();
 
-            // get current count
-            // default to 0 if not present
+            // Get number of cards of certain colour from player, if key not found, return 0
             int count = p.playerColouredCards.getOrDefault(colour, 0);
 
-            // increment the count by one
+            // increment 1 to count if colour is found
             p.playerColouredCards.put(colour, count + 1);
         }
 
-        // If colour not found, put value 0 into map
+        // If missing colourm, add it with a value of 0
+        // This avoids null checks later during score comparison
         colours.stream().forEach(colour -> p.playerColouredCards.putIfAbsent(colour, 0));
-
     }
 
     /*
@@ -49,6 +45,8 @@ public class Score {
      */
     private ArrayList<Card> deepCopyCards(ArrayList<Card> original) {
         ArrayList<Card> copy = new ArrayList<>();
+
+        // Copy cards and create new Card objects
         for (Card c : original) {
             copy.add(new Card(c.getValue(), c.getColour()));
         }
@@ -59,30 +57,44 @@ public class Score {
      * Calculate scores for 2 players
      */
     public void twoPlayers() {
+
+        // Loop through each colour in the game
         for (String colour : colours) {
+
+            // Initialize: no player selected for penalty yet
             int playerToDeduct = -1;
 
+            // Get how many cards of this colour each player has
             int p1colouredCardNumbers = Player.players.get(0).playerColouredCards.get(colour);
             int p2colouredCardNumbers = Player.players.get(1).playerColouredCards.get(colour);
 
+            // If player 1 has 2 or more cards of this colour than player 2, penalize player
+            // 1
             if (p1colouredCardNumbers - p2colouredCardNumbers >= 2) {
                 playerToDeduct = 0;
-            } else if (p2colouredCardNumbers - p1colouredCardNumbers >= 2) {
+            }
+            // If player 2 has 2 or more cards of this colour than player 1, penalize player
+            // 2
+            else if (p2colouredCardNumbers - p1colouredCardNumbers >= 2) {
                 playerToDeduct = 1;
             }
 
+            // If there is a player to penalize for lacking by 2
             if (playerToDeduct != -1) {
-                Player.players
-                        .get(playerToDeduct).playerScoreCount += Player.players.get(playerToDeduct).playerColouredCards
-                                .get(colour);
 
-                Iterator<Card> iterator = Player.players.get(playerToDeduct).calculateScoreDeck.iterator();
-                while (iterator.hasNext()) {
-                    Card c = iterator.next();
-                    if (c != null && colour.equals(c.getColour())) {
-                        iterator.remove();
-                    }
-                }
+                int currentScore = Player.players.get(playerToDeduct).getPlayerScore();
+                int pointsToAdd = Player.players.get(playerToDeduct).playerColouredCards.get(colour);
+
+                // add points to players based on how many colour cards they have
+                Player.players.get(playerToDeduct).setPlayerScore(currentScore + pointsToAdd);
+                
+
+                // Then remove all cards of that colour from their scoring deck
+                Player.players
+                        .get(playerToDeduct).calculateScoreDeck = Player.players.get(playerToDeduct).calculateScoreDeck
+                                .stream()
+                                .filter(c -> c != null && !colour.equals(c.getColour()))
+                                .collect(Collectors.toCollection(ArrayList::new));
             }
         }
     }
@@ -106,9 +118,11 @@ public class Score {
 
             }
 
-            // Step 2: Add in all the players that have the highest count
+            // Step 2: Add all players who have the highest number of cards for this colour
             if (highestCount > 0) {
                 for (Player p : Player.players) {
+                    // Use getOrDefault to avoid nullPointerException if the player has no cards of
+                    // this colour
                     if (p.playerColouredCards.getOrDefault(colour, 0) == highestCount) {
                         playersWithHighestNumOfCards.add(p);
                     }
@@ -116,17 +130,15 @@ public class Score {
             }
 
             // Step 3: Add scores to individual players
-            // Step 3: Remove the coloured cards from the calculating score deck
+            // Step 4: Remove the coloured cards of this colour from the calculating score
+            // deck
             for (Player p : playersWithHighestNumOfCards) {
-                p.playerScoreCount += highestCount;
+                p.setPlayerScore(p.getPlayerScore() + highestCount);
 
-                Iterator<Card> iterator = p.calculateScoreDeck.iterator();
-                while (iterator.hasNext()) {
-                    Card c = iterator.next();
-                    if (c != null && colour.equals(c.getColour())) {
-                        iterator.remove();
-                    }
-                }
+                p.calculateScoreDeck = p.calculateScoreDeck.stream()
+                        .filter(c -> c != null && !colour.equals(c.getColour()))
+                        .collect(Collectors.toCollection(ArrayList::new));
+
             }
         }
 
@@ -136,6 +148,7 @@ public class Score {
      * Calculate Score for players
      */
     public void calculateScore() {
+
         // Create deep copies of open decks for calculation
         for (Player p : Player.players) {
             p.calculateScoreDeck = deepCopyCards(p.openDeck);
@@ -149,13 +162,14 @@ public class Score {
             threePlayersAndAbove();
         }
 
-        // Adds all face value cards into the players score
+        // Add up the face value of all cards in each player's score deck
         for (Player p : Player.players) {
             for (Card c : p.calculateScoreDeck) {
-                p.playerScoreCount += c.getValue();
+                p.setPlayerScore(p.getPlayerScore() + c.getValue());
             }
         }
 
+        // Sort players by score and number of cards (lower is better in Parade)
         Collections.sort(Player.players, new ScoreCardComparator());
         List<Player> sortedPlayers = Player.players;
 
@@ -187,6 +201,8 @@ public class Score {
                     System.out.println(sortedPlayers.get(i).name + " got a score of " +
                             sortedPlayers.get(i).playerScoreCount);
                 }
+                System.out.println(label + " " + p.getPlayerName() +
+                        " got a score of " + p.getPlayerScore());
             } else {
                 // Single winner
                 try {

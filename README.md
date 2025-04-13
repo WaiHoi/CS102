@@ -52,6 +52,29 @@ Three or More Players
 
 The winner is the player with the lowest score!
 
+## Features 
+### Core Game Features 
+- **Deck Initialization**: 66 cards — 6 colours, numbered 0–10.
+- **Card Shuffling**: Randomized deck at the start of each game.
+- **Card Dealing**: 5 cards dealt to each player.
+- **Parade Line**: Dynamic central line where played cards are added.
+- **Hand Management**: Players can view and choose cards from their hand.
+- **Card Play Logic**: Enforces game rules when playing a card.
+- **Score Calculation**: Computes scores based on remaining hand.
+- **Endgame Trigger**: Ends game when deck is exhausted or a player has no cards.
+- **Winner Determination**: Declares winner based on lowest score and lowest number of cards collected
+- **Input Validation**: 
+    - Prevents invalid moves and handles incorrect inputs.
+    - Ensures player usernames are unique
+
+### Multiplayer Features 
+- **Local Multiplayer**: Supports up to 6 players on a single machine.
+
+### Bot Players 
+- **Easy (Random)**: Plays randomly selected cards.
+- **Medium (Heuristic)**: Plays least common color with 20% random variation.
+- **Hard (Simulated)**: Evaluates outcomes to play best card with 10% randomness.
+
 ## Getting Started
 ### Prerequisites
 <!-- Software required for the program to run -->
@@ -61,19 +84,16 @@ To run this project, ensure you have:
     - Terminal or IDE capable of running Java programs
         - e.g. cmd, shell
 
-### Installion
+### Installation
 <!-- Instructions on setting up the project locally -->
 1. Clone this repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/WaiHoi/CS102.git
 ```
 
 2. Navigate to the project directory
-```bash
-cd <directory>
-```
 
-3. Compile the program
+3. Compile the program using `compile.bat` or `compile,sh`
 ```bash
 # windows 
 ./compile
@@ -84,7 +104,7 @@ bash compile.sh
 
 ### Executing Program
 <!-- How to run the program -->
-To run the program
+To run the program, run `run.bat` or `run.sh`
 ```bash
 # windows 
 ./run
@@ -93,11 +113,18 @@ To run the program
 bash run.sh
 ```
 
-## Authors 
+## Group Members 
 <!-- Contributors name and info-->
+1. CHEE BO'EN MALCOLM
+2. WAI HOI
+3. TIEW CHUN YONG ETHAN
+4. ONG ZHENG HAN
+5. LYNUS PHUA YI XUAN
+6. SWAYAM JAIN
 
-## Acknowledgement
+## Acknowledgements
 <!-- 
 *** Any code snippets or examples
 *** format: [text](link)
 -->
+- [Jansi Library for colours](https://github.com/fusesource/jansi.git)

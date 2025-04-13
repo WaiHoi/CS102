@@ -21,31 +21,42 @@ public class Game {
     private static boolean lastRoundTriggered = false; // Flag for last round
 
     public static boolean checkPlayersHandForCardFromEachColour(Player p) {
-        // Define the required colors
+
+        // First, list all the colours that a player needs to have at least one of
+        // If the player has at least one card of each of these 6 colours, they meet the condition.
         ArrayList<String> requiredColors = new ArrayList<>(Arrays.asList(
                 "red", "blue", "green", "grey", "purple", "orange"));
-
-        // Collect colors present in the player's openDeck
+    
+        // Create a list to record what colours the player currently has in their open deck
         ArrayList<String> foundColors = new ArrayList<>();
-        for (Card card : p.openDeck) {
-            if (!foundColors.contains(card.getColour())) { // Avoid duplicates
+    
+        // Check each card the player has collected
+        for (Card card : p.getOpenDeck()) {
+    
+            // If we haven’t already recorded this card’s colour, add it to our list.
+            if (!foundColors.contains(card.getColour())) {
                 foundColors.add(card.getColour());
             }
         }
-
-        // Check if all required colors are in foundColors
+    
+        // Now go through the full set of required colours
         for (String color : requiredColors) {
+    
+            //If even one required colour is missing from the player’s deck, they haven’t met the condition.
             if (!foundColors.contains(color)) {
-                return false; // If any required color is missing, return false
+                return false;
             }
         }
-        return true; // If all colors are found, return true
+    
+        // If we found all 6 colours in the player’s cards, return true — they meet the requirement.
+        return true;
     }
+    
 
     public static void addNewCard(Player p) {
-        Card newCard = deck.get(0);
+        Card newCard = deck.get(0); //gets the card at the top of the deck pile
         deck.remove(0);
-        p.closedDeck.add(newCard);
+        p.addToClosedDeck(newCard);
     }
 
     public static void gameLogic(Player p, boolean lastRound) {
@@ -54,15 +65,17 @@ public class Game {
         int selectNumber = p.placeCard();
     
         // Take the selected card from the player's closed hand
-        Card c = p.closedDeck.get(selectNumber);
+        Card c = p.getCardFromClosedDeck(selectNumber);
+
     
         // Remove that card from their hand (closedDeck)
-        p.closedDeck.remove(c);
+        p.removeCardFromClosedDeck(c);
+
     
         // Add the played card to the end of the parade line
         parade.add(c);
     
-        // If it’s not the final round, let the player draw 1 replacement card
+        // If it’s not the final round, let the player draw 1 replacement card into his closedDeck
         if (!lastRound) {
             addNewCard(p); // refill hand after playing a card
         }
@@ -92,7 +105,8 @@ public class Game {
                 parade.remove(currentCard);
     
                 // Add it to the player’s open deck (face-up scoring pile)
-                p.openDeck.add(currentCard);
+                p.addToOpenDeck(currentCard);
+
     
                 // Also track it in this round’s collected cards (for printing)
                 cardsDrawn.add(currentCard);
@@ -109,7 +123,7 @@ public class Game {
     
         // Show the player’s open scoring deck after collecting
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
-        Card.printCards(p.openDeck, true, true, true); // show total collected cards
+        Card.printCards(p.getOpenDeck(), true, true, true); // show total collected cards
     
         // Pause the game so the next player doesn’t start immediately
         Scanner sc = new Scanner(System.in);
@@ -134,7 +148,7 @@ public class Game {
     
                 // Display whose turn it is
                 System.out.println("\n--------------------------");
-                System.out.println("    " + currentPlayer.name + "'s turn!    ");
+                System.out.println("    " + currentPlayer.getPlayerName() + "'s turn!    ");
                 System.out.println("--------------------------\n");
     
                 // Show the current parade cards
@@ -151,7 +165,7 @@ public class Game {
     
                     // Trigger last round conditions
                     lastRoundTriggered = true;
-                    System.out.println("Last round triggered by " + currentPlayer.name + "!\n");
+                    System.out.println("Last round triggered by " + currentPlayer.getPlayerName() + "!\n");
     
                     // Let all other players finish their final turns
                     executeLastRound(currentPlayer);
@@ -188,26 +202,33 @@ public class Game {
             finalRoundOrder.add(Player.players.get(i));
         }
     
-        // Add players from start to triggering player
+        // Then wrap around: add the remaining players from the start up to (but not including) the triggering player
         for (int i = 0; i < startIndex; i++) {
             finalRoundOrder.add(Player.players.get(i));
         }
     
+        // Now that the order is set, give each player one final turn in this order 
+        // Note the player who triggered the final round will start first
         for (Player p : finalRoundOrder) {
             System.out.println("\n-------------------------------");
-            System.out.println("    " + p.name + "'s final turn!    ");
+            System.out.println("    " + p.getPlayerName() + "'s final turn!    ");
             System.out.println("-------------------------------\n");
     
-            // Display parade as ASCII cards
+            // Show the current state of the parade before the player makes their move
             System.out.println("\nParade:\n");
-            Card.printCards(parade, false, true, true); // displayCardOptions = true, lineNumber = true
+            Card.printCards(parade, false, true, true); // show parade cards with line numbers
     
+            // Let the player take their final turn (game logic with lastRound = true)
             gameLogic(p, true);
+    
+            // Mark that this was the player’s final move — in case any cleanup is needed
             p.lastRound(p);
         }
     
+        // Now that everyone has finished their final turn, calculate and display the final scores
         score.calculateScore();
     }
+    
 
     private static void showGameOver() {
         try {
@@ -247,8 +268,8 @@ public class Game {
         lastRoundTriggered = false;
 
         for (Player p : Player.players) {
-            p.openDeck.clear();
-            p.closedDeck.clear();
+            p.getOpenDeck().clear();
+            p.getClosedDeck().clear();
         }
 
         // clear all players from last game

@@ -99,7 +99,7 @@ public class Initialize {
         for (Player player : Player.players) {
             for (int i = 0; i < 5; i++) {
                 Card card = Game.deck.remove(0); // Remove card from top of the deck
-                player.closedDeck.add(card); // Add card to player's closed deck
+                player.getClosedDeck().add(card); // Add card to player's closed deck
             }
         }
     }

@@ -8,7 +8,6 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class Human extends Player {
     public Card card;
-    private int playerID;
 
     public Human(String name, int playerID) {
         super(name, playerID);
@@ -59,15 +58,15 @@ public class Human extends Player {
 
             int listSize = 3 - j;
             int selectNumber = p.placeCardLastRound(listSize);
-            Card c = p.closedDeck.get(selectNumber);
-            p.closedDeck.remove(c);
-            p.openDeck.add(c);
+            Card c = p.getClosedDeck().get(selectNumber);
+            p.getClosedDeck().remove(c);
+            p.getOpenDeck().add(c);
 
             System.out.println("You have picked " + c.getColour() + " " + c.getValue() + "\n");
 
         }
         System.out.println("Your current deck:");
-        Card.printCards(p.openDeck, true, true, true);
+        Card.printCards(p.getOpenDeck(), true, true, true);
         System.out.println("\nThank you, your last 2 cards will be discarded now.");
     }
 

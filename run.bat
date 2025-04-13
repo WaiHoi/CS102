@@ -1,1 +1,1 @@
-java -cp "bin;lib/*" cardgame.GameMenu
+java -cp "classes;lib/*" cardgame.GameMenu

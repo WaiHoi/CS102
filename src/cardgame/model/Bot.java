@@ -33,7 +33,7 @@ public class Bot extends Player {
     public int easyDifficulty() {
         // chooses a random card 
         Random rand = new Random();
-        int selectNumber = rand.nextInt(closedDeck.size());
+        int selectNumber = rand.nextInt(getClosedDeck().size());
         return selectNumber;
     }
 
@@ -52,8 +52,8 @@ public int mediumDifficulty() {
     int fewestMatchingColours = Integer.MAX_VALUE; // start with very high count
 
     // Loop through all cards in the bot's closed deck
-    for (int i = 0; i < closedDeck.size(); i++) {
-        Card card = closedDeck.get(i); // current card
+    for (int i = 0; i < getClosedDeck().size(); i++) {
+        Card card = getClosedDeck().get(i); // current card
         String colour = card.getColour(); // get card's colour
 
         // Count how many cards in the parade have the same colour
@@ -92,9 +92,9 @@ public int mediumDifficulty() {
         // start with highest possible number
         int minScore = Integer.MAX_VALUE;
 
-        for (int i = 0; i < closedDeck.size(); i++) {
+        for (int i = 0; i < getClosedDeck().size(); i++) {
             // get bots hand
-            Card card = closedDeck.get(i);
+            Card card = getClosedDeck().get(i);
 
             //"If I played this card, how many points would I lose by collecting cards from the parade? Store that result in score."
             int score = scorePerCard(card);
@@ -129,17 +129,17 @@ public int mediumDifficulty() {
         System.out.println("Picking 2 cards by random...\n");
 
         for (int j = 0; j < 2; j++) {
-            int listSize = p.closedDeck.size();;
+            int listSize = p.getClosedDeck().size();;
             int selectNumber = p.placeCardLastRound(listSize);
-            Card c = p.closedDeck.get(selectNumber);
-            p.closedDeck.remove(c);
-            p.openDeck.add(c);
+            Card c = p.getClosedDeck().get(selectNumber);
+            p.getClosedDeck().remove(c);
+            p.getOpenDeck().add(c);
 
             System.out.println("Randomly picked " + c.getColour() + " " + c.getValue());
         }
 
         System.out.println("\nYour current deck:");
-        Card.printCards(p.openDeck, true, true, true);
+        Card.printCards(p.getOpenDeck(), true, true, true);
 
     }
 

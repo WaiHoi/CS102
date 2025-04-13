@@ -214,16 +214,7 @@ public class GameMenu {
             try {
                 System.out.print("Enter your choice: ");
                 int choice = scanner.nextInt(); 
-                //scanner.nextInt() Reads just the number, 
-                //Leaves the newline \n (the Enter key) in the input buffer
                 scanner.nextLine(); 
-                //Sees the leftover \n sitting there
-                //Reads everything up to and including the \n
-                //Returns an empty string ("") because there was nothing typed before the newline
-                //returns to nothing because its not assigned to a variable
-                //Clears the buffer
-                //note: without scanner.nextLine() above any following nextLine() would immediately return an empty string
-                //because it would just read the leftover \n instead of waiting for actual input.
 
                 switch (choice) {//switch case
                     case 1:
@@ -235,15 +226,12 @@ public class GameMenu {
                     default:  // Handles cases where the user enters an integer other than 1 or 2
                         System.out.println(AnsiColors.colorizeBold(
                                 "Invalid choice! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); 
-                                //explanation for this mentioned in displayMainMenu() method
-                                //no need for scanner.nextLine() as the user has already entered an integer, so 
-                                //the newline has already been cleared by the scanner.nextLine() right after it (in line 455)
                 }
             } catch (InputMismatchException e) { //
                 //Handle invalid cases when the input, choice, is not a integer
                 System.out.println(AnsiColors.colorizeBold(
-                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); // explanation for this is in displayMainMenu() method
-                scanner.nextLine(); //clears the line by returning the invalid String input. its invalid because int is the required datatype, not String.
+                        "Invalid input! Please enter either 1 or 2.", AnsiColors.BRIGHT_RED)); 
+                scanner.nextLine(); 
             }
         }
     }
@@ -252,18 +240,17 @@ public class GameMenu {
     public static void startLocalGame() {
         setupHumans(); //select the number of humans and bots, 2 <= number of players <= 6
         setupBots();  //sets up bot difficulty (from level 1 to 3) if numBots > 0, bot difficulty is the same for all bots
-        initializeGame(); 
-        //resets the game, adds all Bots and humans to players, 
-        //shuffles the deck, deals the card to players and puts the following 6 cards into Parade, 
-        //and displays game state, handles the loop of the game
-        startGame(); 
+        initializeGame(); //the main body of the game
+        startGame(); //recursive loop, brings you back to main menu after game ends
     }
 
     // Setup players
     private static void setupHumans() {
     // Collect user input and player names
         displayPlayerSetup(); 
-        usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
+        if (numHumans > 0) {
+            usernames = getPlayerNames(numHumans); //usernames is of type List<String>, getPlayerNames() in line 87
+        }
     }
 
     // Ask for difficulty level if bots are present
@@ -327,40 +314,31 @@ public class GameMenu {
         System.out.println("+--------------------------------------+");
     }
 
-    // Center text within a fixed width
+    // Centers the given text within the specified width by padding spaces on both sides.
+    // Ensures padding is non-negative to avoid formatting issues.
     private static String centerText(String text, int width) {
         int padding = Math.max((width - text.length()) / 2, 0);
-        // Calculate the number of spaces to pad on each side.
-        // (width - text.length()) gives total extra space available.
-        // Dividing by 2 gives the padding on one side.\
-        // Math.max(..., 0) ensures the padding is not negative. The '0' makes the width at least 0, even if its negative
         return String.format("%" + padding + "s%s%" + padding + "s", "", text, "");
-        // Construct the centered string using String.format.
-        // "%" + padding + "s" creates a formatted string field that pads with spaces to a total width of 'padding'.
-        // The first "%" + padding + "s" adds left padding, then %s is where the text goes,
-        // and the second "%" + padding + "s" adds right padding.
-        // For example, if padding is 3 and text is "Hello", the format becomes "%3s%s%3s"
-        // and with the arguments ("", "Hello", "") it produces "   Hello   ". (this is the portions after the comma in the String.format in line 568)
-        // and if arguments were ("a", "Hello", "a"), it produces "     aHello     a"
-
     }
+
+
+    /*  AnsiConsole.systemInstall() comes from the Jansi library:
+        (import org.fusesource.jansi.AnsiConsole)
+        It wraps System.out and System.err with special streams that interpret those ANSI escape codes
+         — so even on Windows CMD, the output looks properly styled.
+
+        It replaces the standard System.out and System.err with special streams
+         that support ANSI escape codes (e.g. \033[31m → red text) — enabling things like:
+         - Colored text
+         - Bold text
+         - Cursor movement
+         - Background colors
+
+         This ensures that ANSI formatting works properly even on terminals
+         (like Windows CMD) that don’t support ANSI codes by default. */
 
     public static void main(String[] args) {
         AnsiConsole.systemInstall(); 
-        // AnsiConsole.systemInstall() comes from the Jansi library:
-        // (import org.fusesource.jansi.AnsiConsole)
-        //It wraps System.out and System.err with special streams that interpret those ANSI escape codes
-        // — so even on Windows CMD, the output looks properly styled.
-
-        // It replaces the standard System.out and System.err with special streams
-        // that support ANSI escape codes (e.g. \033[31m → red text) — enabling things like:
-        // - Colored text
-        // - Bold text
-        // - Cursor movement
-        // - Background colors
-
-        // This ensures that ANSI formatting works properly even on terminals
-        // (like Windows CMD) that don’t support ANSI codes by default.
 
         startGame(); //calls startGame method from GameMenu
 
