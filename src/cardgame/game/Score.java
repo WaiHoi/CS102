@@ -5,6 +5,8 @@ import java.util.*;
 import cardgame.model.*;
 import cardgame.utility.*;
 
+import com.github.lalyos.jfiglet.FigletFont;
+
 public class Score {
 
     public Player player;
@@ -19,7 +21,7 @@ public class Score {
     public void countPlayerCards(Player p) {
 
         // reset count for new player
-        
+
         p.playerColouredCards.clear();
 
         // use player attribute to get card arraylist
@@ -155,31 +157,56 @@ public class Score {
         }
 
         Collections.sort(Player.players, new ScoreCardComparator());
+        List<Player> sortedPlayers = Player.players;
 
-        // Display player's scoring
-        List<Player> sortedPlayers = Player.players; // already sorted as described
+        if (!sortedPlayers.isEmpty()) {
+            Player winner = sortedPlayers.get(0);
 
-        String[] labels = { "[WINNER]", "[SECOND]", "[THIRD]", "[FOURTH]", "[FIFTH]", "[SIXTH]" }; // Extend if needed
+            // Check for tie with second place
+            if (sortedPlayers.size() > 1 && winner.playerScoreCount == sortedPlayers.get(1).playerScoreCount) {
+                Player second = sortedPlayers.get(1);
+                int cardDifference = winner.openDeck.size() - second.openDeck.size();
 
-        for (int i = 0; i < sortedPlayers.size(); i++) {
-            Player current = sortedPlayers.get(i);
-            String label = (i < labels.length) ? labels[i] : "[" + (i + 1) + "TH]";
+                try {
+                    // Generate Figlet for "JOINT WINNERS" in yellow
+                    String jointWinnerArt = FigletFont.convertOneLine("JOINT WINNERS");
+                    System.out.println(AnsiColors.colorize(jointWinnerArt, AnsiColors.BRIGHT_YELLOW));
+                } catch (Exception e) {
+                    System.out.println(AnsiColors.colorize("JOINT WINNERS", AnsiColors.BRIGHT_YELLOW));
+                }
 
-            if (i + 1 < sortedPlayers.size()) {
-                Player next = sortedPlayers.get(i + 1);
+                // Print names in bold
+                System.out.println(
+                        AnsiColors.colorizeBold(winner.name, AnsiColors.BRIGHT_YELLOW) + " and " +
+                                AnsiColors.colorizeBold(second.name, AnsiColors.BRIGHT_YELLOW) +
+                                " tie with score " + winner.playerScoreCount +
+                                " (won by " + cardDifference + " cards)");
 
-                if (current.playerScoreCount == next.playerScoreCount) {
-                    int cardDifference = current.openDeck.size() - next.openDeck.size();
-                    System.out.println(label + " " + current.name + " wins " + next.name +
-                            " by " + cardDifference + " cards with score " + current.playerScoreCount);
-                } else {
-                    System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+                // Print remaining players
+                for (int i = 2; i < sortedPlayers.size(); i++) {
+                    System.out.println(sortedPlayers.get(i).name + " got a score of " +
+                            sortedPlayers.get(i).playerScoreCount);
                 }
             } else {
-                // Last player (no one to compare to)
-                System.out.println(label + " " + current.name + " wins with score " + current.playerScoreCount);
+                // Single winner
+                try {
+                    // Generate Figlet for "WINNER" in yellow
+                    String winnerArt = FigletFont.convertOneLine("WINNER");
+                    System.out.println(AnsiColors.colorize(winnerArt, AnsiColors.BRIGHT_YELLOW));
+                } catch (Exception e) {
+                    System.out.println(AnsiColors.colorize("WINNER", AnsiColors.BRIGHT_YELLOW));
+                }
+
+                // Print winner name in bold
+                System.out.println(
+                        AnsiColors.colorizeBold(winner.name, AnsiColors.BRIGHT_YELLOW) + " wins with score " + winner.playerScoreCount);
+
+                // Print other players
+                for (int i = 1; i < sortedPlayers.size(); i++) {
+                    System.out.println(sortedPlayers.get(i).name + " got a score of " +
+                            sortedPlayers.get(i).playerScoreCount);
+                }
             }
         }
-
     }
 }
