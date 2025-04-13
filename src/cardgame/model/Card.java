@@ -25,54 +25,54 @@ public class Card {
         switch (color.toLowerCase()) {
             case "blue": // Princess
                 return Arrays.asList(
-                    colorCode + "|   .---.   |" + AnsiColors.RESET,  // Crown (aligned to 11 chars)
-                    colorCode + "|  ( ^_^ )  |" + AnsiColors.RESET,  // Smiling face
-                    colorCode + "|   / A \\   |" + AnsiColors.RESET);   // Dress with an "A-line" shape
-    
+                        colorCode + "|   .---.   |" + AnsiColors.RESET, // Crown (aligned to 11 chars)
+                        colorCode + "|  ( ^_^ )  |" + AnsiColors.RESET, // Smiling face
+                        colorCode + "|   / A \\   |" + AnsiColors.RESET); // Dress with an "A-line" shape
+
             case "red": // Clown
                 return Arrays.asList(
-                    colorCode + "|   .---.   |" + AnsiColors.RESET,  // Hat
-                    colorCode + "|  ( @.@ )  |" + AnsiColors.RESET,  // Face with a red nose
-                    colorCode + "|   \\_v_/   |" + AnsiColors.RESET); // Smile
-    
+                        colorCode + "|   .---.   |" + AnsiColors.RESET, // Hat
+                        colorCode + "|  ( @.@ )  |" + AnsiColors.RESET, // Face with a red nose
+                        colorCode + "|   \\_v_/   |" + AnsiColors.RESET); // Smile
+
             case "green": // Dwarf
                 return Arrays.asList(
-                    colorCode + "|  .-==-.   |" + AnsiColors.RESET,  // Helmet
-                    colorCode + "|  (o_o)    |" + AnsiColors.RESET,    // Face with beard
-                    colorCode + "|  /_\\_/\\   |" + AnsiColors.RESET);    // Beard and body
-    
+                        colorCode + "|  .-==-.   |" + AnsiColors.RESET, // Helmet
+                        colorCode + "|  (o_o)    |" + AnsiColors.RESET, // Face with beard
+                        colorCode + "|  /_\\_/\\   |" + AnsiColors.RESET); // Beard and body
+
             case "orange": // Duck
                 return Arrays.asList(
-                    colorCode + "|   __      |" + AnsiColors.RESET,  // Duck head outline
-                    colorCode + "| <(o )___  |" + AnsiColors.RESET,  // Duck face with beak
-                    colorCode + "|   ^^ ^^   |" + AnsiColors.RESET);   // Duck body or feet
-    
+                        colorCode + "|   __      |" + AnsiColors.RESET, // Duck head outline
+                        colorCode + "| <(o )___  |" + AnsiColors.RESET, // Duck face with beak
+                        colorCode + "|   ^^ ^^   |" + AnsiColors.RESET); // Duck body or feet
+
             case "grey": // Bunny
                 return Arrays.asList(
-                    colorCode + "|   (\\_/)   |" + AnsiColors.RESET,  // Bunny ears and head
-                    colorCode + "|  (='.'=)  |" + AnsiColors.RESET,  // Bunny face with nose
-                    colorCode + "|  (\")_(\")  |" + AnsiColors.RESET);   // Bunny body with paws
-    
+                        colorCode + "|   (\\_/)   |" + AnsiColors.RESET, // Bunny ears and head
+                        colorCode + "|  (='.'=)  |" + AnsiColors.RESET, // Bunny face with nose
+                        colorCode + "|  (\")_(\")  |" + AnsiColors.RESET); // Bunny body with paws
+
             case "purple": // Cat
                 return Arrays.asList(
-                    colorCode + "|   /\\_/\\   |" + AnsiColors.RESET,
-                    colorCode + "|  ( o.o )  |" + AnsiColors.RESET,
-                    colorCode + "|   > ^ <   |" + AnsiColors.RESET);
-    
+                        colorCode + "|   /\\_/\\   |" + AnsiColors.RESET,
+                        colorCode + "|  ( o.o )  |" + AnsiColors.RESET,
+                        colorCode + "|   > ^ <   |" + AnsiColors.RESET);
+
             default: // Default empty art
                 return Arrays.asList(
-                    colorCode + "|           |" + AnsiColors.RESET,
-                    colorCode + "|           |" + AnsiColors.RESET,
-                    colorCode + "|           |" + AnsiColors.RESET);
+                        colorCode + "|           |" + AnsiColors.RESET,
+                        colorCode + "|           |" + AnsiColors.RESET,
+                        colorCode + "|           |" + AnsiColors.RESET);
         }
     }
-    
 
     /**
      * Generates ASCII art for the card with colored borders and text.
      */
     private List<String> renderCardAscii() {
-        String colorCode = getColorCode();// colorCode is based on the card's colour, since renderCardAscii() is called on a Card object
+        String colorCode = getColorCode();// colorCode is based on the card's colour, since renderCardAscii() is called
+                                          // on a Card object
 
         List<String> lines = new ArrayList<>();
 
@@ -91,9 +91,9 @@ public class Card {
         // Add lines to represent the card
         lines.add(topBottomBorder);
         lines.add(topNumberLine);
-        lines.add(emptyLine); //padding
+        lines.add(emptyLine); // padding
         lines.addAll(asciiArt); // Middle lines (symbol/art)
-        lines.add(emptyLine); //padding
+        lines.add(emptyLine); // padding
         lines.add(bottomNumberLine);
         lines.add(topBottomBorder);
 
@@ -121,16 +121,19 @@ public class Card {
     }
 
     /**
-    * Prints a list of cards either as ASCII art or simple text.
-    * 
-    * @param deck               The list of cards to print
-    * @param sorting            If true when invoked, sorts cards by colour and value before printing
-    * @param displayCardOptions If true, prints full ASCII card art; if false, prints summary string
-    * @param lineNumber         If true, shows "Line X:" labels (used for parade); 
-    *                           if false, shows numbered labels above cards (used for player hands)
-    */
-    public static String printCards(ArrayList<Card> deck, boolean sorting, boolean displayCardOptions, 
-                                        boolean lineNumber) {
+     * Prints a list of cards either as ASCII art or simple text.
+     * 
+     * @param deck               The list of cards to print
+     * @param sorting            If true when invoked, sorts cards by colour and
+     *                           value before printing
+     * @param displayCardOptions If true, prints full ASCII card art; if false,
+     *                           prints summary string
+     * @param lineNumber         If true, shows "Line X:" labels (used for parade);
+     *                           if false, shows numbered labels above cards (used
+     *                           for player hands)
+     */
+    public static String printCards(ArrayList<Card> deck, boolean sorting, boolean displayCardOptions,
+            boolean lineNumber) {
         if (deck.isEmpty()) {
             System.out.println("No card collected this round");
             return "";
@@ -138,14 +141,15 @@ public class Card {
 
         if (sorting) { // If sorting == true, sort cards by colour (A–Z), then by value (low to high)
             deck.sort((card1, card2) -> {
-        
+
                 // Compare colours alphabetically (based on Unicode of first different letter)
                 int colorComparison = card1.getColour().compareTo(card2.getColour());
-        
+
                 // If colours are different, return the result of colorComparison
-                // If colours are the same (colorComparison == 0), compare the card values instead
-                return (colorComparison != 0) ? colorComparison 
-                       : Integer.compare(card1.getValue(), card2.getValue());
+                // If colours are the same (colorComparison == 0), compare the card values
+                // instead
+                return (colorComparison != 0) ? colorComparison
+                        : Integer.compare(card1.getValue(), card2.getValue());
             });
         }
 
@@ -157,30 +161,38 @@ public class Card {
                     printedCards.append("; "); // Add a semicolon between cards
             }
             printedCards.append("]");
-            return printedCards.toString(); //return a formatted summary string, somthing like [2 of Blue; 5 of Green; 9 of Red]
+            return printedCards.toString(); // return a formatted summary string, somthing like [2 of Blue; 5 of Green;
+                                            // 9 of Red]
         }
 
-        final int CONSOLE_WIDTH = 120;  // Total width of the console display
+        final int CONSOLE_WIDTH = 120; // Total width of the console display
 
-        //This creates a visual representation of each card as ASCII art — like rows of strings. 
-        //visual representation below:
-        /*List<String> red1 = ["╔═══════╗", "║ Red   ║", "║   1   ║", "╚═══════╝"];
-        List<String> blue3 = ["╔═══════╗", "║ Blue  ║", "║   3   ║", "╚═══════╝"];
-        List<String> green7 = ["╔═══════╗", "║Green  ║", "║   7   ║", "╚═══════╝"];*/
+        // This creates a visual representation of each card as ASCII art — like rows of
+        // strings.
+        // visual representation below:
+        /*
+         * List<String> red1 = ["╔═══════╗", "║ Red   ║", "║   1   ║", "╚═══════╝"];
+         * List<String> blue3 = ["╔═══════╗", "║ Blue  ║", "║   3   ║", "╚═══════╝"];
+         * List<String> green7 = ["╔═══════╗", "║Green  ║", "║   7   ║", "╚═══════╝"];
+         */
         List<List<String>> allCardsLines = new ArrayList<>(); // Holds the ASCII art lines for each card
         for (Card card : deck) {
             allCardsLines.add(card.renderCardAscii()); // Generate ASCII lines for each card
         }
 
-        // Calculate card width 
+        // Calculate card width
         int cardWidth = 13; // Width (in characters) of a single ASCII card
         // Determine how many cards can fit per line
-        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth); //cardsPerLine = 9
+        int cardsPerLine = Math.max(1, CONSOLE_WIDTH / cardWidth); // cardsPerLine = 9
 
         // Print cards in groups that fit within the console width
-        for (int group = 0; group < allCardsLines.size(); group += cardsPerLine) { //allCardsLines.size() is number of Cards
-            int groupEnd = Math.min(group + cardsPerLine, allCardsLines.size()); //This line calculates the end index of the current group (or row) of cards you want to print on the screen.
-            
+        for (int group = 0; group < allCardsLines.size(); group += cardsPerLine) { // allCardsLines.size() is number of
+                                                                                   // Cards
+            int groupEnd = Math.min(group + cardsPerLine, allCardsLines.size()); // This line calculates the end index
+                                                                                 // of the current group (or row) of
+                                                                                 // cards you want to print on the
+                                                                                 // screen.
+
             if (!lineNumber) {
                 // If lineNumber == false → we're printing a player's hand (closedDeck)
                 // Show numbered labels like [1] [2] above each card
@@ -192,8 +204,8 @@ public class Card {
                     int labelWidth = 3;
                     int padding = (cardWidth - labelWidth) / 2;
                     numberLine.append(" ".repeat(padding))
-                              .append("[").append(label).append("]")
-                              .append(" ".repeat(padding));
+                            .append("[").append(label).append("]")
+                            .append(" ".repeat(padding));
 
                     // Add space between cards
                     numberLine.append("  "); // spacing between cards

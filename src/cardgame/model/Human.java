@@ -13,8 +13,8 @@ public class Human extends Player {
     }
 
     public int placeCard() {
-       
-         // Show the player’s open scoring deck before they choose
+
+        // Show the player’s open scoring deck before they choose
         System.out.println(ansi().fgBrightCyan().a("\nYour scoring deck:\n").reset());
         Card.printCards(openDeck, true, true, true); // show total collected cards
 
@@ -25,11 +25,14 @@ public class Human extends Player {
         int selectNumber = 0;
 
         Scanner sc = new Scanner(System.in);
+
+        // prompt for valid entries only
         while (true) {
             try {
                 selectNumber = sc.nextInt() - 1;
                 sc.nextLine();
 
+                // print if entries are invalid
                 if (selectNumber >= 0 && selectNumber <= 4) {
                     break; // valid input, exit loop
                 } else {
@@ -37,6 +40,7 @@ public class Human extends Player {
                     System.out.print("Please enter only numbers from 1 to 5:");
                 }
 
+                // prompt again if entries are invalid with the catch of exception
             } catch (InputMismatchException e) {
                 sc.nextLine();
                 System.out.println("Invalid Entry!");
@@ -53,36 +57,47 @@ public class Human extends Player {
                 "Please choose the second card to be added into your open deck."
         };
 
+        // for 2 rounds
         for (int j = 0; j < 2; j++) {
             System.out.println(ansi().fgBrightCyan().a("\nYour closed deck:\n").reset());
+
+            // print out the cards to be chosen to be added to deck
             Card.printCards(closedDeck, false, true, false);
-    
+
             System.out.print(messages[j] + "\n> ");
 
+            // get the number of card to be added from closed deck into the open deck
             int listSize = 3 - j;
             int selectNumber = p.placeCardLastRound(listSize);
             Card c = p.getClosedDeck().get(selectNumber);
+
+            // remove from closed deck, add to open deck
             p.getClosedDeck().remove(c);
             p.getOpenDeck().add(c);
 
             System.out.println("You have picked " + c.getColour() + " " + c.getValue() + "\n");
 
         }
+
+        // display current deck of cards
         System.out.println("Your current deck:");
         Card.printCards(p.getOpenDeck(), true, true, true);
         System.out.println("\nThank you, your last 2 cards will be discarded now.");
     }
 
     public int placeCardLastRound(int listSize) {
-        
+
         int selectNumber = 0;
 
         Scanner sc = new Scanner(System.in);
+
+        // prompt for card number
         while (true) {
             try {
                 selectNumber = sc.nextInt() - 1;
                 sc.nextLine();
 
+                // if invalid entry, catch exception
                 if (selectNumber >= 0 && selectNumber <= listSize) {
                     break; // valid input, exit loop
                 } else {
@@ -97,6 +112,5 @@ public class Human extends Player {
             }
         }
         return selectNumber;
-    }   
-    
+    }
 }

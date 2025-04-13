@@ -1,4 +1,5 @@
 package cardgame.model;
+
 /**
  * Enum representing the difficulty levels of bot players.
  * Only fixed constant values , (like EASY, MEDIUM, HARD) are allowed.

@@ -10,7 +10,8 @@ public abstract class Player {
     private String name;
     private int playerID;
     private int playerScore;
-    private ArrayList<Card> calculateScoreDeck = new ArrayList<>(); //deep copy of open deck, only used in final score calculation
+    private ArrayList<Card> calculateScoreDeck = new ArrayList<>(); // deep copy of open deck, only used in final score
+                                                                    // calculation
     private TreeMap<String, Integer> playerColouredCards = new TreeMap<>();
     private static ArrayList<Player> players = new ArrayList<>();
 
@@ -20,13 +21,12 @@ public abstract class Player {
     ArrayList<String> colours = new ArrayList<>(Arrays.asList(
             "blue", "green", "grey", "purple", "orange", "red"));
 
-
     // Constructor with parameter to set if the player is a bot
     public Player(String name, int playerID) {
         this.name = name;
         this.playerID = playerID;
     }
-            
+
     public ArrayList<Card> getCalculateScoreDeck() {
         return calculateScoreDeck;
     }
@@ -83,7 +83,7 @@ public abstract class Player {
         this.playerScore = playerScore;
     }
 
-    public static void randomizePlayers(){
+    public static void randomizePlayers() {
         Random rand = new Random();
         int rotateValue = rand.nextInt(Player.players.size());
         Collections.rotate(players, rotateValue);
@@ -99,13 +99,13 @@ public abstract class Player {
      */
     private ArrayList<Card> deepCopyCards(ArrayList<Card> original) {
         return original.stream()
-       .map(card -> new Card(card.getValue(), card.getColour()))
-       .collect(Collectors.toCollection(ArrayList::new));
+                .map(card -> new Card(card.getValue(), card.getColour()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void prepareForScoring(Player p) {
         this.calculateScoreDeck = deepCopyCards(this.openDeck);
-        this.countPlayerCards(p);  // Now an internal method
+        this.countPlayerCards(p); // Now an internal method
     }
 
     /*
@@ -131,15 +131,12 @@ public abstract class Player {
         // This avoids null checks later during score comparison
         colours.stream().forEach(colour -> p.getPlayerColouredCards().putIfAbsent(colour, 0));
     }
-    
 
     public void removeCardsByColour(String colourToRemove) {
         Objects.requireNonNull(colourToRemove, "Colour cannot be null");
-        calculateScoreDeck.removeIf(card -> 
-            card != null && colourToRemove.equals(card.getColour())
-        );
+        calculateScoreDeck.removeIf(card -> card != null && colourToRemove.equals(card.getColour()));
     }
-    
+
     public Card getCardFromClosedDeck(int index) {
         if (index >= 0 && index < closedDeck.size()) {
             return closedDeck.get(index);
@@ -150,14 +147,14 @@ public abstract class Player {
     public void removeCardFromClosedDeck(Card card) {
         closedDeck.remove(card);
     }
-    
+
     public void addToOpenDeck(Card card) {
         openDeck.add(card);
     }
 
     public abstract int placeCard();
+
     public abstract void lastRound(Player p);
+
     public abstract int placeCardLastRound(int listSize);
-    
-    
 }

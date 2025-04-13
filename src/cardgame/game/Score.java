@@ -13,7 +13,6 @@ public class Score {
     ArrayList<String> colours = new ArrayList<>(Arrays.asList(
             "blue", "green", "grey", "purple", "orange", "red"));
 
-
     /*
      * Calculate scores for 2 players
      */
@@ -48,7 +47,6 @@ public class Score {
 
                 // add points to players based on how many colour cards they have
                 Player.getPlayers().get(playerToDeduct).setPlayerScore(currentScore + pointsToAdd);
-                
 
                 // Then remove all cards of that colour from their scoring deck
                 Player.getPlayers().get(playerToDeduct).removeCardsByColour(colour);
@@ -72,7 +70,6 @@ public class Score {
                 if (currentCount > highestCount) {
                     highestCount = currentCount;
                 }
-
             }
 
             // Step 2: Add all players who have the highest number of cards for this colour
@@ -91,10 +88,7 @@ public class Score {
             // deck
             for (Player p : playersWithHighestNumOfCards) {
                 p.setPlayerScore(p.getPlayerScore() + highestCount);
-
                 p.removeCardsByColour(colour);
-
-
             }
         }
 
@@ -144,7 +138,7 @@ public class Score {
 
         System.out.println("[WINNER] " + possibleWinner.getPlayerName() + " wins with score " +
                 possibleWinnerScore);
-        
+
         // Loop through players
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);

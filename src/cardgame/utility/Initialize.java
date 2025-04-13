@@ -16,13 +16,14 @@ public class Initialize {
      * @param numBots       Number of bot players.
      * @param botDifficulty Difficulty level for bots.
      */
-    public static void initializeVariables(List<String> usernames, int numHumans, 
-                                           int numBots, BotDifficulty botDifficulty) {
-        initializePlayers(usernames, numHumans); //adds all Humans to players
-        initializeBots(numBots, botDifficulty); //adds Bots to Players
-        initializeDeck(); //reads deck from the file, populate and shuffles it
-        dealCardsToPlayers(); //each player gets 5 cards, followed by the next player
-        initializeParade(); //the next 6 cards after the all players gets their cards, will be the cards for the parade
+    public static void initializeVariables(List<String> usernames, int numHumans,
+            int numBots, BotDifficulty botDifficulty) {
+        initializePlayers(usernames, numHumans); // adds all Humans to players
+        initializeBots(numBots, botDifficulty); // adds Bots to Players
+        initializeDeck(); // reads deck from the file, populate and shuffles it
+        dealCardsToPlayers(); // each player gets 5 cards, followed by the next player
+        initializeParade(); // the next 6 cards after the all players gets their cards, will be the cards
+                            // for the parade
     }
 
     /**
@@ -32,12 +33,13 @@ public class Initialize {
      * @param numHumans Number of human players.
      */
 
-    //This method creates and adds numHumans Human players (subclass of Player) to the shared list Player.players,
-    //using the names from the usernames list and assigning each a unique ID.
+    // This method creates and adds numHumans Human players (subclass of Player) to
+    // the shared list Player.players,
+    // using the names from the usernames list and assigning each a unique ID.
     private static void initializePlayers(List<String> usernames, int numHumans) {
         for (int i = 0; i < numHumans; i++) {
             int playerID = i + 1;
-            Player.getPlayers().add(new Human(usernames.get(i), playerID)); 
+            Player.getPlayers().add(new Human(usernames.get(i), playerID));
         }
     }
 
@@ -57,17 +59,21 @@ public class Initialize {
     }
 
     /**
-     * Reads the deck from a file ("deck.txt"), shuffles it, and populates the game deck.
+     * Reads the deck from a file ("deck.txt"), shuffles it, and populates the game
+     * deck.
      */
     private static void initializeDeck() {
         ArrayList<Card> deckUnshuffled = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File("deck.txt"))) {
             while (scanner.hasNext()) {// Read each line of the file
                 String[] attributes = scanner.nextLine().split(","); // Split the line by comma into attributes
-                Card card = new Card(Integer.parseInt(attributes[0]), attributes[1]);  //index will always only be 0 or 1 because each line in deck.txt only has number first then color
+                Card card = new Card(Integer.parseInt(attributes[0]), attributes[1]); // index will always only be 0 or
+                                                                                      // 1 because each line in deck.txt
+                                                                                      // only has number first then
+                                                                                      // color
                 // Create a Card object using the parsed values
                 // First value is an integer, second is a string
-                deckUnshuffled.add(card); //add the cards
+                deckUnshuffled.add(card); // add the cards
             }
         } catch (FileNotFoundException e) {
             System.out.println("ERROR: Deck file not found. Please ensure 'deck.txt' exists.");
@@ -75,7 +81,7 @@ public class Initialize {
         }
 
         // Shuffle the cards
-        shuffleDeck(deckUnshuffled);//line 86
+        shuffleDeck(deckUnshuffled);// line 86
     }
 
     /**
@@ -84,11 +90,13 @@ public class Initialize {
      * @param deckUnshuffled The unshuffled deck read from the file.
      */
     private static void shuffleDeck(ArrayList<Card> deckUnshuffled) {
-        Random random = new Random(); // Creates a new random number generator 
+        Random random = new Random(); // Creates a new random number generator
         while (!deckUnshuffled.isEmpty()) {
-            //while unshuffiled deck still has cards
-            int randomIndex = random.nextInt(deckUnshuffled.size()); //This picks a random number between 0 and the size of the deck - 1.
-            Game.getDeck().add(deckUnshuffled.remove(randomIndex)); // Remove card from unshuffled list and add to final deck
+            // while unshuffiled deck still has cards
+            int randomIndex = random.nextInt(deckUnshuffled.size()); // This picks a random number between 0 and the
+                                                                     // size of the deck - 1.
+            Game.getDeck().add(deckUnshuffled.remove(randomIndex)); // Remove card from unshuffled list and add to final
+                                                                    // deck
         }
     }
 

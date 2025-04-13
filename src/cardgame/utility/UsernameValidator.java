@@ -12,15 +12,17 @@ public class UsernameValidator {
 
     // Validation rules
     private static final Set<String> RESERVED_NAMES = Set.of("bot", "player");
-    private static final Pattern VALID_CHARS = Pattern.compile("^[a-zA-Z0-9_-]+$"); // Matches full string: ^ = start, [a-zA-Z0-9_-] = allowed chars, + = 1+ times, $ = end
+    private static final Pattern VALID_CHARS = Pattern.compile("^[a-zA-Z0-9_-]+$"); // Matches full string: ^ = start,
+                                                                                    // [a-zA-Z0-9_-] = allowed chars, +
+                                                                                    // = 1+ times, $ = end
     private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 20;
 
     /**
      * Validates a username based on predefined rules.
      *
-     * @param username      The username to validate.
-     * @param errorMessage  A StringBuilder to store error messages.
+     * @param username     The username to validate.
+     * @param errorMessage A StringBuilder to store error messages.
      * @return true if the username is valid, false otherwise.
      */
     public static synchronized boolean validateUsername(String username, StringBuilder errorMessage) {
@@ -28,14 +30,19 @@ public class UsernameValidator {
         errorMessage.setLength(0);
 
         // Perform validation checks
-        if (isNullOrEmpty(username, errorMessage)) return false; 
-        if (isInvalidLength(username, errorMessage)) return false; 
-        if (hasInvalidCharacters(username, errorMessage)) return false; 
-        if (isReservedName(username, errorMessage)) return false; 
-        if (!isUnique(username, errorMessage)) return false; 
+        if (isNullOrEmpty(username, errorMessage))
+            return false;
+        if (isInvalidLength(username, errorMessage))
+            return false;
+        if (hasInvalidCharacters(username, errorMessage))
+            return false;
+        if (isReservedName(username, errorMessage))
+            return false;
+        if (!isUnique(username, errorMessage))
+            return false;
 
         // If all checks pass, add the username to the set and return true
-        usernames.add(username); //username here belongs to UsernameValidator
+        usernames.add(username); // username here belongs to UsernameValidator
         return true;
     }
 
@@ -90,7 +97,8 @@ public class UsernameValidator {
      */
     private static boolean hasInvalidCharacters(String username, StringBuilder errorMessage) {
         if (!VALID_CHARS.matcher(username).matches()) {
-            appendError(errorMessage, "Username contains invalid characters. Only letters, numbers, hyphens (-), and underscores (_) are allowed.");
+            appendError(errorMessage,
+                    "Username contains invalid characters. Only letters, numbers, hyphens (-), and underscores (_) are allowed.");
             return true;
         }
         return false;
@@ -111,7 +119,7 @@ public class UsernameValidator {
      * Checks if a username is unique.
      */
     private static boolean isUnique(String username, StringBuilder errorMessage) {
-        if (!usernames.add(username)) { //add is boolean. if usename not unique, cannot be added to set
+        if (!usernames.add(username)) { // add is boolean. if usename not unique, cannot be added to set
             appendError(errorMessage, "Username already in use.");
             return false;
         }
@@ -119,7 +127,8 @@ public class UsernameValidator {
     }
 
     /**
-     * Appends an error message in bright red with typical formatting to the provided StringBuilder.
+     * Appends an error message in bright red with typical formatting to the
+     * provided StringBuilder.
      */
     private static void appendError(StringBuilder errorMessage, String message) {
         String formattedError = AnsiColors.colorizeBold("ERROR: " + message, AnsiColors.BRIGHT_RED);
