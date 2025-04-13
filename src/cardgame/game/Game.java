@@ -31,7 +31,7 @@ public class Game {
         ArrayList<String> foundColors = new ArrayList<>();
     
         // Check each card the player has collected
-        for (Card card : p.openDeck) {
+        for (Card card : p.getOpenDeck()) {
     
             // If we haven’t already recorded this card’s colour, add it to our list.
             if (!foundColors.contains(card.getColour())) {
@@ -56,7 +56,7 @@ public class Game {
     public static void addNewCard(Player p) {
         Card newCard = deck.get(0); //gets the card at the top of the deck pile
         deck.remove(0);
-        p.closedDeck.add(newCard);
+        p.addToClosedDeck(newCard);
     }
 
     public static void gameLogic(Player p, boolean lastRound) {
@@ -65,10 +65,12 @@ public class Game {
         int selectNumber = p.placeCard();
     
         // Take the selected card from the player's closed hand
-        Card c = p.closedDeck.get(selectNumber);
+        Card c = p.getCardFromClosedDeck(selectNumber);
+
     
         // Remove that card from their hand (closedDeck)
-        p.closedDeck.remove(c);
+        p.removeCardFromClosedDeck(c);
+
     
         // Add the played card to the end of the parade line
         parade.add(c);
@@ -103,7 +105,8 @@ public class Game {
                 parade.remove(currentCard);
     
                 // Add it to the player’s open deck (face-up scoring pile)
-                p.openDeck.add(currentCard);
+                p.addToOpenDeck(currentCard);
+
     
                 // Also track it in this round’s collected cards (for printing)
                 cardsDrawn.add(currentCard);
@@ -120,7 +123,7 @@ public class Game {
     
         // Show the player’s open scoring deck after collecting
         System.out.println("\n" + p.getPlayerName() + "'s deck of cards:");
-        Card.printCards(p.openDeck, true, true, true); // show total collected cards
+        Card.printCards(p.getOpenDeck(), true, true, true); // show total collected cards
     
         // Pause the game so the next player doesn’t start immediately
         Scanner sc = new Scanner(System.in);
@@ -145,7 +148,7 @@ public class Game {
     
                 // Display whose turn it is
                 System.out.println("\n--------------------------");
-                System.out.println("    " + currentPlayer.name + "'s turn!    ");
+                System.out.println("    " + currentPlayer.getPlayerName() + "'s turn!    ");
                 System.out.println("--------------------------\n");
     
                 // Show the current parade cards
@@ -162,7 +165,7 @@ public class Game {
     
                     // Trigger last round conditions
                     lastRoundTriggered = true;
-                    System.out.println("Last round triggered by " + currentPlayer.name + "!\n");
+                    System.out.println("Last round triggered by " + currentPlayer.getPlayerName() + "!\n");
     
                     // Let all other players finish their final turns
                     executeLastRound(currentPlayer);
@@ -208,7 +211,7 @@ public class Game {
         // Note the player who triggered the final round will start first
         for (Player p : finalRoundOrder) {
             System.out.println("\n-------------------------------");
-            System.out.println("    " + p.name + "'s final turn!    ");
+            System.out.println("    " + p.getPlayerName() + "'s final turn!    ");
             System.out.println("-------------------------------\n");
     
             // Show the current state of the parade before the player makes their move
@@ -265,8 +268,8 @@ public class Game {
         lastRoundTriggered = false;
 
         for (Player p : Player.players) {
-            p.openDeck.clear();
-            p.closedDeck.clear();
+            p.getOpenDeck().clear();
+            p.getClosedDeck().clear();
         }
 
         // clear all players from last game

@@ -12,7 +12,7 @@ import cardgame.game.*;
 public class ScoreCardComparator implements Comparator<Player>{
     public int compare(Player p1, Player p2){
         // Compare players based on score (by lower score)
-        int scoreComparison = Integer.compare(p1.playerScoreCount, p2.playerScoreCount);
+        int scoreComparison = Integer.compare(p1.getPlayerScore(), p2.getPlayerScore());
 
         // Return if scores are different
         if (scoreComparison != 0) {
@@ -20,6 +20,6 @@ public class ScoreCardComparator implements Comparator<Player>{
         }
 
         // Equal score, compare number of cards
-        return Integer.compare(p1.openDeck.size(), p2.openDeck.size());
+        return Integer.compare(p1.getOpenDeck().size(), p2.getOpenDeck().size());
     }
 }

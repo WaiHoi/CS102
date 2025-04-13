@@ -1,13 +1,12 @@
 package cardgame.game;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import cardgame.model.*;
 import cardgame.utility.*;
 
 public class Score {
-
-    public Player player;
 
     // colours array
     ArrayList<String> colours = new ArrayList<>(Arrays.asList(
@@ -25,18 +24,14 @@ public class Score {
 
             String colour = card.getColour();
 
-            // Look up how many cards the player already has of this colour
-            // If it’s not found in the map, treat it as 0 for now
-            int count = p.playerColouredCards.getOrDefault(colour, 0); // returns the integer value associated with the
-                                                                       // colour key
+            // Get number of cards of certain colour from player, if key not found, return 0
+            int count = p.playerColouredCards.getOrDefault(colour, 0);
 
-            // increment 1 to the count (count + 1) and store it back into the map each time
-            // the color is found
+            // increment 1 to count if colour is found
             p.playerColouredCards.put(colour, count + 1);
         }
 
-        // Make sure all colours are included in the map
-        // Even if a player has 0 of a colour, add it with a value of 0
+        // If missing colourm, add it with a value of 0
         // This avoids null checks later during score comparison
         colours.stream().forEach(colour -> p.playerColouredCards.putIfAbsent(colour, 0));
     }
@@ -47,6 +42,8 @@ public class Score {
      */
     private ArrayList<Card> deepCopyCards(ArrayList<Card> original) {
         ArrayList<Card> copy = new ArrayList<>();
+
+        // Copy cards and create new Card objects
         for (Card c : original) {
             copy.add(new Card(c.getValue(), c.getColour()));
         }
@@ -61,7 +58,8 @@ public class Score {
         // Loop through each colour in the game
         for (String colour : colours) {
 
-            int playerToDeduct = -1; // Initialize: no player selected for penalty yet
+            // Initialize: no player selected for penalty yet
+            int playerToDeduct = -1;
 
             // Get how many cards of this colour each player has
             int p1colouredCardNumbers = Player.players.get(0).playerColouredCards.get(colour);
@@ -81,21 +79,19 @@ public class Score {
             // If there is a player to penalize for lacking by 2
             if (playerToDeduct != -1) {
 
-                Player.players
-                        .get(playerToDeduct).playerScoreCount += Player.players
-                                .get(playerToDeduct).playerColouredCards.get(colour); // returns the int value mapped to
-                                                                                      // the colour key
+                int currentScore = Player.players.get(playerToDeduct).getPlayerScore();
+                int pointsToAdd = Player.players.get(playerToDeduct).playerColouredCards.get(colour);
+
+                // add points to players based on how many colour cards they have
+                Player.players.get(playerToDeduct).setPlayerScore(currentScore + pointsToAdd);
+                
 
                 // Then remove all cards of that colour from their scoring deck
-                Iterator<Card> iterator = Player.players.get(playerToDeduct).calculateScoreDeck.iterator();
-                while (iterator.hasNext()) {
-                    Card c = iterator.next();
-
-                    // If the card matches the penalized colour, remove it
-                    if (c != null && colour.equals(c.getColour())) {
-                        iterator.remove();
-                    }
-                }
+                Player.players
+                        .get(playerToDeduct).calculateScoreDeck = Player.players.get(playerToDeduct).calculateScoreDeck
+                                .stream()
+                                .filter(c -> c != null && !colour.equals(c.getColour()))
+                                .collect(Collectors.toCollection(ArrayList::new));
             }
         }
     }
@@ -131,19 +127,15 @@ public class Score {
             }
 
             // Step 3: Add scores to individual players
-            // Step 4: Remove the coloured cards of this colour from the calculating score deck
+            // Step 4: Remove the coloured cards of this colour from the calculating score
+            // deck
             for (Player p : playersWithHighestNumOfCards) {
-                p.playerScoreCount += highestCount;
+                p.setPlayerScore(p.getPlayerScore() + highestCount);
 
-                Iterator<Card> iterator = p.calculateScoreDeck.iterator();
-                while (iterator.hasNext()) {
-                    Card c = iterator.next();
-                    if (c != null && colour.equals(c.getColour())) { 
-                        // checking if the color of card c that we are iterating is of the same color 
-                        // as colour (in the big for loop), and is not null
-                        iterator.remove(); //remove it if it is
-                    }
-                }
+                p.calculateScoreDeck = p.calculateScoreDeck.stream()
+                        .filter(c -> c != null && !colour.equals(c.getColour()))
+                        .collect(Collectors.toCollection(ArrayList::new));
+
             }
         }
 
@@ -170,7 +162,7 @@ public class Score {
         // Add up the face value of all cards in each player's score deck
         for (Player p : Player.players) {
             for (Card c : p.calculateScoreDeck) {
-                p.playerScoreCount += c.getValue();
+                p.setPlayerScore(p.getPlayerScore() + c.getValue());
             }
         }
 
@@ -182,13 +174,13 @@ public class Score {
 
         // Get winner (first player in sorted list)
         Player possibleWinner = sortedPlayers.get(0);
-        int possibleWinnerScore = possibleWinner.playerScoreCount;
-        int possibleWinnerDeckSize = possibleWinner.openDeck.size();
+        int possibleWinnerScore = possibleWinner.getPlayerScore();
+        int possibleWinnerDeckSize = possibleWinner.getOpenDeck().size();
 
-        System.out.println("[WINNER] " + possibleWinner.name + " wins with score " + 
-                            possibleWinnerScore);
+        System.out.println("[WINNER] " + possibleWinner.getPlayerName() + " wins with score " +
+                possibleWinnerScore);
 
-        // Loop through players 
+        // Loop through players
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
             String label = (i < labels.length) ? labels[i] : "[" + (i + 1) + "TH]";
@@ -198,26 +190,26 @@ public class Score {
             }
 
             // Print tiebreaker note
-            if (p.playerScoreCount == possibleWinnerScore) {
-                int cardDiff = p.openDeck.size() - possibleWinnerDeckSize;
+            if (p.getPlayerScore() == possibleWinnerScore) {
+                int cardDiff = p.getOpenDeck().size() - possibleWinnerDeckSize;
 
                 // same score and number of cards
                 if (cardDiff == 0) {
-                    System.out.println(" -> " + possibleWinner.name + " wins tiebreak against " + 
-                                        p.name + " with equal number of cards (" + 
-                                        possibleWinnerDeckSize + ")");
-                // same score and fewer cards
+                    System.out.println(" -> " + possibleWinner.getPlayerName() + " wins tiebreak against " +
+                            p.getPlayerName() + " with equal number of cards (" +
+                            possibleWinnerDeckSize + ")");
+                    // same score and fewer cards
                 } else {
-                    System.out.println(" -> " + possibleWinner.name + 
-                                        " wins tiebreak against " + p.name + 
-                                        " by " + cardDiff + " fewer cards (score: " +
-                                        possibleWinnerScore + ")");
+                    System.out.println(" -> " + possibleWinner.getPlayerName() +
+                            " wins tiebreak against " + p.getPlayerName() +
+                            " by " + cardDiff + " fewer cards (score: " +
+                            possibleWinnerScore + ")");
                 }
-                System.out.println(label + " " + p.name + 
-                                    " got a score of " + p.playerScoreCount);
+                System.out.println(label + " " + p.getPlayerName() +
+                        " got a score of " + p.getPlayerScore());
             } else {
-                System.out.println(label + " " + p.name + 
-                                    " got a score of " + p.playerScoreCount);
+                System.out.println(label + " " + p.getPlayerName() +
+                        " got a score of " + p.getPlayerScore());
             }
         }
     }
