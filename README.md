@@ -63,12 +63,11 @@ The winner is the player with the lowest score!
 - **Score Calculation**: Computes scores based on remaining hand.
 - **Endgame Trigger**: Ends game when deck is exhausted or a player has no cards.
 - **Winner Determination**: Declares winner based on lowest score and lowest number of cards collected
-- **Input Validation**: 
-    - Prevents invalid moves and handles incorrect inputs.
-    - Ensures player usernames are unique
+- **Input Validation**: Prevents invalid moves and handles incorrect inputs.
 
 ### Multiplayer Features 
 - **Local Multiplayer**: Supports up to 6 players on a single machine.
+- **Unique Usernames**: Ensures usernames are unique and between 3-20 characters
 
 ### Bot Players 
 - **Easy (Random)**: Plays randomly selected cards.
