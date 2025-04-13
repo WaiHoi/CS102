@@ -14,6 +14,10 @@ public class Human extends Player {
     }
 
     public int placeCard() {
+       
+         // Show the player’s open scoring deck before they choose
+        System.out.println(ansi().fgBrightCyan().a("\nYour scoring deck:\n").reset());
+        Card.printCards(openDeck, true, true, true); // show total collected cards
 
         System.out.println(ansi().fgBrightCyan().a("\nYour closed deck:\n").reset());
         Card.printCards(closedDeck, false, true, false);
