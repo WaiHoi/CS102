@@ -4,9 +4,6 @@ import java.util.*;
 
 import cardgame.model.*;
 import cardgame.utility.UsernameValidator;
-
-import org.fusesource.jansi.AnsiConsole;
-
 import com.github.lalyos.jfiglet.FigletFont;
 
 public class Game {
@@ -14,7 +11,6 @@ public class Game {
     private static ArrayList<Card> deck = new ArrayList<>(); // the pile that players draw from
     private static ArrayList<Card> parade = new ArrayList<>(); // actual line of cards that the players lay out in the
                                                                // middle
-    private static int lastRound = 0;
     private static Score score = new Score();
     private static boolean lastRoundTriggered = false; // Flag for last round
 
@@ -280,7 +276,6 @@ public class Game {
         currentRound = 1;
         deck.clear();
         parade.clear();
-        lastRound = 0;
         score = new Score();
         lastRoundTriggered = false;
 

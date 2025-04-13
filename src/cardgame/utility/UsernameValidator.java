@@ -3,8 +3,6 @@ package cardgame.utility;
 import java.util.*;
 import java.util.regex.*;
 
-import cardgame.utility.AnsiColors;
-
 public class UsernameValidator {
 
     // Set to store unique usernames

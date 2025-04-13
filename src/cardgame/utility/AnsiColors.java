@@ -1,10 +1,5 @@
 package cardgame.utility;
 
-import org.fusesource.jansi.AnsiConsole;
-
-import static org.fusesource.jansi.Ansi.DISABLE;
-import static org.fusesource.jansi.Ansi.ansi;
-
 public class AnsiColors {
     // ANSI Reset
     public static final String RESET = "\u001B[0m";

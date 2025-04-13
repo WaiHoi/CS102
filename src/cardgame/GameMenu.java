@@ -27,7 +27,6 @@ public class GameMenu {
     private static final int CONSOLE_WIDTH = 40;
 
     // Variables for storing user and bot data
-    private static String username;
     private static List<String> usernames = new ArrayList<>();
     private static int numHumans;
     private static int numBots;

@@ -3,7 +3,6 @@ package cardgame.model;
 import java.util.*;
 
 import cardgame.game.*;
-import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class Human extends Player {
