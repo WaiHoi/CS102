@@ -172,56 +172,54 @@ public class Score {
         // Sort players by score and number of cards (lower is better in Parade)
         Collections.sort(Player.players, new ScoreCardComparator());
         List<Player> sortedPlayers = Player.players;
+        String[] labels = { "[WINNER]", "[SECOND]", "[THIRD]", "[FOURTH]", "[FIFTH]", "[SIXTH]" };
 
-        if (!sortedPlayers.isEmpty()) {
-            Player winner = sortedPlayers.get(0);
+        try {
+            // Generate Figlet for "WINNER" in yellow
+            String winnerArt = FigletFont.convertOneLine("WINNER");
+            System.out.println(AnsiColors.colorize(winnerArt, AnsiColors.BRIGHT_YELLOW));
+        } catch (Exception e) {
+            System.out.println(AnsiColors.colorize("WINNER", AnsiColors.BRIGHT_YELLOW));
+        }
 
-            // Check for tie with second place
-            if (sortedPlayers.size() > 1 && winner.playerScoreCount == sortedPlayers.get(1).playerScoreCount) {
-                Player second = sortedPlayers.get(1);
-                int cardDifference = winner.openDeck.size() - second.openDeck.size();
+        // Get winner (first player in sorted list)
+        Player possibleWinner = sortedPlayers.get(0);
+        int possibleWinnerScore = possibleWinner.getPlayerScore();
+        int possibleWinnerDeckSize = possibleWinner.getOpenDeck().size();
 
-                try {
-                    // Generate Figlet for "JOINT WINNERS" in yellow
-                    String jointWinnerArt = FigletFont.convertOneLine("JOINT WINNERS");
-                    System.out.println(AnsiColors.colorize(jointWinnerArt, AnsiColors.BRIGHT_YELLOW));
-                } catch (Exception e) {
-                    System.out.println(AnsiColors.colorize("JOINT WINNERS", AnsiColors.BRIGHT_YELLOW));
-                }
+        System.out.println("[WINNER] " + possibleWinner.getPlayerName() + " wins with score " +
+                possibleWinnerScore);
+        
+        // Loop through players
+        for (int i = 0; i < sortedPlayers.size(); i++) {
+            Player p = sortedPlayers.get(i);
+            String label = (i < labels.length) ? labels[i] : "[" + (i + 1) + "TH]";
 
-                // Print names in bold
-                System.out.println(
-                        AnsiColors.colorizeBold(winner.name, AnsiColors.BRIGHT_YELLOW) + " and " +
-                                AnsiColors.colorizeBold(second.name, AnsiColors.BRIGHT_YELLOW) +
-                                " tie with score " + winner.playerScoreCount +
-                                " (won by " + cardDifference + " cards)");
+            if (p == possibleWinner) {
+                continue;
+            }
 
-                // Print remaining players
-                for (int i = 2; i < sortedPlayers.size(); i++) {
-                    System.out.println(sortedPlayers.get(i).name + " got a score of " +
-                            sortedPlayers.get(i).playerScoreCount);
+            // Print tiebreaker note
+            if (p.getPlayerScore() == possibleWinnerScore) {
+                int cardDiff = p.getOpenDeck().size() - possibleWinnerDeckSize;
+
+                // same score and number of cards
+                if (cardDiff == 0) {
+                    System.out.println(" -> " + possibleWinner.getPlayerName() + " wins tiebreak against " +
+                            p.getPlayerName() + " with equal number of cards (" +
+                            possibleWinnerDeckSize + ")");
+                    // same score and fewer cards
+                } else {
+                    System.out.println(" -> " + possibleWinner.getPlayerName() +
+                            " wins tiebreak against " + p.getPlayerName() +
+                            " by " + cardDiff + " fewer cards (score: " +
+                            possibleWinnerScore + ")");
                 }
                 System.out.println(label + " " + p.getPlayerName() +
                         " got a score of " + p.getPlayerScore());
             } else {
-                // Single winner
-                try {
-                    // Generate Figlet for "WINNER" in yellow
-                    String winnerArt = FigletFont.convertOneLine("WINNER");
-                    System.out.println(AnsiColors.colorize(winnerArt, AnsiColors.BRIGHT_YELLOW));
-                } catch (Exception e) {
-                    System.out.println(AnsiColors.colorize("WINNER", AnsiColors.BRIGHT_YELLOW));
-                }
-
-                // Print winner name in bold
-                System.out.println(
-                        AnsiColors.colorizeBold(winner.name, AnsiColors.BRIGHT_YELLOW) + " wins with score " + winner.playerScoreCount);
-
-                // Print other players
-                for (int i = 1; i < sortedPlayers.size(); i++) {
-                    System.out.println(sortedPlayers.get(i).name + " got a score of " +
-                            sortedPlayers.get(i).playerScoreCount);
-                }
+                System.out.println(label + " " + p.getPlayerName() +
+                        " got a score of " + p.getPlayerScore());
             }
         }
     }
