@@ -7,7 +7,6 @@ import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class Human extends Player {
-    public Card card;
 
     public Human(String name, int playerID) {
         super(name, playerID);

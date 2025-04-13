@@ -37,7 +37,7 @@ public class Initialize {
     private static void initializePlayers(List<String> usernames, int numHumans) {
         for (int i = 0; i < numHumans; i++) {
             int playerID = i + 1;
-            Player.players.add(new Human(usernames.get(i), playerID)); 
+            Player.getPlayers().add(new Human(usernames.get(i), playerID)); 
         }
     }
 
@@ -52,7 +52,7 @@ public class Initialize {
     // each with a name like "Bot 1" and the specified difficulty level.
     private static void initializeBots(int numBots, BotDifficulty botDifficulty) {
         for (int i = 0; i < numBots; i++) {
-            Player.players.add(new Bot("Bot " + (i + 1), botDifficulty)); //
+            Player.getPlayers().add(new Bot("Bot " + (i + 1), botDifficulty)); //
         }
     }
 
@@ -88,7 +88,7 @@ public class Initialize {
         while (!deckUnshuffled.isEmpty()) {
             //while unshuffiled deck still has cards
             int randomIndex = random.nextInt(deckUnshuffled.size()); //This picks a random number between 0 and the size of the deck - 1.
-            Game.deck.add(deckUnshuffled.remove(randomIndex)); // Remove card from unshuffled list and add to final deck
+            Game.getDeck().add(deckUnshuffled.remove(randomIndex)); // Remove card from unshuffled list and add to final deck
         }
     }
 
@@ -96,9 +96,9 @@ public class Initialize {
      * Deals 5 cards to each player from the game deck.
      */
     private static void dealCardsToPlayers() {
-        for (Player player : Player.players) {
+        for (Player player : Player.getPlayers()) {
             for (int i = 0; i < 5; i++) {
-                Card card = Game.deck.remove(0); // Remove card from top of the deck
+                Card card = Game.getDeck().remove(0); // Remove card from top of the deck
                 player.getClosedDeck().add(card); // Add card to player's closed deck
             }
         }
@@ -109,8 +109,8 @@ public class Initialize {
      */
     private static void initializeParade() {
         for (int i = 0; i < 6; i++) {
-            Card card = Game.deck.remove(0); // Remove card from top of the deck
-            Game.parade.add(card); // Add card to parade
+            Card card = Game.getDeck().remove(0); // Remove card from top of the deck
+            Game.getParade().add(card); // Add card to parade
         }
     }
 }

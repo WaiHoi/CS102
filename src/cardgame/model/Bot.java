@@ -58,7 +58,7 @@ public int mediumDifficulty() {
 
         // Count how many cards in the parade have the same colour
         int cardCount = 0;
-        for (Card paradeCard : Game.parade) {
+        for (Card paradeCard : Game.getParade()) {
             if (paradeCard.getColour().equals(colour)) {
                 cardCount++; // increase count if colour matches
             }
@@ -111,10 +111,10 @@ public int mediumDifficulty() {
     private int scorePerCard(Card card) {
         int score = 0;
 
-        for (int i = card.getValue(); i < Game.parade.size(); i++) {
+        for (int i = card.getValue(); i < Game.getParade().size(); i++) {
             //This mimics the Parade rule: "Skip a number of cards equal to the value of the card played"
 
-            Card c = Game.parade.get(i); //assess "each non safe" card
+            Card c = Game.getParade().get(i); //assess "each non safe" card
 
             // matches the same colour or if value is less than or equal
             if (c.getColour().equals(card.getColour()) || c.getValue() <= card.getValue()) {

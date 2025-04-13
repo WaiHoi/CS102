@@ -281,8 +281,8 @@ public class GameMenu {
         System.out.println("\nPlayers:");
         
         //List all players and whether they are human or not
-        for (int i = 0; i < Player.players.size(); i++) {
-            Player player = Player.players.get(i);
+        for (int i = 0; i < Player.getPlayers().size(); i++) {
+            Player player = Player.getPlayers().get(i);
 
             if (player instanceof Human) {
                 System.out.println("   " + (i + 1) + ". " + player.getPlayerName() + " (HUMAN)");
@@ -292,7 +292,7 @@ public class GameMenu {
             }
         }
 
-        System.out.println("\nTotal Players: " + Player.players.size());
+        System.out.println("\nTotal Players: " + Player.getPlayers().size());
         printBorder();
     }
 
